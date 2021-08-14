@@ -50,9 +50,9 @@ namespace Tappe.Data.Models
         public override void MapToModel(DataRow row)
         {
             base.MapToModel(row);
-            ItemRef = Field(row, _itemRefColumnName, ItemRef);
-            StockRef = Field(row, _stockRefColumnName, StockRef);
-            Quantity = Field(row, _quantityColumnName, Quantity);
+            ItemRef = GetField(row, _itemRefColumnName, ItemRef);
+            StockRef = GetField(row, _stockRefColumnName, StockRef);
+            Quantity = GetField(row, _quantityColumnName, Quantity);
         }
 
         public override string TableName()

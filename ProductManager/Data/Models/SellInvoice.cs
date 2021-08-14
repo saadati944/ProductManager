@@ -58,12 +58,12 @@ namespace Tappe.Data.Models
         public override void MapToModel(DataRow row)
         {
             base.MapToModel(row);
-            Number = Field(row, _numberColumnName, Number);
-            PartyRef = Field(row, _partyRefColumnName, PartyRef);
-            UserRef = Field(row, _userRefColumnName, UserRef);
-            Date = Field(row, _dateColumnName, Date);
-            TotalPrice = Field(row, _totalPriceColumnName, TotalPrice);
-            StockRef = Field(row, _stockRefColumnName, StockRef);
+            Number = GetField(row, _numberColumnName, Number);
+            PartyRef = GetField(row, _partyRefColumnName, PartyRef);
+            UserRef = GetField(row, _userRefColumnName, UserRef);
+            Date = GetField(row, _dateColumnName, Date);
+            TotalPrice = GetField(row, _totalPriceColumnName, TotalPrice);
+            StockRef = GetField(row, _stockRefColumnName, StockRef);
         }
 
         public override string TableName()

@@ -45,9 +45,9 @@ namespace Tappe.Data.Models
         public override void MapToModel(DataRow row)
         {
             base.MapToModel(row);
-            ItemRef = Field(row, _itemRefColumnName, ItemRef);
-            Price = Field(row, _priceColumnName, Price);
-            Date = Field(row, _dateColumnName, Date);
+            ItemRef = GetField(row, _itemRefColumnName, ItemRef);
+            Price = GetField(row, _priceColumnName, Price);
+            Date = GetField(row, _dateColumnName, Date);
         }
 
         public override string TableName()

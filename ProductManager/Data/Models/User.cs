@@ -47,11 +47,11 @@ namespace Tappe.Data.Models
         public override void MapToModel(DataRow row)
         {
             base.MapToModel(row);
-            FirstName = Field(row, _firstnameColumnName, FirstName);
-            LastName = Field(row, _lastnameColumnName, LastName);
-            Password = Field(row, _passwordnameColumnName, Password);
-            Age = Field(row, _agenameColumnName, Age);
-            Gender = Field(row, _gendernameColumnName, Gender);
+            FirstName = GetField(row, _firstnameColumnName, FirstName);
+            LastName = GetField(row, _lastnameColumnName, LastName);
+            Password = GetField(row, _passwordnameColumnName, Password);
+            Age = GetField(row, _agenameColumnName, Age);
+            Gender = GetField(row, _gendernameColumnName, Gender);
         }
 
         public override string TableName()

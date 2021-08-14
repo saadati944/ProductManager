@@ -30,13 +30,13 @@ namespace Tappe.Data.Models
         public virtual void MapToModel(DataRow row)
         {
             if (Id == -1)
-                Id = Field(row, "Id", Id);
+                Id = GetField(row, "Id", Id);
             //if (Id == -1)
             //    Id = (int)row["Id"];
         }
         public virtual void Include() { }
 
-        protected T Field<T>(DataRow row, string col, T def)
+        public T GetField<T>(DataRow row, string col, T def)
         {
             T val = row.Field<T>(col);
             return val == null ? def : val;

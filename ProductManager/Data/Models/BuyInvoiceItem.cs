@@ -36,12 +36,12 @@ namespace Tappe.Data.Models
         public override void MapToModel(System.Data.DataRow row)
         {
             base.MapToModel(row);
-            InvoiceRef = Field(row, _buyInvoiceRefColumnName, InvoiceRef);
-            ItemRef = Field(row, _itemRefColumnName, ItemRef);
-            Quantity = Field(row, _quantityColumnName, Quantity);
-            Fee = Field(row, _feeColumnName, Fee);
-            Tax = Field(row, _taxColumnName, Tax);
-            Discount = Field(row, _discountColumnName, Discount);
+            InvoiceRef = GetField(row, _buyInvoiceRefColumnName, InvoiceRef);
+            ItemRef = GetField(row, _itemRefColumnName, ItemRef);
+            Quantity = GetField(row, _quantityColumnName, Quantity);
+            Fee = GetField(row, _feeColumnName, Fee);
+            Tax = GetField(row, _taxColumnName, Tax);
+            Discount = GetField(row, _discountColumnName, Discount);
         }
         public override void Include()
         {

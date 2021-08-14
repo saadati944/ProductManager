@@ -44,9 +44,9 @@ namespace Tappe.Data.Models
         public override void MapToModel(System.Data.DataRow row)
         {
             base.MapToModel(row);
-            Name = Field(row, _nameColumnName, Name);
-            Value = Field(row, _valueColumnName, Value);
-            UserRef = Field(row, _userRefColumnName, UserRef);
+            Name = GetField(row, _nameColumnName, Name);
+            Value = GetField(row, _valueColumnName, Value);
+            UserRef = GetField(row, _userRefColumnName, UserRef);
         }
 
         public override string TableName()

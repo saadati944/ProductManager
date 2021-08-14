@@ -9,12 +9,14 @@ namespace Tappe.Data.Models
 {
     public class Item : Model
     {
-        private const string _nameColumnName = "Name";
-        private const string _descriptionColumnName = "Description";
-        private const string _creatorRefColumnName = "CreatorRef";
-        private const string _priceColumnName = "Price";
-        private const string _measurementUnitRefColumnName = "MeasurementUnitRef";
-        private const string _tableName = "Items";
+        public const string NameColumnName = "Name";
+        public const string DescriptionColumnName = "Description";
+        public const string CreatorRefColumnName = "CreatorRef";
+        public const string CreatorColumnName = "Creator";
+        public const string PriceColumnName = "Price";
+        public const string MeasurementUnitRefColumnName = "MeasurementUnitRef";
+        public const string MeasurementUnitColumnName = "MeasurementUnit";
+        public const string _tableName = "Items";
 
         public string Name { get; set; }
         public string Description { get; set; }
@@ -41,16 +43,16 @@ namespace Tappe.Data.Models
         public override void MapToModel(DataRow row)
         {
             base.MapToModel(row);
-            Name = Field(row, _nameColumnName, Name);
-            Description = Field(row, _descriptionColumnName, Description);
-            CreatorRef = Field(row, _creatorRefColumnName, CreatorRef);
-            Price = Field(row, _priceColumnName, Price);
-            MeasurementUnitRef = Field(row, _measurementUnitRefColumnName, MeasurementUnitRef);
+            Name = GetField(row, NameColumnName, Name);
+            Description = GetField(row, DescriptionColumnName, Description);
+            CreatorRef = GetField(row, CreatorRefColumnName, CreatorRef);
+            Price = GetField(row, PriceColumnName, Price);
+            MeasurementUnitRef = GetField(row, MeasurementUnitRefColumnName, MeasurementUnitRef);
         }
 
         public override string[] Columns()
         {
-            return new string[]{ _nameColumnName, _descriptionColumnName, _creatorRefColumnName, _priceColumnName, _measurementUnitRefColumnName };
+            return new string[]{ NameColumnName, DescriptionColumnName, CreatorRefColumnName, PriceColumnName, MeasurementUnitRefColumnName };
         }
 
         public override string[] GetValues()
