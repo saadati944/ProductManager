@@ -1,0 +1,106 @@
+﻿Entities:
+	Mall
+	Person
+	Product
+	Category
+	Price
+	Attribute
+	Image
+
+Tables:
+	Products
+	Categories
+	ProductCategories
+	Attributes
+	ProductAttributes
+	ProductPrices
+	UnitConversions
+	MeasurementUnits
+	Images
+	ProductImages
+	Malls
+	MallProducts
+	MallSellers
+	People
+
+Detailed Tables:
+	@ Products:
+		ProductID - int
+		Name - string
+		Description - string
+		OwnerREF - FK(to People.PersonID)
+
+	@ Categories:
+		CategoryID - int
+		Name - string
+	
+	@ ProductCategories:
+		ID - int
+		ProductREF - FK(to Products.ProductID)
+		CategoryREF - FK(to Categories.CategoryID)
+
+	@ Attributes:
+		AttributeID - int
+		Name - string
+		Description - string
+	
+	@ ProductAttributes:
+		ID - int
+		ProductREF - FK(to Products.ProductID)
+		AttributeREF - FK(to Attributes.AttributeID)
+		Value - string
+
+	@ ProductPrices:
+		ID - int
+		ProductREF - FK(to Products.ProductID)
+		MeasurementUnitREF - FK(to MeasurementUnits.MeasurementUnitID)
+		CostPerUnit - int
+		StartDate - Date
+		EndDate - Date
+
+	@ UnitConversions:
+		ID - int
+		ProductREF - FK(to Products.ProductID)
+		FromUnit - FK(to MeasurementUnits.MeasurementUnitID)
+		ToUnit - FK(to MeasurementUnits.MeasurementUnitID)
+		Coefficient - double
+
+	@ MeasurementUnits:
+		MeasurementUnitID - int
+		Name - string
+
+	@ Images:
+		ImageID - int
+		Description - string
+		FilePath - string
+
+	@ ProductImages:
+		ID - int
+		ProductREF - FK(to Products.ProductID)
+		ImageREF - FK(to Images.ImageID)
+
+	@ Malls:
+		MallID - int
+		Name - string
+		Description - string
+		OpenTime - time
+		CloseTime - time
+
+	@ MallProducts:
+		ID - int
+		MallID - FK(to Malls.MallID)
+		ProductREF - FK(to Products.ProductID)
+		MeasurementUnitREF - FK(to MeasurementUnits.MeasurementUnitID)
+		Quantity - float
+
+	@ MallSellers:
+		ID - int
+		MallREF - FK(to Malls.MallID)
+		PersonREF - FK(to People.PersonID)
+
+	@ People:
+		PersonID - int
+		FirstName - string
+		LastName - string
+		Age - int
+		Gender - bit
