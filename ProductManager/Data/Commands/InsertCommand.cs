@@ -13,7 +13,6 @@ namespace Tappe.Data.Commands
         public InsertCommand(SqlConnection connection, SqlTransaction transaction, string table, string[] columns, string[] values)
         {
             string query = CreateQuery(table, columns, values);
-            System.Windows.Forms.MessageBox.Show(query);
             if(transaction != null)
                 _sqlCommand = new SqlCommand(query, connection, transaction);
             else

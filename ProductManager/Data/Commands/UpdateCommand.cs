@@ -13,7 +13,6 @@ namespace Tappe.Data.Commands
         public UpdateCommand(SqlConnection connection, SqlTransaction transaction, string table, string[] columns, string[] values, string condition)
         {
             string query = CreateQuery(table, columns, values, condition);
-            System.Windows.Forms.MessageBox.Show(query);
             if(transaction == null)
                 _sqlCommand = new SqlCommand(query, connection);
             else
