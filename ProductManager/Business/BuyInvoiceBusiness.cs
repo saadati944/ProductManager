@@ -60,7 +60,7 @@ namespace Tappe.Business
         }
         public override DataTable GetInvoice(int number)
         {
-            DataTable table = _buyInvoicesRepository.NewDataTable();
+            DataTable table = _buyInvoicesRepository.NewInvoiceDataTable();
 
             try
             {
@@ -79,9 +79,14 @@ namespace Tappe.Business
             return table;
         }
 
-        public override IEnumerable<InvoiceItem> GetInvoiceItems(int invoiceid)
+        public override IEnumerable<InvoiceItem> GetInvoiceItemModels(int invoiceid)
         {
             return _database.GetAll<BuyInvoiceItem>(null, null, "InvoiceRef=" + invoiceid);
+        }
+        public override DataTable GetInvoiceItems(int invoiceid)
+        {
+            DataTable table = _database.GetAllDataset<BuyInvoiceItem>(null, null, "InvoiceRef=" + invoiceid).Tables[0];
+            return table;
         }
 
         public override int GetLastInvoiceNumber()
@@ -104,10 +109,17 @@ namespace Tappe.Business
             return 0;
         }
 
-        public bool SaveInvoice(DataTable table)
+        public override bool SaveInvoice(DataTable invoicetable, DataTable invoiceitems)
         {
             BuyInvoice invoice = new BuyInvoice();
-            invoice.MapToModel(table.Rows[0]);
+            invoice.MapToModel(invoicetable.Rows[0]);
+            var items = new List<BuyInvoiceItem>();
+            foreach (DataRow row in invoiceitems.Rows)
+            {
+                BuyInvoiceItem bi = new BuyInvoiceItem();
+                bi.MapToModel(row);
+                items.Add(bi);
+            }
             return SaveInvoice(invoice);
         }
 

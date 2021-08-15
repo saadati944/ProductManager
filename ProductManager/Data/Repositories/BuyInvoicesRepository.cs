@@ -96,9 +96,13 @@ namespace Tappe.Data.Repositories
             if (DataChanged != null)
                 DataChanged();
         }
-        public DataTable NewDataTable()
+        public DataTable NewInvoiceDataTable()
         {
             return DataTable.Clone();
+        }
+        public DataTable NewInvoiceItemDataTable()
+        {
+            return _database.GetAllDataset<BuyInvoiceItem>(null, null, "1=0", null, 0).Tables[0];
         }
     }
 

@@ -26,9 +26,11 @@ namespace Tappe.Business
             _buyInvoicesRepository = container.Create<Data.Repositories.BuyInvoicesRepository>();
         }
 
+        public abstract bool SaveInvoice(DataTable invoicetable, DataTable invoiceitems);
         public abstract Invoice GetInvoiceModel(int number);
         public abstract DataTable GetInvoice(int number);
-        public abstract IEnumerable<InvoiceItem> GetInvoiceItems(int invoiceid);
+        public abstract IEnumerable<InvoiceItem> GetInvoiceItemModels(int invoiceid);
+        public abstract DataTable GetInvoiceItems(int invoiceid);
         public abstract int GetLastInvoiceNumber();
         public abstract decimal GetTotalPrice();
         public abstract bool IsInvoiceNumberValid(int num);
