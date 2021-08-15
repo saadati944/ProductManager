@@ -46,7 +46,7 @@ namespace Tappe.Business
             return sellInvoice;
         }
 
-        public override Invoice GetInvoice(int number)
+        public override Invoice GetInvoiceModel(int number)
         {
             SellInvoice si = null;
             try
@@ -57,6 +57,27 @@ namespace Tappe.Business
             if (si != null)
                 return si;
             return new SellInvoice();
+        }
+
+        public override DataTable GetInvoice(int number)
+        {
+            DataTable table = _buyInvoicesRepository.NewDataTable();
+
+            try
+            {
+                DataRow row = _database.GetAllDataset<SellInvoice>(null, null, "Number=" + number, null, 1).Tables[0].Rows[0];
+                DataRow newRow = table.NewRow();
+                newRow[SellInvoice.IdColumnName] = row[SellInvoice.IdColumnName];
+                newRow[SellInvoice.NumberColumnName] = row[SellInvoice.NumberColumnName];
+                newRow[SellInvoice.PartyRefColumnName] = row[SellInvoice.PartyRefColumnName];
+                newRow[SellInvoice.UserRefColumnName] = row[SellInvoice.UserRefColumnName];
+                newRow[SellInvoice.StockRefColumnName] = row[SellInvoice.StockRefColumnName];
+                newRow[SellInvoice.DateColumnName] = row[SellInvoice.DateColumnName];
+                newRow[SellInvoice.TotalPriceColumnName] = row[SellInvoice.TotalPriceColumnName];
+                table.Rows.Add(newRow);
+            }
+            catch { }
+            return table;
         }
 
         public override IEnumerable<InvoiceItem> GetInvoiceItems(int invoiceid)
@@ -82,6 +103,13 @@ namespace Tappe.Business
             }
             catch { }
             return 0;
+        }
+
+        public bool SaveInvoice(DataTable table)
+        {
+            SellInvoice invoice = new SellInvoice();
+            invoice.MapToModel(table.Rows[0]);
+            return SaveInvoice(invoice);
         }
 
         public bool SaveInvoice(SellInvoice invoice)

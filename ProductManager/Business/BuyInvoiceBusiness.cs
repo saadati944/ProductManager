@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Data.SqlClient;
 using Tappe.Data;
 using Tappe.Data.Models;
+using System.Data;
 
 namespace Tappe.Business
 {
@@ -45,7 +46,7 @@ namespace Tappe.Business
             return buyInvoice;
         }
 
-        public override Invoice GetInvoice(int number)
+        public override Invoice GetInvoiceModel(int number)
         {
             BuyInvoice bi = null;
             try
@@ -56,6 +57,26 @@ namespace Tappe.Business
             if (bi != null)
                 return bi;
             return new BuyInvoice();
+        }
+        public override DataTable GetInvoice(int number)
+        {
+            DataTable table = _buyInvoicesRepository.NewDataTable();
+
+            try
+            {
+                DataRow row = _database.GetAllDataset<BuyInvoice>(null, null, "Number=" + number, null, 1).Tables[0].Rows[0];
+                DataRow newRow = table.NewRow();
+                newRow[BuyInvoice.IdColumnName] = row[BuyInvoice.IdColumnName];
+                newRow[BuyInvoice.NumberColumnName] = row[BuyInvoice.NumberColumnName];
+                newRow[BuyInvoice.PartyRefColumnName] = row[BuyInvoice.PartyRefColumnName];
+                newRow[BuyInvoice.UserRefColumnName] = row[BuyInvoice.UserRefColumnName];
+                newRow[BuyInvoice.StockRefColumnName] = row[BuyInvoice.StockRefColumnName];
+                newRow[BuyInvoice.DateColumnName] = row[BuyInvoice.DateColumnName];
+                newRow[BuyInvoice.TotalPriceColumnName] = row[BuyInvoice.TotalPriceColumnName];
+                table.Rows.Add(newRow);
+            }
+            catch { }
+            return table;
         }
 
         public override IEnumerable<InvoiceItem> GetInvoiceItems(int invoiceid)
@@ -82,6 +103,14 @@ namespace Tappe.Business
             catch { }
             return 0;
         }
+
+        public bool SaveInvoice(DataTable table)
+        {
+            BuyInvoice invoice = new BuyInvoice();
+            invoice.MapToModel(table.Rows[0]);
+            return SaveInvoice(invoice);
+        }
+
         public bool SaveInvoice(BuyInvoice invoice)
         {
             var connection = _database.GetConnection();

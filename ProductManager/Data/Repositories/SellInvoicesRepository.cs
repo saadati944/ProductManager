@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data;
 using System.Data.SqlClient;
+using Tappe.Data;
+using Tappe.Data.Models;
 
 namespace Tappe.Data.Repositories
 {
@@ -49,7 +51,7 @@ namespace Tappe.Data.Repositories
             if (_connection == null)
             {
                 _connection = _database.GetConnection();
-                _dataAdapter = _database.GetDataAdapter<Models.SellInvoice>(_connection);
+                _dataAdapter = _database.GetDataAdapter<SellInvoice>(_connection);
             }
             if (_dataTable == null)
                 _dataTable = new DataTable();
@@ -59,33 +61,33 @@ namespace Tappe.Data.Repositories
             _dataAdapter.Fill(_dataTable);
 
             if (!_dataTable.Columns.Contains(_userColumnName))
-                _dataTable.Columns.Add(_userColumnName);
+                _dataTable.Columns.Add(_userColumnName, typeof(User));
             if (!_dataTable.Columns.Contains(_partyColumnName))
-                _dataTable.Columns.Add(_partyColumnName);
-            if(!_dataTable.Columns.Contains(_typeColumnName))
-                _dataTable.Columns.Add(_typeColumnName);
+                _dataTable.Columns.Add(_partyColumnName, typeof(Party));
+            if (!_dataTable.Columns.Contains(_typeColumnName))
+                _dataTable.Columns.Add(_typeColumnName, typeof(string));
             if (!_dataTable.Columns.Contains(_stockColumnName))
-                _dataTable.Columns.Add(_stockColumnName);
+                _dataTable.Columns.Add(_stockColumnName, typeof(Stock));
             if (!_dataTable.Columns.Contains(_persianDateColumnName))
-                _dataTable.Columns.Add(_persianDateColumnName);
+                _dataTable.Columns.Add(_persianDateColumnName, typeof(string));
 
             for (int i = 0; i < _dataTable.Rows.Count; i++)
             {
                 DataRow dr = _dataTable.Rows[i];
 
-                Models.Party party = new Models.Party { Id = (int)dr[_partyRefColumnName] };
+                Party party = new Party { Id = (int)dr[_partyRefColumnName] };
                 party.Load();
                 dr[_partyColumnName] = party;
 
-                Models.User user = new Models.User { Id = (int)dr[_userRefColumnName] };
+                User user = new User { Id = (int)dr[_userRefColumnName] };
                 user.Load();
                 dr[_userColumnName] = user;
 
-                Models.Stock stock = new Models.Stock { Id = (int)dr[_stockRefColumnName] };
+                Stock stock = new Stock { Id = (int)dr[_stockRefColumnName] };
                 stock.Load();
                 dr[_stockColumnName] = stock;
 
-                dr[_persianDateColumnName] = Models.PersianDate.PersianDateStringFromDateTime((DateTime)dr[_dateColumnName]);
+                dr[_persianDateColumnName] = PersianDate.PersianDateStringFromDateTime((DateTime)dr[_dateColumnName]);
 
                 dr[_typeColumnName] = "فروش";
             }
@@ -93,6 +95,10 @@ namespace Tappe.Data.Repositories
 
             if (DataChanged != null)
                 DataChanged();
+        }
+        public DataTable NewDataTable()
+        {
+            return DataTable.Clone();
         }
     }
 
