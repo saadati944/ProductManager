@@ -8,6 +8,12 @@ namespace Tappe.Data.Models
 {
     public abstract class InvoiceItem : Model
     {
+        public const string ItemRefColumnName = "ItemRef";
+        public const string QuantityColumnName = "Quantity";
+        public const string FeeColumnName = "Fee";
+        public const string TaxColumnName = "Tax";
+        public const string DiscountColumnName = "Discount";
+
         public int InvoiceRef { get; set; }
         public Invoice Invoice { get; set; }
         public int ItemRef { get; set; }

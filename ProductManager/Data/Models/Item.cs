@@ -9,6 +9,8 @@ namespace Tappe.Data.Models
 {
     public class Item : Model
     {
+        private const string _tableName = "Items";
+
         public const string NameColumnName = "Name";
         public const string DescriptionColumnName = "Description";
         public const string CreatorRefColumnName = "CreatorRef";
@@ -16,7 +18,6 @@ namespace Tappe.Data.Models
         public const string PriceColumnName = "Price";
         public const string MeasurementUnitRefColumnName = "MeasurementUnitRef";
         public const string MeasurementUnitColumnName = "MeasurementUnit";
-        public const string _tableName = "Items";
 
         public string Name { get; set; }
         public string Description { get; set; }

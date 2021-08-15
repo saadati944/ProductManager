@@ -99,7 +99,7 @@ namespace Tappe.Forms
                 if (itemsGridView.Rows[e.RowIndex].Cells[_itemColumnIndex].Value == null)
                     return;
                 ((DataGridViewButtonCell)itemsGridView.Rows[e.RowIndex].Cells[_deleteBtnColumnIndex]).Value = "حذف";
-                var item = _itemsBusiness.GetItem((string)itemsGridView.Rows[e.RowIndex].Cells[_itemColumnIndex].Value);
+                var item = _itemsBusiness.GetItemModel((string)itemsGridView.Rows[e.RowIndex].Cells[_itemColumnIndex].Value);
                 itemsGridView.Rows[e.RowIndex].Cells[_idColumnIndex].Value = item.Id;
                 itemsGridView.Rows[e.RowIndex].Cells[_feeColumnIndex].Value = _itemsBusiness.GetItemPrice(item.Id, _sellInvoice.Date).Price;
                 itemsGridView.Rows[e.RowIndex].Cells[_quantityColumnIndex].Value = (int) 0;

@@ -10,11 +10,12 @@ namespace Tappe.Data.Models
     public class User : Model
     {
         private const string _tableName = "Users";
-        private const string _firstnameColumnName = "Firstname";
-        private const string _lastnameColumnName = "Lastname";
-        private const string _passwordnameColumnName = "Password";
-        private const string _agenameColumnName = "Age";
-        private const string _gendernameColumnName = "Gender";
+
+        public const string FirstnameColumnName = "Firstname";
+        public const string LastnameColumnName = "Lastname";
+        public const string PasswordnameColumnName = "Password";
+        public const string AgenameColumnName = "Age";
+        public const string GendernameColumnName = "Gender";
 
         public int Age { get; set; }
         public string FirstName { get; set; }
@@ -35,7 +36,7 @@ namespace Tappe.Data.Models
 
         public override string[] Columns()
         {
-            return new string[] { _firstnameColumnName, _lastnameColumnName, _passwordnameColumnName, _agenameColumnName, _gendernameColumnName };
+            return new string[] { FirstnameColumnName, LastnameColumnName, PasswordnameColumnName, AgenameColumnName, GendernameColumnName };
         }
 
         public override string[] GetValues()
@@ -47,11 +48,11 @@ namespace Tappe.Data.Models
         public override void MapToModel(DataRow row)
         {
             base.MapToModel(row);
-            FirstName = GetField(row, _firstnameColumnName, FirstName);
-            LastName = GetField(row, _lastnameColumnName, LastName);
-            Password = GetField(row, _passwordnameColumnName, Password);
-            Age = GetField(row, _agenameColumnName, Age);
-            Gender = GetField(row, _gendernameColumnName, Gender);
+            FirstName = GetField(row, FirstnameColumnName, FirstName);
+            LastName = GetField(row, LastnameColumnName, LastName);
+            Password = GetField(row, PasswordnameColumnName, Password);
+            Age = GetField(row, AgenameColumnName, Age);
+            Gender = GetField(row, GendernameColumnName, Gender);
         }
 
         public override string TableName()

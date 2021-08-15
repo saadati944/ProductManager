@@ -79,7 +79,7 @@ namespace Tappe.Data.Repositories
             {
                 DataRow dr = _dataTable.Rows[i];
 
-                Models.Item item = _itemsBusiness.GetItem((int)dr[_itemRefColumnName]);
+                Models.Item item = _itemsBusiness.GetItemModel((int)dr[_itemRefColumnName]);
                 dr[_itemColumnName] = item;
                 dr[_measurementUnitColumnName] = _measurementUnitsRepository.GetUnit(item.MeasurementUnitRef);
 
@@ -91,7 +91,7 @@ namespace Tappe.Data.Repositories
 
             foreach(var x in _itemTotalQuantities)
             {
-                Models.Item item = _itemsBusiness.GetItem(x.ItemRef);
+                Models.Item item = _itemsBusiness.GetItemModel(x.ItemRef);
                 _dataTable.Rows.Add(-1, x.ItemRef, -1, x.Quantity, "مجموع موجودی", item, x.MeasurementUnit);
             }
 

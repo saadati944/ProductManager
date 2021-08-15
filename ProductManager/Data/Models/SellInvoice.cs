@@ -10,22 +10,9 @@ namespace Tappe.Data.Models
     public class SellInvoice : Invoice
     {
         private const string _tableName = "SellInvoices";
-        private const string _numberColumnName = "Number";
-        private const string _partyRefColumnName = "PartyRef";
-        private const string _userRefColumnName = "UserRef";
-        private const string _dateColumnName = "Date";
-        private const string _totalPriceColumnName = "TotalPrice";
-        private const string _stockRefColumnName = "StockRef";
 
-        //public int Number { get; set; }
-        //public int PartyRef { get; set; }
-        //public Party Party { get; set; }
-        //public int UserRef { get; set; }
-        //public User User { get; set; }
-        //public DateTime Date { get; set; }
-        //public decimal TotalPrice { get; set; }
 
-        //public IEnumerable<SellInvoiceItem> InvoiceItems { get; set; }
+
 
         public override InvoiceType GetInvoiceType()
         {
@@ -36,7 +23,7 @@ namespace Tappe.Data.Models
 
         public override string[] Columns()
         {
-            return new string[] { _numberColumnName, _partyRefColumnName, _userRefColumnName, _dateColumnName, _totalPriceColumnName, _stockRefColumnName};
+            return new string[] { NumberColumnName, PartyRefColumnName, UserRefColumnName, DateColumnName, TotalPriceColumnName, StockRefColumnName};
         }
 
         public override string[] GetValues()
@@ -58,12 +45,12 @@ namespace Tappe.Data.Models
         public override void MapToModel(DataRow row)
         {
             base.MapToModel(row);
-            Number = GetField(row, _numberColumnName, Number);
-            PartyRef = GetField(row, _partyRefColumnName, PartyRef);
-            UserRef = GetField(row, _userRefColumnName, UserRef);
-            Date = GetField(row, _dateColumnName, Date);
-            TotalPrice = GetField(row, _totalPriceColumnName, TotalPrice);
-            StockRef = GetField(row, _stockRefColumnName, StockRef);
+            Number = GetField(row, NumberColumnName, Number);
+            PartyRef = GetField(row, PartyRefColumnName, PartyRef);
+            UserRef = GetField(row, UserRefColumnName, UserRef);
+            Date = GetField(row, DateColumnName, Date);
+            TotalPrice = GetField(row, TotalPriceColumnName, TotalPrice);
+            StockRef = GetField(row, StockRefColumnName, StockRef);
         }
 
         public override string TableName()

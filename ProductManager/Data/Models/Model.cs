@@ -9,6 +9,8 @@ namespace Tappe.Data.Models
 {
     public abstract class Model
     {
+        public const string IdColumnName = "Id";
+
         private int _id = -1;
         public int Id
         {
@@ -36,8 +38,10 @@ namespace Tappe.Data.Models
         }
         public virtual void Include() { }
 
-        public T GetField<T>(DataRow row, string col, T def)
+        public static T GetField<T>(DataRow row, string col, T def)
         {
+            if (row[col] is DBNull)
+                return def;
             T val = row.Field<T>(col);
             return val == null ? def : val;
         }

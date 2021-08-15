@@ -10,25 +10,13 @@ namespace Tappe.Data.Models
 {
     public class SellInvoiceItem : InvoiceItem
     {
-        public const string _tableName = "SellInvoiceItems";
-        public const string _sellInvoiceColumnName = "SellInvoiceRef";
-        public const string _itemRefColumnName = "ItemRef";
-        public const string _quantityColumnName = "Quantity";
-        public const string _feeColumnName = "Fee";
-        public const string _taxColumnName = "Tax";
-        public const string _discountColumnName = "Discount";
+        private const string _tableName = "SellInvoiceItems";
 
-        //public int InvoiceRef { get; set; }
-        //public SellInvoice Invoice { get; set; }
-        //public int ItemRef { get; set; }
-        //public Item Item { get; set; }
-        //public int Quantity { get; set; }
-        //public decimal Fee { get; set; }
-
+        public const string SellInvoiceColumnName = "SellInvoiceRef";
 
         public override string[] Columns()
         {
-            return new string[] { _sellInvoiceColumnName, _itemRefColumnName, _quantityColumnName, _feeColumnName, _taxColumnName, _discountColumnName};
+            return new string[] { SellInvoiceColumnName, ItemRefColumnName, QuantityColumnName, FeeColumnName, TaxColumnName, DiscountColumnName};
         }
 
         public override string[] GetValues()
@@ -38,12 +26,12 @@ namespace Tappe.Data.Models
         public override void MapToModel(System.Data.DataRow row)
         {
             base.MapToModel(row);
-            InvoiceRef = GetField(row, _sellInvoiceColumnName, InvoiceRef);
-            ItemRef = GetField(row, _itemRefColumnName, ItemRef);
-            Quantity = GetField(row, _quantityColumnName, Quantity);
-            Fee = GetField(row, _feeColumnName, Fee);
-            Tax = GetField(row, _taxColumnName, Tax);
-            Discount = GetField(row, _discountColumnName, Discount);
+            InvoiceRef = GetField(row, SellInvoiceColumnName, InvoiceRef);
+            ItemRef = GetField(row, ItemRefColumnName, ItemRef);
+            Quantity = GetField(row, QuantityColumnName, Quantity);
+            Fee = GetField(row, FeeColumnName, Fee);
+            Tax = GetField(row, TaxColumnName, Tax);
+            Discount = GetField(row, DiscountColumnName, Discount);
         }
         public override void Include()
         {

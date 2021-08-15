@@ -76,7 +76,7 @@ namespace Tappe.Data.Repositories
             {
                 DataRow dr = _dataTable.Rows[i];
 
-                Models.Item item = _itemsBusiness.GetItem((int)dr[_itemRefColumnName]);
+                Models.Item item = _itemsBusiness.GetItemModel((int)dr[_itemRefColumnName]);
                 dr[_itemColumnName] = item;
 
                 dr[_persianDateColumnName] = Models.PersianDate.PersianDateStringFromDateTime((DateTime)dr[_dateColumnName]);

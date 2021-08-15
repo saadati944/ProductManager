@@ -9,6 +9,13 @@ namespace Tappe.Data.Models
 {
     public abstract class Invoice : Model
     {
+        public const string NumberColumnName = "Number";
+        public const string PartyRefColumnName = "PartyRef";
+        public const string UserRefColumnName = "UserRef";
+        public const string DateColumnName = "Date";
+        public const string TotalPriceColumnName = "TotalPrice";
+        public const string StockRefColumnName = "StockRef";
+
         public enum InvoiceType
         {
             Selling,

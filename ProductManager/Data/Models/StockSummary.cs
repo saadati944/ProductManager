@@ -10,9 +10,10 @@ namespace Tappe.Data.Models
     public class StockSummary : Model
     {
         private const string _tableName = "StockSummaries";
-        private const string _itemRefColumnName = "ItemRef";
-        private const string _stockRefColumnName = "StockRef";
-        private const string _quantityColumnName = "Quantity";
+
+        public const string ItemRefColumnName = "ItemRef";
+        public const string StockRefColumnName = "StockRef";
+        public const string QuantityColumnName = "Quantity";
 
         public int ItemRef { get; set; }
         public Item Item { get; set; }
@@ -39,7 +40,7 @@ namespace Tappe.Data.Models
 
         public override string[] Columns()
         {
-            return new string[] { _itemRefColumnName, _stockRefColumnName, _quantityColumnName };
+            return new string[] { ItemRefColumnName, StockRefColumnName, QuantityColumnName };
         }
 
         public override string[] GetValues()
@@ -50,9 +51,9 @@ namespace Tappe.Data.Models
         public override void MapToModel(DataRow row)
         {
             base.MapToModel(row);
-            ItemRef = GetField(row, _itemRefColumnName, ItemRef);
-            StockRef = GetField(row, _stockRefColumnName, StockRef);
-            Quantity = GetField(row, _quantityColumnName, Quantity);
+            ItemRef = GetField(row, ItemRefColumnName, ItemRef);
+            StockRef = GetField(row, StockRefColumnName, StockRef);
+            Quantity = GetField(row, QuantityColumnName, Quantity);
         }
 
         public override string TableName()

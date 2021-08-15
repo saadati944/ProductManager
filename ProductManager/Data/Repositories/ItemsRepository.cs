@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data;
 using System.Data.SqlClient;
+using Tappe.Data.Models;
 
 namespace Tappe.Data.Repositories
 {
@@ -16,20 +17,14 @@ namespace Tappe.Data.Repositories
         private SqlConnection _connection;
         private SqlDataAdapter _dataAdapter;
 
-        private const string _itemMeasurementUnitColumnName = "MeasurementUnit";
-        private const string _nameColumnName = "Name";
-        private const string _idColumnName = "Id";
-        private const string _itemMeasurementUnitRefColumnName = "MeasurementUnitRef";
-        private const string _creatorColumnName = "Creator";
-        private const string _creatorRefColumnName = "CreatorRef";
 
-        public IEnumerable<Models.Item> Items
+        public IEnumerable<Item> Items
         {
             get
             {
                 if (_dataTable == null)
                     Update();
-                return _dataTable.Select().Select(x => { var i = new Models.Item(); i.MapToModel(x); return i; });
+                return _dataTable.Select().Select(x => { var i = new Item(); i.MapToModel(x); return i; });
             }
         }
         public DataTable DataTable
@@ -61,7 +56,7 @@ namespace Tappe.Data.Repositories
             if (_connection == null)
             {
                 _connection = _database.GetConnection();
-                _dataAdapter = _database.GetDataAdapter<Models.Item>(_connection);
+                _dataAdapter = _database.GetDataAdapter<Item>(_connection);
             }
             if(_dataTable == null)
                 _dataTable = new DataTable();
@@ -69,19 +64,19 @@ namespace Tappe.Data.Repositories
                 _dataTable.Clear();
 
             _dataAdapter.Fill(_dataTable);
-
-            if (!_dataTable.Columns.Contains(_itemMeasurementUnitColumnName))
-                _dataTable.Columns.Add(_itemMeasurementUnitColumnName);
-            if (!_dataTable.Columns.Contains(_creatorColumnName))
-                _dataTable.Columns.Add(_creatorColumnName);
+            
+            if (!_dataTable.Columns.Contains(Item.MeasurementUnitColumnName))
+                _dataTable.Columns.Add(Item.MeasurementUnitColumnName, typeof(MeasurementUnit));
+            if (!_dataTable.Columns.Contains(Item.CreatorColumnName))
+                _dataTable.Columns.Add(Item.CreatorColumnName, typeof(User));
 
             for (int i=0; i<_dataTable.Rows.Count; i++)
             {
                 DataRow dr = _dataTable.Rows[i];
-                dr[_itemMeasurementUnitColumnName] = _measurementUnitsRepository.GetUnit((int)dr[_itemMeasurementUnitRefColumnName]);
-                Models.User user = new Models.User { Id = (int)dr[_creatorRefColumnName] };
+                dr[Item.MeasurementUnitColumnName] = _measurementUnitsRepository.GetUnit((int)dr[Item.MeasurementUnitRefColumnName]);
+                User user = new User { Id = (int)dr[Item.CreatorRefColumnName] };
                 user.Load();
-                dr[_creatorColumnName] = user;
+                dr[Item.CreatorColumnName] = user;
             }
 
 

@@ -14,7 +14,7 @@ namespace Tappe.Forms
 
         public FrmItemLastPrices(int itemRef)
         {
-            _item = container.Create<Business.ItemsBusiness>().GetItem(itemRef);
+            _item = container.Create<Business.ItemsBusiness>().GetItemModel(itemRef);
             SetTitle("لیست قیمت های " + _item.Name);
 
             _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _persianDateColumnName, DisplayName = "تاریخ" });

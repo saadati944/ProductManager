@@ -229,6 +229,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="Properties\DataSources\System.Data.DataTable.datasource" />
     <None Include="Properties\DataSources\Tappe.Data.Models.Item.datasource" />
     <None Include="Properties\DataSources\Tappe.Data.Models.User.datasource" />
     <None Include="Properties\Settings.settings">
@@ -244,7 +245,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="Product.txt" />
   </ItemGroup>

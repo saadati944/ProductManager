@@ -9,9 +9,10 @@ namespace Tappe.Data.Models
     class Permission : Model
     {
         private const string _tableName = "Permissions";
-        private const string _nameColumnName = "Name";
-        private const string _valueColumnName = "Value";
-        private const string _userRefColumnName = "UserRef";
+
+        public const string NameColumnName = "Name";
+        public const string ValueColumnName = "Value";
+        public const string UserRefColumnName = "UserRef";
 
         public string Name { get; set; }
         public string Value { get; set; }
@@ -34,7 +35,7 @@ namespace Tappe.Data.Models
 
         public override string[] Columns()
         {
-            return new string[] { _userRefColumnName, _nameColumnName, _valueColumnName };
+            return new string[] { UserRefColumnName, NameColumnName, ValueColumnName };
         }
 
         public override string[] GetValues()
@@ -44,9 +45,9 @@ namespace Tappe.Data.Models
         public override void MapToModel(System.Data.DataRow row)
         {
             base.MapToModel(row);
-            Name = GetField(row, _nameColumnName, Name);
-            Value = GetField(row, _valueColumnName, Value);
-            UserRef = GetField(row, _userRefColumnName, UserRef);
+            Name = GetField(row, NameColumnName, Name);
+            Value = GetField(row, ValueColumnName, Value);
+            UserRef = GetField(row, UserRefColumnName, UserRef);
         }
 
         public override string TableName()

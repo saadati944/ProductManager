@@ -9,14 +9,14 @@ namespace Tappe.Data.Models
 {
     public class Stock : Model
     {
-        private const string _nameColumnName = "Name";
         private const string _tableName = "Stocks";
+        public const string NameColumnName = "Name";
 
         public string Name { get; set; }
 
         public override string[] Columns()
         {
-            return new string[] { _nameColumnName };
+            return new string[] { NameColumnName };
         }
 
         public override string[] GetValues()
@@ -27,7 +27,7 @@ namespace Tappe.Data.Models
         public override void MapToModel(DataRow row)
         {
             base.MapToModel(row);
-            Name = GetField(row, _nameColumnName, Name);
+            Name = GetField(row, NameColumnName, Name);
         }
 
         public override string TableName()
