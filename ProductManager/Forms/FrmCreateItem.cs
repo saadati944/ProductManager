@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Tappe.Data;
+using Tappe.Data.Models;
 
 namespace Tappe.Forms
 {
@@ -14,7 +16,7 @@ namespace Tappe.Forms
     {
         private readonly Business.ItemsBusiness _itemsBusiness;
         private readonly Data.Repositories.MeasurementUnitsRepository _measurementUnitsRepository;
-        private Data.Models.Item _item;
+        private DataTable _dataTable;
 
         public FrmCreateItem(int itemId = -1)
         {
@@ -24,90 +26,105 @@ namespace Tappe.Forms
             _measurementUnitsRepository.Update();
             cmbMeasurementUnits.Items.AddRange(_measurementUnitsRepository.MeasurementUnits.ToArray());
 
-            
+            CreateDataTable(itemId);
+
+            var defdata = _dataTable.NewRow();
+            defdata.ItemArray = _dataTable.Rows[0].ItemArray;
+            _dataTable.Rows.Add(defdata);
+
+            BindDataTable();
+            errorProvider.DataSource = _dataTable;
+        }
+
+        private void CreateDataTable(int itemId)
+        {
             if (itemId != -1)
             {
-                _item = _itemsBusiness.GetItem(itemId);
-                _item.Include();
+                _dataTable = _itemsBusiness.GetItem(itemId);
+                DataRow row = _dataTable.Rows[0];
                 for (int i = 0; i < cmbMeasurementUnits.Items.Count; i++)
-                    if (((Data.Models.MeasurementUnit)cmbMeasurementUnits.Items[i]).Id == _item.MeasurementUnitRef)
+                    if (((MeasurementUnit)cmbMeasurementUnits.Items[i]).Id == (int)row[Item.MeasurementUnitRefColumnName])
                     {
                         cmbMeasurementUnits.SelectedIndex = i;
-                        _item.MeasurementUnit = (Data.Models.MeasurementUnit)cmbMeasurementUnits.Items[i];
+                        break;
                     }
                 lblTitle.Text = Text = "تغییر محصول";
-                txtCreator.Text = _item.Creator.ToString();
+                
             }
             else
             {
-                _item = new Data.Models.Item();
-                _item.CreatorRef = Program.LoggedInUser.Id;
-                txtCreator.Text = Program.LoggedInUser.ToString();
+                _dataTable = _itemsBusiness.NewTable();
+                DataRow row = _dataTable.NewRow();
+                row[Item.CreatorRefColumnName] = Program.LoggedInUser.Id;
+                row[Item.CreatorColumnName] = Program.LoggedInUser;
+                row[Item.NameColumnName] = row[Item.DescriptionColumnName] = "";
+                row[Item.PriceColumnName] = 0;
+                row[Item.MeasurementUnitRefColumnName] = ((MeasurementUnit)cmbMeasurementUnits.Items[0]).Id;
+                cmbMeasurementUnits.SelectedIndex = 0;
+                _dataTable.Rows.Add(row);
             }
-            bindingSource.DataSource = new Data.Models.Item
+            txtCreator.Text = _dataTable.Rows[0][Item.CreatorColumnName].ToString();
+        }
+        
+        private void BindDataTable()
+        {
+            txtItemName.DataBindings.Add("Text", _dataTable, Item.NameColumnName, false, DataSourceUpdateMode.OnPropertyChanged);
+            txtDescription.DataBindings.Add("Text", _dataTable, Item.DescriptionColumnName, false, DataSourceUpdateMode.OnPropertyChanged);
+            numDefaultPrice.DataBindings.Add("Value", _dataTable, Item.PriceColumnName, false, DataSourceUpdateMode.OnPropertyChanged);
+            cmbMeasurementUnits.DataBindings.Add("SelectedItem", _dataTable, Item.MeasurementUnitColumnName, false, DataSourceUpdateMode.OnPropertyChanged);
+        }
+
+        private bool ValidateDatatable()
+        {
+            DataRow row = _dataTable.Rows[0];
+
+            row[Item.MeasurementUnitRefColumnName] = cmbMeasurementUnits.SelectedIndex == -1 ? -1 : ((MeasurementUnit)cmbMeasurementUnits.SelectedItem).Id;
+
+            row.ClearErrors();
+
+            bool result = true;
+
+            if (row[Item.NameColumnName] is DBNull)
             {
-                Id = _item.Id,
-                Name = _item.Name,
-                Description = _item.Description,
-                Price = _item.Price,
-                MeasurementUnitRef = _item.MeasurementUnitRef,
-                CreatorRef = _item.CreatorRef,
-                MeasurementUnit = _item.MeasurementUnit,
-                Creator = _item.Creator
-            };
+                row.SetColumnError(Item.NameColumnName, "نام کالا اجباری میباشد");
+                result = false;
+            }
+            else
+            {
+                string name = (string)row[Item.NameColumnName];
+                if (name.Length == 0 || name != (string)_dataTable.Rows[1][Item.NameColumnName] && _itemsBusiness.IsItemNameExists(name))
+                {
+                    row.SetColumnError(Item.NameColumnName, "این نام قبلا ثبت شده است");
+                    result = false;
+                }
+            }
+            if (row[Item.MeasurementUnitRefColumnName] is DBNull || (int)row[Item.MeasurementUnitRefColumnName] == -1)
+            {
+                row.SetColumnError(Item.MeasurementUnitColumnName, "یکی از واحد های اندازه گیری را انتخاب نمایید");
+                result = false;
+            }
+
+            return result;
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            if (!ValidateDatatable())
+                return;
+
+            _itemsBusiness.SaveItem(_dataTable);
+            Close();
         }
 
         private void btnCancele_Click(object sender, EventArgs e)
         {
             Close();
         }
-
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-            if (!ValidateChildren(ValidationConstraints.Enabled))
-                return;
-            _item = (Data.Models.Item)bindingSource.DataSource;
-            _item.MeasurementUnitRef = _item.MeasurementUnit.Id;
-            _itemsBusiness.SaveItem(_item);
-            Close();
-        }
-
-
-        private void txtItemName_Validating(object sender, CancelEventArgs e)
-        {
-            if (txtItemName.Text != _item.Name && (String.IsNullOrEmpty(txtItemName.Text) || _itemsBusiness.IsItemNameExists(txtItemName.Text)))
-            {
-                e.Cancel = true;
-                if(String.IsNullOrEmpty(txtItemName.Text))
-                    errorProvider.SetError(txtItemName, "نام کالا اجباری میباشد");
-                else
-                    errorProvider.SetError(txtItemName, "این نام قبلا ثبت شده است");
-            }
-            else
-            {
-                e.Cancel = false;
-                errorProvider.SetError(txtItemName, null);
-            }
-        }
-
-        private void cmbMeasurementUnits_Validating(object sender, CancelEventArgs e)
-        {
-            if(cmbMeasurementUnits.SelectedIndex == -1)
-            {
-                e.Cancel = true;
-                errorProvider.SetError(cmbMeasurementUnits, "یکی از موارد را انتخاب کنید");
-            }
-            else
-            {
-                e.Cancel = false;
-                errorProvider.SetError(cmbMeasurementUnits, null);
-            }
-        }
-
         private void FrmCreateItem_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
                 btnCancele_Click(null, null);
         }
+
     }
 }

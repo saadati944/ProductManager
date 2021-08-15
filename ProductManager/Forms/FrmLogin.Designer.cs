@@ -89,6 +89,7 @@
             this.txtPassword.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.txtPassword.Size = new System.Drawing.Size(198, 20);
             this.txtPassword.TabIndex = 1;
+            this.txtPassword.Text = "123";
             this.txtPassword.Validating += new System.ComponentModel.CancelEventHandler(this.txtPassword_Validating);
             // 
             // label2

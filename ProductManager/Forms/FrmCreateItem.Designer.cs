@@ -31,7 +31,6 @@
             this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.txtItemName = new System.Windows.Forms.TextBox();
-            this.bindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.label2 = new System.Windows.Forms.Label();
             this.txtDescription = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -44,7 +43,6 @@
             this.cmbMeasurementUnits = new System.Windows.Forms.ComboBox();
             this.label6 = new System.Windows.Forms.Label();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numDefaultPrice)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             this.SuspendLayout();
@@ -60,17 +58,11 @@
             // 
             // txtItemName
             // 
-            this.txtItemName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource, "Name", true));
             this.txtItemName.Location = new System.Drawing.Point(21, 55);
             this.txtItemName.MaxLength = 50;
             this.txtItemName.Name = "txtItemName";
             this.txtItemName.Size = new System.Drawing.Size(213, 21);
             this.txtItemName.TabIndex = 0;
-            this.txtItemName.Validating += new System.ComponentModel.CancelEventHandler(this.txtItemName_Validating);
-            // 
-            // bindingSource
-            // 
-            this.bindingSource.DataSource = typeof(Tappe.Data.Models.Item);
             // 
             // label2
             // 
@@ -83,7 +75,6 @@
             // 
             // txtDescription
             // 
-            this.txtDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource, "Description", true));
             this.txtDescription.Location = new System.Drawing.Point(21, 90);
             this.txtDescription.MaxLength = 100;
             this.txtDescription.Name = "txtDescription";
@@ -110,7 +101,6 @@
             // 
             // numDefaultPrice
             // 
-            this.numDefaultPrice.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.bindingSource, "Price", true));
             this.numDefaultPrice.DecimalPlaces = 4;
             this.numDefaultPrice.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.numDefaultPrice.Location = new System.Drawing.Point(21, 126);
@@ -172,13 +162,11 @@
             // 
             // cmbMeasurementUnits
             // 
-            this.cmbMeasurementUnits.DataBindings.Add(new System.Windows.Forms.Binding("SelectedItem", this.bindingSource, "MeasurementUnit", true));
             this.cmbMeasurementUnits.FormattingEnabled = true;
             this.cmbMeasurementUnits.Location = new System.Drawing.Point(22, 163);
             this.cmbMeasurementUnits.Name = "cmbMeasurementUnits";
             this.cmbMeasurementUnits.Size = new System.Drawing.Size(212, 21);
             this.cmbMeasurementUnits.TabIndex = 3;
-            this.cmbMeasurementUnits.Validating += new System.ComponentModel.CancelEventHandler(this.cmbMeasurementUnits_Validating);
             // 
             // label6
             // 
@@ -199,7 +187,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoValidate = System.Windows.Forms.AutoValidate.EnableAllowFocusChange;
+            this.AutoValidate = System.Windows.Forms.AutoValidate.Disable;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(255)))), ((int)(((byte)(220)))));
             this.ClientSize = new System.Drawing.Size(330, 276);
             this.Controls.Add(this.label6);
@@ -227,7 +215,6 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "تعریف محصول جدید";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCreateItem_KeyDown);
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numDefaultPrice)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
             this.ResumeLayout(false);
@@ -251,6 +238,5 @@
         private System.Windows.Forms.ComboBox cmbMeasurementUnits;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.ErrorProvider errorProvider;
-        private System.Windows.Forms.BindingSource bindingSource;
     }
 }

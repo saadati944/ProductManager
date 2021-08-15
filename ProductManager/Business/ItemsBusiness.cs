@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Tappe.Data;
+using Tappe.Data.Models;
 using System.Data;
 
 namespace Tappe.Business
@@ -13,8 +14,6 @@ namespace Tappe.Business
         private readonly Database _database;
         private readonly Data.Repositories.ItemsRepository _itemsRepository;
 
-        private const string _nameColumnName = "Name";
-        private const string _idColumnName = "Id";
 
         public Data.Repositories.ItemsRepository ItemsRepository
         {
@@ -24,7 +23,7 @@ namespace Tappe.Business
             }
         }
 
-        public IEnumerable<Data.Models.Item> Items
+        public IEnumerable<Item> Items
         {
             get
             {
@@ -39,37 +38,37 @@ namespace Tappe.Business
         }
         public bool IsItemNameExists(string name)
         {
-            return _database.GetAll<Data.Models.Item>(null, null, "Name='" + name.Replace("'", "''") + "'", null, 1).Count() != 0;
+            return _database.GetAll<Item>(null, null, "Name='" + name.Replace("'", "''") + "'", null, 1).Count() != 0;
         }
 
         public static int GetItemQuantity(int itemRef, int stockRef)
         {
             try
             {
-                return container.Create<Database>().GetAll<Data.Models.StockSummary>(null, null, "StockRef="+stockRef+" AND ItemRef=" + itemRef, null, 1).First().Quantity;
+                return container.Create<Database>().GetAll<StockSummary>(null, null, "StockRef="+stockRef+" AND ItemRef=" + itemRef, null, 1).First().Quantity;
             }
             catch { }
             return 0;
         }
 
-        public Data.Models.Item GetItem(string name)
+        public Item GetItemModel(string name)
         {
             foreach (DataRow x in _itemsRepository.DataTable.Rows)
-                if ((string)x[_nameColumnName] == name)
+                if ((string)x[Item.NameColumnName] == name)
                 {
-                    var it = new Data.Models.Item();
+                    var it = new Item();
                     it.MapToModel(x);
                     return it;
                 }
 
             return null;
         }
-        public Data.Models.Item GetItem(int id)
+        public Item GetItemModel(int id)
         {
             foreach (DataRow x in _itemsRepository.DataTable.Rows)
-                if ((int)x[_idColumnName] == id)
+                if ((int)x[Item.IdColumnName] == id)
                 {
-                    var it = new Data.Models.Item();
+                    var it = new Item();
                     it.MapToModel(x);
                     return it;
                 }
@@ -77,18 +76,44 @@ namespace Tappe.Business
             return null;
         }
 
-        public Data.Models.ItemPrice GetItemPrice(int id, DateTime? dateTime)
+        public DataTable GetItem(int id)
+        {
+            DataTable table = _itemsRepository.DataTable.Clone();
+            
+            foreach (DataRow x in _itemsRepository.DataTable.Rows)
+                if ((int)x[Item.IdColumnName] == id)
+                {
+                    table.Rows.Add(x.ItemArray);
+                    break;
+                }
+
+            return table;
+        }
+
+
+        public ItemPrice GetItemPrice(int id, DateTime? dateTime)
         {
             if (dateTime != null)
-                foreach (var x in _database.GetAll<Data.Models.ItemPrice>(null, null, String.Format("ItemRef = {0} AND Date <= '{1}'", id, dateTime.Value.ToString("yyyy-MM-dd")), "Date DESC", 1))
+                foreach (var x in _database.GetAll<ItemPrice>(null, null, String.Format("ItemRef = {0} AND Date <= '{1}'", id, dateTime.Value.ToString("yyyy-MM-dd")), "Date DESC", 1))
                     return x;
 
-            var item = GetItem(id);
-            return new Data.Models.ItemPrice { ItemRef = item.Id, Item = item, Date = dateTime == null ? DateTime.Now : dateTime.Value, Price = item.Price };
+            var item = GetItemModel(id);
+            return new ItemPrice { ItemRef = item.Id, Item = item, Date = dateTime == null ? DateTime.Now : dateTime.Value, Price = item.Price };
         }
 
-        public void SaveItem(Data.Models.Item item)
+        public DataTable NewTable()
         {
+            return _itemsRepository.DataTable.Clone();
+        }
+
+        public void SaveItem(Item item)
+        {
+            _database.Save(item);
+        }
+        public void SaveItem(DataTable table)
+        {
+            Item item = new Item();
+            item.MapToModel(table.Rows[0]);
             _database.Save(item);
         }
 
