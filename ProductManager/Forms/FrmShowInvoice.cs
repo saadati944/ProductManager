@@ -38,6 +38,7 @@ namespace Tappe.Forms
             _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _discountColumnName, DisplayName = "تخفیف" });
             _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _taxColumnName, DisplayName = "مالیات و عوارض" });
             _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _totalPriceColumnName, DisplayName = "مبلغ کل" });
+            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _stockColumnName, DisplayName = "انبار"});
             LoadColumnSettings();
 
             lblInformation.Dock = System.Windows.Forms.DockStyle.Top;
@@ -68,6 +69,8 @@ namespace Tappe.Forms
             dataGridView.Columns[_taxColumnName].Visible = IsVIsibleColumn(_settingsPrefix + _taxColumnName);
             dataGridView.Columns.Add(_totalPriceColumnName, "مبلغ کل");
             dataGridView.Columns[_totalPriceColumnName].Visible = IsVIsibleColumn(_settingsPrefix + _totalPriceColumnName);
+            dataGridView.Columns.Add(_stockColumnName, "انبار");
+            dataGridView.Columns[_stockColumnName].Visible = IsVIsibleColumn(_settingsPrefix + _stockColumnName);
 
             Data.Models.Invoice invoice;
             if (selling)
@@ -78,7 +81,7 @@ namespace Tappe.Forms
             {
                 if (!x.Included)
                     x.Include();
-                dataGridView.Rows.Add(x.Item.Name.ToString(), x.Quantity, x.Fee, x.Discount, x.Tax, x.Fee * x.Quantity - x.Discount + x.Tax);
+                dataGridView.Rows.Add(x.Item.Name, x.Quantity, x.Fee, x.Discount, x.Tax, x.Fee * x.Quantity - x.Discount + x.Tax, x.Stock.Name);
             }
 
             SetTitle(String.Format("فاکتور {0} شماره {1}", selling ? "فروش" : "خرید", invoice.Number));
@@ -94,9 +97,7 @@ namespace Tappe.Forms
             information.Append(invoice.GetPersianDate().ToString());
             information.Append("\nقیمت کل           : ");
             information.Append(invoice.TotalPrice);
-            information.Append("\nانبار                  : ");
-            information.Append(invoice.Stock.Name);
-
+            
             lblInformation.Text = information.ToString();
         }
     }

@@ -251,7 +251,7 @@ namespace Tappe.Business
         {
             try
             {
-                return _database.GetAll<BuyInvoice>(null, null, "Number=" + num, null, 1).Count() == 0;
+                return _database.GetAll<BuyInvoice>(null, null, "Number=" + num, null, 1).Count() == 0 && _database.GetAll<SellInvoice>(null, null, String.Format("{0}={1} AND {2}={3}", InvoiceLock.InvoiceNumberColumnName, num, InvoiceLock.InvoiceTypeColumnName, 0), null, 1).Count() == 0;
             }
             catch { }
             return false;

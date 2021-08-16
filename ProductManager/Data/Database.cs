@@ -193,7 +193,7 @@ namespace Tappe.Data
         public void Load(Models.Model model, SqlConnection connection = null, SqlTransaction transaction = null)
         {
             var select = new Commands.SelectCommand(connection == null ? _connection : connection, transaction, model.TableName(), model.Columns(), "id = "+model.Id, null, 1, false);
-            System.Data.DataRow row = select.Execute().First();
+            DataRow row = select.Execute().First();
             model.MapToModel(row);
             return;
         }

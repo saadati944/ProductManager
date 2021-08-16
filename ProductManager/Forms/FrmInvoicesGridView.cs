@@ -42,7 +42,6 @@ namespace Tappe.Forms
         //private const string _dateColumnName = "Date";
         private const string _persianDateColumnName = "PersianDate";
         private const string _TotalPriceColumnName = "TotalPrice";
-        private const string _stockColumnName = "Stock";
 
         public FrmInvoicesGridView(InvoiceFormType formType, FrmMain frmMain) : base()
         {
@@ -79,7 +78,6 @@ namespace Tappe.Forms
             _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _numberColumnName, DisplayName = "شماره فاکتور", Checked = true });
             _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _persianDateColumnName, DisplayName = "تاریخ", Checked = true });
             _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _TotalPriceColumnName, DisplayName = "مبلغ کل", Checked = true });
-            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _stockColumnName, DisplayName = "انبار", Checked = true });
 
             LoadColumnSettings();
 
@@ -207,9 +205,6 @@ namespace Tappe.Forms
             dataGridView.Columns[_TotalPriceColumnName].Visible = IsVIsibleColumn(_settingsPrefix + _TotalPriceColumnName);
             dataGridView.Columns[_TotalPriceColumnName].DataPropertyName = _TotalPriceColumnName;
 
-            dataGridView.Columns.Add(_stockColumnName, "انبار");
-            dataGridView.Columns[_stockColumnName].Visible = IsVIsibleColumn(_settingsPrefix + _stockColumnName);
-            dataGridView.Columns[_stockColumnName].DataPropertyName = _stockColumnName;
 
             dataGridView.DataSource = CreateTable();
         }

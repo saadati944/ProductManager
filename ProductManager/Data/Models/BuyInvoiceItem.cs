@@ -15,12 +15,12 @@ namespace Tappe.Data.Models
 
         public override string[] Columns()
         {
-            return new string[] { BuyInvoiceRefColumnName, ItemRefColumnName, QuantityColumnName, FeeColumnName, TaxColumnName, DiscountColumnName };
+            return new string[] { BuyInvoiceRefColumnName, ItemRefColumnName, QuantityColumnName, FeeColumnName, TaxColumnName, DiscountColumnName, StockRefColumnName};
         }
 
         public override string[] GetValues()
         {
-            return new string[] { InvoiceRef.ToString(), ItemRef.ToString(), Quantity.ToString(), Fee.ToString(), Tax.ToString(), Discount.ToString() };
+            return new string[] { InvoiceRef.ToString(), ItemRef.ToString(), Quantity.ToString(), Fee.ToString(), Tax.ToString(), Discount.ToString(), StockRef.ToString() };
         }
         public override void MapToModel(System.Data.DataRow row)
         {
@@ -31,14 +31,17 @@ namespace Tappe.Data.Models
             Fee = GetField(row, FeeColumnName, Fee);
             Tax = GetField(row, TaxColumnName, Tax);
             Discount = GetField(row, DiscountColumnName, Discount);
+            StockRef = GetField(row, StockRefColumnName, StockRef);
         }
         public override void Include()
         {
             Item = new Item { Id = ItemRef };
             Invoice = new BuyInvoice { Id = InvoiceRef };
+            Stock = new Stock { Id = StockRef };
 
             Item.Load();
             Invoice.Load();
+            Stock.Load();
         }
 
         public override string TableName()

@@ -13,6 +13,7 @@ namespace Tappe.Data.Models
         public const string FeeColumnName = "Fee";
         public const string TaxColumnName = "Tax";
         public const string DiscountColumnName = "Discount";
+        public const string StockRefColumnName = "StockRef";
 
         public int InvoiceRef { get; set; }
         public Invoice Invoice { get; set; }
@@ -22,11 +23,14 @@ namespace Tappe.Data.Models
         public decimal Fee { get; set; }
         public decimal Discount { get; set; }
         public decimal Tax { get; set; }
+        public int StockRef { get; set; }
+        public Stock Stock { get; set; }
+
         public new bool Included
         {
             get
             {
-                return Item != null && Invoice != null;
+                return Item != null && Invoice != null && Stock != null;
             }
         }
 
