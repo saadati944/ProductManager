@@ -8,56 +8,37 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Tappe.Data;
+using Tappe.Data.Models;
 using Tappe.Data.Repositories;
 
 namespace Tappe.Forms
 {
-    public partial class FrmCreateBuyInvoice : Form
+    public partial class FrmCreateBuyInvoice : FrmCreateInvoice
     {
-        private readonly int _idColumnIndex = 0;
-        private readonly int _itemColumnIndex = 1;
-        private readonly int _quantityColumnIndex = 2;
-        private readonly int _feeColumnIndex = 3;
-        private readonly int _discountColumnIndex = 4;
-        private readonly int _TotalAfterDiscountColumnIndex = 5;
-        private readonly int _taxcolumnName = 6;
-        private readonly int _totalPriceColumnIndex = 7;
-        private readonly int _deleteBtnColumnIndex = 8;
 
-
-        private readonly Database _database;
-        private readonly Business.BuyInvoiceBusiness _buyInvoiceBusiness;
-        private readonly Business.ItemsBusiness _itemsBusiness;
-        private readonly Data.Models.BuyInvoice _buyInvoice = new Data.Models.BuyInvoice();
-
-        public FrmCreateBuyInvoice()
+        public FrmCreateBuyInvoice(int number = -1)
         {
             InitializeComponent();
-            _database = container.Create<Database>();
-            _itemsBusiness = container.Create<Business.ItemsBusiness>();
-            _buyInvoiceBusiness = container.Create<Business.BuyInvoiceBusiness>();
 
-            txtBuyer.Text = Program.LoggedInUser.ToString();
-            _buyInvoice.UserRef = Program.LoggedInUser.Id;
-            _buyInvoice.Date = DateTime.Now;
-            _buyInvoice.Number = _buyInvoiceBusiness.GetLastInvoiceNumber() + 1;
+            _invoiceBusiness = _buyInvoiceBusiness;
 
-            Binding b = new Binding ("Text", _buyInvoice, "Date");
-            b.Format += new ConvertEventHandler(DateToString);
-            b.Parse += new ConvertEventHandler(StringToDate);
-            txtDate.DataBindings.Add(b);
-            numInvoiceNumber.DataBindings.Add("Value", _buyInvoice, "Number");
-            lblTotalPrice.DataBindings.Add("Text", _buyInvoice, "TotalPrice");
+            itemsGridView.AutoGenerateColumns = false;
+
+            InitilizeDataTable(number);
 
             cmbParties.Items.AddRange(_database.Parties.ToArray());
             cmbParties.SelectedIndex = 0;
             cmbStocks.Items.AddRange(_database.Stocks.ToArray());
             cmbStocks_SelectedIndexChanged(null, null);
 
+            txtBuyer.Text = Program.LoggedInUser.ToString();
+
+            SuspendLayout();
             for (int i=0; i<6; i++)
                 itemsGridView.Columns.Insert(2, new CustomControls.NumericUpDownColumn());
 
             ((DataGridViewComboBoxColumn)itemsGridView.Columns[_itemColumnIndex]).Items.AddRange(_itemsBusiness.Items.Select(x => x.Name).ToArray());
+
 
             itemsGridView.Columns[_TotalAfterDiscountColumnIndex].ReadOnly = true;
             itemsGridView.Columns[_totalPriceColumnIndex].ReadOnly = true;
@@ -69,17 +50,63 @@ namespace Tappe.Forms
             itemsGridView.Columns[_taxcolumnName].Name = "عوارض و مالیات";
             itemsGridView.Columns[_totalPriceColumnIndex].Name = "مبلغ کل با احتساب تخفیف و عوارض و مالیات";
 
+
             itemsGridView.CellBeginEdit += ItemsGridView_CellBeginEdit;
             itemsGridView.CellEndEdit += ItemsGridView_CellEndEdit;
             itemsGridView.CellClick += ItemsGridView_CellClick;
+
+            ResumeLayout();
+
+            cmbParties.Text = cmbParties.Items.Count != 0 ? "" : cmbParties.Items[0].ToString();
+            BindDataTable();
+            
         }
 
+        protected override DataTable NewInvoiceDataTable()
+        {
+            return _buyInvoiceBusiness.BuyInvoicesRepository.NewInvoiceDataTable();
+        }
+        protected override DataTable NewInvoiceItemDataTable()
+        {
+            return _buyInvoiceBusiness.BuyInvoicesRepository.NewInvoiceItemDataTable();
+        }
+
+        private void BindDataTable()
+        {
+            //header bindings
+            numInvoiceNumber.DataBindings.Add("Value", _invoiceDataTable, Invoice.NumberColumnName, false, DataSourceUpdateMode.OnPropertyChanged);
+            lblTotalPrice.DataBindings.Add("Text", _invoiceDataTable, Invoice.TotalPriceColumnName, false, DataSourceUpdateMode.OnPropertyChanged);
+
+            cmbParties.DataBindings.Add("SelectedIndex", _invoiceDataTable, Invoice.PartyRefColumnName, false, DataSourceUpdateMode.Never);
+
+            Binding b = new Binding("Text", _invoiceDataTable, Invoice.DateColumnName, false, DataSourceUpdateMode.OnPropertyChanged);
+            b.Format += new ConvertEventHandler(DateToString);
+            b.Parse += new ConvertEventHandler(StringToDate);
+            txtDate.DataBindings.Add(b);
+
+            b = new Binding("SelectedIndex", _invoiceDataTable, Invoice.StockRefColumnName, false, DataSourceUpdateMode.OnPropertyChanged);
+            b.Format += new ConvertEventHandler(StockIdToSelectedIndex);
+            b.Parse += new ConvertEventHandler(SelectedIndexToStockId);
+            cmbStocks.DataBindings.Add(b);
+
+            //items bindings
+            itemsGridView.DataSource = _invoiceItemsDataTable;
+            itemsGridView.Columns[_idColumnIndex].DataPropertyName = InvoiceItem.ItemRefColumnName;
+            itemsGridView.Columns[_quantityColumnIndex].DataPropertyName = InvoiceItem.QuantityColumnName;
+            itemsGridView.Columns[_feeColumnIndex].DataPropertyName = InvoiceItem.FeeColumnName;
+            itemsGridView.Columns[_discountColumnIndex].DataPropertyName = InvoiceItem.DiscountColumnName;
+            itemsGridView.Columns[_taxcolumnName].DataPropertyName = InvoiceItem.TaxColumnName;
+        }
+ 
         private void ItemsGridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.ColumnIndex == _deleteBtnColumnIndex)
             {
-                if(e.RowIndex != itemsGridView.Rows.Count-1)
+                if (e.RowIndex != itemsGridView.Rows.Count - 1)
+                {
                     itemsGridView.Rows.RemoveAt(e.RowIndex);
+                    CalculateTotalPrice();
+                }
                 return;
             }
         }
@@ -99,7 +126,7 @@ namespace Tappe.Forms
                 ((DataGridViewButtonCell)itemsGridView.Rows[e.RowIndex].Cells[_deleteBtnColumnIndex]).Value = "حذف";
                 var item = _itemsBusiness.GetItemModel((string)itemsGridView.Rows[e.RowIndex].Cells[_itemColumnIndex].Value);
                 itemsGridView.Rows[e.RowIndex].Cells[_idColumnIndex].Value = item.Id;
-                itemsGridView.Rows[e.RowIndex].Cells[_feeColumnIndex].Value = _itemsBusiness.GetItemPrice(item.Id, _buyInvoice.Date).Price;
+                itemsGridView.Rows[e.RowIndex].Cells[_feeColumnIndex].Value = _itemsBusiness.GetItemPrice(item.Id, (DateTime)_invoiceDataTable.Rows[0][Invoice.DateColumnName]).Price;
                 itemsGridView.Rows[e.RowIndex].Cells[_quantityColumnIndex].Value = (int) 0;
                 itemsGridView.Rows[e.RowIndex].Cells[_discountColumnIndex].Value = (decimal)0;
                 itemsGridView.Rows[e.RowIndex].Cells[_taxcolumnName].Value = (decimal)0;
@@ -114,13 +141,10 @@ namespace Tappe.Forms
                     - (decimal)itemsGridView.Rows[e.RowIndex].Cells[_discountColumnIndex].Value;
 
                 itemsGridView.Rows[e.RowIndex].Cells[_totalPriceColumnIndex].Value =
-                    (int)itemsGridView.Rows[e.RowIndex].Cells[_quantityColumnIndex].Value
-                    * (decimal)itemsGridView.Rows[e.RowIndex].Cells[_feeColumnIndex].Value
-                    - (decimal)itemsGridView.Rows[e.RowIndex].Cells[_discountColumnIndex].Value
+                    (decimal)itemsGridView.Rows[e.RowIndex].Cells[_TotalAfterDiscountColumnIndex].Value
                     + (decimal)itemsGridView.Rows[e.RowIndex].Cells[_taxcolumnName].Value;
                 CalculateTotalPrice();
             }
-            
         }
 
 
@@ -132,28 +156,16 @@ namespace Tappe.Forms
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            if (!ValidateChildren(ValidationConstraints.Enabled))
+            _invoiceDataTable.Rows[0][Invoice.PartyRefColumnName] = GetPartyRef();
+            if( !Business.InvoiceBusiness.ValidateInvoiceDataTable(_invoiceDataTable, _buyInvoiceBusiness) 
+                | !Business.InvoiceBusiness.ValidateInvoiceItemsDataTable(_invoiceItemsDataTable) || !ValidateChildren(ValidationConstraints.Enabled))
+            {
                 return;
-
-            _buyInvoice.PartyRef = GetPartyRef();
+            }
 
             CalculateTotalPrice();
 
-            List<Data.Models.InvoiceItem> invoiceItems = new List<Data.Models.InvoiceItem>();
-            for(int i=0; i<itemsGridView.Rows.Count - 1; i++)
-            {
-                invoiceItems.Add(new Data.Models.BuyInvoiceItem
-                {
-                    ItemRef = (int) itemsGridView.Rows[i].Cells[_idColumnIndex].Value,
-                    Fee = (decimal)itemsGridView.Rows[i].Cells[_feeColumnIndex].Value,
-                    Quantity = (int)itemsGridView.Rows[i].Cells[_quantityColumnIndex].Value,
-                    Discount = (decimal)itemsGridView.Rows[i].Cells[_discountColumnIndex].Value,
-                    Tax = (decimal)itemsGridView.Rows[i].Cells[_taxcolumnName].Value
-                });
-            }
-
-            _buyInvoice.InvoiceItems = invoiceItems;
-            bool result = _buyInvoiceBusiness.SaveInvoice(_buyInvoice);
+            bool result = _buyInvoiceBusiness.SaveInvoice(_invoiceDataTable, _invoiceItemsDataTable);
             if (!result)
                 MessageBox.Show("هنگام ذخیره کردن فاکتور خطایی رخ داده است !!!");
             else
@@ -162,10 +174,10 @@ namespace Tappe.Forms
 
         private int GetPartyRef()
         {
-            if(cmbParties.SelectedIndex != -1 && ((Data.Models.Party)cmbParties.SelectedItem).Name == cmbParties.Text)
-                return ((Data.Models.Party)cmbParties.SelectedItem).Id;
+            if(cmbParties.SelectedIndex != -1 && ((Party)cmbParties.SelectedItem).Name == cmbParties.Text)
+                return ((Party)cmbParties.SelectedItem).Id;
             
-            var party = new Data.Models.Party { Name = cmbParties.Text };
+            var party = new Party { Name = cmbParties.Text };
             party.Save();
             return party.Id;
         }
@@ -189,29 +201,14 @@ namespace Tappe.Forms
                 totalprice += (decimal) itemsGridView.Rows[i].Cells[_totalPriceColumnIndex].Value;
             }
 
-            _buyInvoice.TotalPrice = totalprice;
             lblTotalPrice.Text = totalprice.ToString();
         }
 
-        private void txtDate_Validating(object sender, CancelEventArgs e)
-        {
-            DateTime dt;
-            if (!Data.Models.PersianDate.DateTimeFromPersianDateString(txtDate.Text, out dt))
-            {
-                errorProvider.SetError(txtDate, "تاریخ ورودی معتبر نمیباشد");
-                e.Cancel = true;
-            }
-            else
-            {
-                errorProvider.SetError(txtDate, null);
-                e.Cancel = false;
-            }
-        }
 
         private void DateToString(object sender, ConvertEventArgs cevent)
         {
             if (cevent.DesiredType != typeof(string)) return;
-            cevent.Value = Data.Models.PersianDate.PersianDateStringFromDateTime((DateTime)cevent.Value);
+            cevent.Value = PersianDate.PersianDateStringFromDateTime((DateTime)cevent.Value);
         }
 
         private void StringToDate(object sender, ConvertEventArgs cevent)
@@ -219,52 +216,30 @@ namespace Tappe.Forms
             if (cevent.DesiredType != typeof(DateTime)) return;
 
             DateTime dt;
-            if (!Data.Models.PersianDate.DateTimeFromPersianDateString((string)cevent.Value, out dt))
+            if (!PersianDate.DateTimeFromPersianDateString((string)cevent.Value, out dt))
                 return;
 
             cevent.Value = dt;
         }
-
-        private void numInvoiceNumber_Validating(object sender, CancelEventArgs e)
+        private void SelectedIndexToStockId(object sender, ConvertEventArgs cevent)
         {
-            if (!_buyInvoiceBusiness.IsInvoiceNumberValid((int)numInvoiceNumber.Value))
-            {
-                errorProvider.SetError(numInvoiceNumber, "شماره فاکتور قبلا ثبت شده است");
-                e.Cancel = true;
-            }
-            else
-            {
-                errorProvider.SetError(numInvoiceNumber, null);
-                e.Cancel = false;
-            }
+            if (cevent.DesiredType != typeof(int)) return;
+            cevent.Value = ((int)cevent.Value) == -1 ? -1 : ((Stock)cmbStocks.SelectedItem).Id;
         }
 
-        private void itemsGridView_Validating(object sender, CancelEventArgs e)
+        private void StockIdToSelectedIndex(object sender, ConvertEventArgs cevent)
         {
-            if (itemsGridView.Rows.Count == 1)
-            { 
-                e.Cancel = true;
-                errorProvider.SetError(itemsGridView, "فاکتور خالی میباشد");
-            }
-            else
+            if (cevent.DesiredType != typeof(int)) return;
+            for(int i=0; i<cmbStocks.Items.Count; i++)
             {
-                e.Cancel = false;
-                errorProvider.SetError(itemsGridView, null);
+            Stock x = (Stock) cmbStocks.Items[i];
+                if(x.Id == (int)cevent.Value)
+                {
+                    cevent.Value = i;
+                    return;
+                }
             }
-        }
-
-        private void cmbStocks_Validating(object sender, CancelEventArgs e)
-        {
-            if(cmbStocks.SelectedIndex == -1)
-            {
-                e.Cancel = true;
-                errorProvider.SetError(cmbStocks, "یک انبار را انتخاب کنید");
-            }
-            else
-            {
-                e.Cancel = false;
-                errorProvider.SetError(cmbStocks, null);
-            }
+            cevent.Value = -1;
         }
 
         private void cmbStocks_SelectedIndexChanged(object sender, EventArgs e)
@@ -272,13 +247,34 @@ namespace Tappe.Forms
             if (cmbStocks.SelectedIndex == -1)
                 cmbStocks.SelectedIndex = 0;
 
-            _buyInvoice.StockRef = ((Data.Models.Stock)cmbStocks.SelectedItem).Id;
+            _invoiceDataTable.Rows[0][Invoice.StockRefColumnName] = ((Stock)cmbStocks.SelectedItem).Id;
         }
 
         private void FrmCreateBuyInvoice_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
                 btnCancele_Click(null, null);
+        }
+
+        private void txtDate_Leave(object sender, EventArgs e)
+        {
+            DateTime dt;
+            if (!PersianDate.DateTimeFromPersianDateString(txtDate.Text, out dt))
+                txtDate.Text = PersianDate.PersianDateStringFromDateTime((DateTime)_invoiceDataTable.Rows[0][Invoice.DateColumnName]);
+        }
+
+        private void cmbParties_Validating(object sender, CancelEventArgs e)
+        {
+            if (String.IsNullOrEmpty(cmbParties.Text))
+            {
+                e.Cancel = true;
+                errorProvider.SetError(cmbParties, "نام تامین کننده را وارد یا انتخاب نمایید");
+            }
+            else
+            {
+                e.Cancel = false;
+                errorProvider.SetError(cmbParties, null);
+            }
         }
     }
 }

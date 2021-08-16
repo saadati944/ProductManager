@@ -12,6 +12,13 @@ namespace Tappe.Business
 {
     public class BuyInvoiceBusiness : InvoiceBusiness
     {
+        public Data.Repositories.BuyInvoicesRepository BuyInvoicesRepository
+        {
+            get
+            {
+                return _buyInvoicesRepository;
+            }
+        }
         public new IEnumerable<BuyInvoice> Invoices 
         { 
             get
@@ -26,7 +33,6 @@ namespace Tappe.Business
                 return _database.BuyInvoiceItems;
             }
         }
-
         public static BuyInvoice FullLoadBuyInvoice(int number)
         {
             Database db = container.Create<Database>();
@@ -120,6 +126,7 @@ namespace Tappe.Business
                 bi.MapToModel(row);
                 items.Add(bi);
             }
+            invoice.InvoiceItems = items;
             return SaveInvoice(invoice);
         }
 

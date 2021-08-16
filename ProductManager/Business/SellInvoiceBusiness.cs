@@ -12,6 +12,13 @@ namespace Tappe.Business
 {
     public class SellInvoiceBusiness : InvoiceBusiness
     {
+        public Data.Repositories.SellInvoicesRepository SellInvoicesRepository
+        {
+            get
+            {
+                return _sellInvoicesRepository;
+            }
+        }
         public new IEnumerable<SellInvoice> Invoices
         {
             get
@@ -122,6 +129,7 @@ namespace Tappe.Business
                 si.MapToModel(row);
                 items.Add(si);
             }
+            invoice.InvoiceItems = items;
             return SaveInvoice(invoice);
         }
 

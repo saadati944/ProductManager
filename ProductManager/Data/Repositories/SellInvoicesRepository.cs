@@ -103,7 +103,7 @@ namespace Tappe.Data.Repositories
         }
         public DataTable NewInvoiceItemDataTable()
         {
-            return _database.GetAllDataset<BuyInvoiceItem>(null, null, "1=0", null, 0).Tables[0];
+            return _database.GetAllDataset<SellInvoiceItem>(null, null, "1=0", null, 0).Tables[0];
         }
     }
 
