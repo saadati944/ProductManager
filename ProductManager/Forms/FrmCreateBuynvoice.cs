@@ -16,7 +16,7 @@ namespace Tappe.Forms
     public partial class FrmCreateBuyInvoice : FrmCreateInvoice
     {
 
-        public FrmCreateBuyInvoice(int number = -1)
+        public FrmCreateBuyInvoice(int invoiceNumber, int number = -1)
         {
             InitializeComponent();
 
@@ -65,6 +65,7 @@ namespace Tappe.Forms
                 EditMode();
 
             itemsGridView.Columns[_idColumnIndex].Visible = false;
+            _invoiceDataTable.Rows[0][Invoice.NumberColumnName] = invoiceNumber;
         }
 
         protected override DataTable NewInvoiceDataTable()

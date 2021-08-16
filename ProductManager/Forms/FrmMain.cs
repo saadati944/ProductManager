@@ -17,6 +17,10 @@ namespace Tappe.Forms
         private readonly Data.Repositories.MeasurementUnitsRepository _measurementUnitsRepository;
         private readonly Data.Repositories.SellInvoicesRepository _sellInvoicesRepository;
         private readonly Data.Repositories.BuyInvoicesRepository _buyInvoicesRepository;
+
+        private readonly BuyInvoiceBusiness _buyInvoiceBusiness;
+        private readonly SellInvoiceBusiness _sellInvoiceBusiness;
+
         private readonly Permissions _permissions;
         private readonly List<FrmGridView> _gridViewForms = new List<FrmGridView>();
 
@@ -29,8 +33,11 @@ namespace Tappe.Forms
             _itemsRepository = container.Create<Data.Repositories.ItemsRepository>();
             _measurementUnitsRepository = container.Create<Data.Repositories.MeasurementUnitsRepository>();
             _measurementUnitsRepository.Update();
-            _sellInvoicesRepository = container.Create<Data.Repositories.SellInvoicesRepository>();
-            _buyInvoicesRepository = container.Create<Data.Repositories.BuyInvoicesRepository>();
+
+            _buyInvoiceBusiness = container.Create<BuyInvoiceBusiness>();
+            _sellInvoiceBusiness = container.Create<SellInvoiceBusiness>();
+            _sellInvoicesRepository = _sellInvoiceBusiness.SellInvoicesRepository;
+            _buyInvoicesRepository = _buyInvoiceBusiness.BuyInvoicesRepository;
             _permissions = container.Create<Permissions>();
 
             UserUpdated();
@@ -151,22 +158,26 @@ namespace Tappe.Forms
 
         private void btnAddBuyingInvoice_Click(object sender, EventArgs e)
         {
+            int invoiceNumber = _buyInvoiceBusiness.GetLockedInvoiceNumber();
             try
             {
-                new FrmCreateBuyInvoice().ShowDialog();
+                new FrmCreateBuyInvoice(invoiceNumber).ShowDialog();
                 UpdateInvoicesRepo();
             }
             catch { }
+            _buyInvoiceBusiness.UnlockInvoiceNumber(invoiceNumber);
         }
 
         private void btnAddSellingInvoice_Click(object sender, EventArgs e)
         {
+            int invoiceNumber = _sellInvoiceBusiness.GetLockedInvoiceNumber();
             try
             {
-                new FrmCreateSellInvoice().ShowDialog();
+                new FrmCreateSellInvoice(invoiceNumber).ShowDialog();
                 UpdateInvoicesRepo();
             }
             catch { }
+            _sellInvoiceBusiness.UnlockInvoiceNumber(invoiceNumber);
         }
 
         private void btnMeasurementUnits_Click(object sender, EventArgs e)

@@ -37,6 +37,8 @@ namespace Tappe.Business
         public abstract int GetLastInvoiceNumber();
         public abstract decimal GetTotalPrice();
         public abstract bool IsInvoiceNumberValid(int num);
+        public abstract int GetLockedInvoiceNumber();
+
 
         protected StockSummary ItemQuantity(int itemRef, int stockRef, SqlConnection connection, SqlTransaction transaction)
         {
@@ -143,5 +145,47 @@ namespace Tappe.Business
             return result;
         }
 
+        protected void UnlockInvoiceNumber(int number, Invoice.InvoiceType invoiceType)
+        {
+            //TODO: correct this
+            var locks = _database.GetAll<InvoiceLock>(null, null, String.Format("{0}={1} AND {2}={3}", InvoiceLock.InvoiceNumberColumnName, number, InvoiceLock.InvoiceTypeColumnName, invoiceType == Invoice.InvoiceType.Selling ? 1 : 0), null, 1);
+            if (locks.Count() == 0)
+                return;
+            _database.Delete(locks.First());
+        }
+
+        protected bool LockInvoiceNumber(int number, Invoice.InvoiceType invoiceType)
+        {
+            var connection = _database.GetConnection();
+            var transaction = _database.BeginTransaction(connection);
+
+            if(LockInvoice(number, invoiceType, connection, transaction))
+            {
+                transaction.Commit();
+                connection.Close();
+                return true;
+            }
+
+            transaction.Rollback();
+            connection.Close();
+            return false;
+        }
+        private bool LockInvoice(int number, Invoice.InvoiceType type, SqlConnection connection, SqlTransaction transaction)
+         {
+            try
+            {
+                //TODO: correct this
+                if(_database.GetAll<InvoiceLock>(connection, transaction, String.Format("{0}={1} AND {2}={3}", InvoiceLock.InvoiceNumberColumnName, number, InvoiceLock.InvoiceTypeColumnName, type == Invoice.InvoiceType.Selling ? 1:0), null, 1).Count() != 0)
+                    return false;
+
+                InvoiceLock il = new InvoiceLock { InvoiceType = type, InvoiceNumber = number };
+                _database.Save(il, connection, transaction);
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
     }
 }

@@ -127,16 +127,29 @@ namespace Tappe.Forms
         {
             var invoicetype = (string)dataGridView.CurrentRow.Cells[_typeColumnName].Value == _sellInvoiceColumnText ? InvoiceFormType.SellingInvoices : InvoiceFormType.BuyingInvoices;
             var invoicenumber = (int)dataGridView.CurrentRow.Cells[_numberColumnName].Value;
-
+            
             if(invoicetype == InvoiceFormType.BuyingInvoices)
             {
-                new FrmCreateBuyInvoice(invoicenumber).ShowDialog();
-                _buyInvoicesRepository.Update();
+                if (_buyInvoiceBusiness.LockInvoiceNumber(invoicenumber))
+                {
+                    new FrmCreateBuyInvoice(invoicenumber).ShowDialog();
+                    _buyInvoiceBusiness.UnlockInvoiceNumber(invoicenumber);
+                    _buyInvoicesRepository.Update();
+                }
+                else
+                    MessageBox.Show("امکان ویرایش فاکتور وجود ندارد");
+
             }
             else
             {
-                new FrmCreateSellInvoice(invoicenumber).ShowDialog();
-                _sellInvoicesRepository.Update();
+                if (_sellInvoiceBusiness.LockInvoiceNumber(invoicenumber))
+                {
+                    new FrmCreateSellInvoice(invoicenumber).ShowDialog();
+                    _sellInvoiceBusiness.UnlockInvoiceNumber(invoicenumber);
+                    _sellInvoicesRepository.Update();
+                }
+                else
+                    MessageBox.Show("امکان ویرایش فاکتور وجود ندارد");
             }
         }
 

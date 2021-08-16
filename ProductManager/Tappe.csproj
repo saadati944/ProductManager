@@ -59,6 +59,7 @@
     <Compile Include="Data\Commands\UpdateCommand.cs" />
     <Compile Include="Data\CustomeQueries.cs" />
     <Compile Include="Data\Database.cs" />
+    <Compile Include="Data\Models\InvoiceLock.cs" />
     <Compile Include="Data\Models\ItemPrice.cs" />
     <Compile Include="Data\Models\Permission.cs" />
     <Compile Include="Data\Models\Stock.cs" />

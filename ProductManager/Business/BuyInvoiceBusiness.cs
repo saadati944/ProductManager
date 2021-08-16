@@ -94,7 +94,13 @@ namespace Tappe.Business
             DataTable table = _database.GetAllDataset<BuyInvoiceItem>(null, null, "BuyInvoiceRef=" + invoiceid).Tables[0];
             return table;
         }
-
+        public override int GetLockedInvoiceNumber()
+        {
+            int l = GetLastInvoiceNumber();
+            while (!LockInvoiceNumber(l))
+                l++;
+            return l;
+        }
         public override int GetLastInvoiceNumber()
         {
             try
@@ -251,5 +257,14 @@ namespace Tappe.Business
             return false;
         }
 
+
+        public bool LockInvoiceNumber(int number)
+        {
+            return LockInvoiceNumber(number, Invoice.InvoiceType.Buying);
+        }
+        public void UnlockInvoiceNumber(int number)
+        {
+            UnlockInvoiceNumber(number, Invoice.InvoiceType.Buying);
+        }
     }
 }
