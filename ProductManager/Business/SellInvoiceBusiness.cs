@@ -117,7 +117,20 @@ namespace Tappe.Business
             catch { }
             return 0;
         }
-
+        public override bool EditInvoice(int lastNumber, DataTable invoicetable, DataTable invoiceitems)
+        {
+            var connection = _database.GetConnection();
+            var transaction = _database.BeginTransaction(connection);
+            if (RemoveInvoice(lastNumber, connection, transaction) && Save(invoicetable, invoiceitems, connection, transaction))
+            {
+                _database.CommitTransaction(transaction);
+                connection.Close();
+                return true;
+            }
+            _database.RollbackTransaction(transaction);
+            connection.Close();
+            return false;
+        }
         public override bool RemoveInvoice(int number)
         {
             var connection = _database.GetConnection();
@@ -159,26 +172,10 @@ namespace Tappe.Business
 
         public override bool SaveInvoice(DataTable invoicetable, DataTable invoiceitems)
         {
-            SellInvoice invoice = new SellInvoice();
-            invoice.MapToModel(invoicetable.Rows[0]);
-            var items = new List<SellInvoiceItem>();
-            foreach (DataRow row in invoiceitems.Rows)
-            {
-                SellInvoiceItem si = new SellInvoiceItem();
-                si.MapToModel(row);
-                items.Add(si);
-            }
-            invoice.InvoiceItems = items;
-            return SaveInvoice(invoice);
-        }
-
-        public bool SaveInvoice(SellInvoice invoice)
-        {
             var connection = _database.GetConnection();
             var transaction = _database.BeginTransaction(connection);
 
-
-            if(Save(invoice, connection, transaction))
+            if (Save(invoicetable, invoiceitems, connection, transaction))
             {
                 _database.CommitTransaction(transaction);
                 connection.Close();
@@ -188,6 +185,24 @@ namespace Tappe.Business
             _database.RollbackTransaction(transaction);
             connection.Close();
             return false;
+        }
+        private bool Save(DataTable invoicetable, DataTable invoiceitems, SqlConnection connection, SqlTransaction transaction)
+        {
+            SellInvoice invoice = new SellInvoice();
+            invoice.MapToModel(invoicetable.Rows[0]);
+            invoice.Id = -1;
+
+            var items = new List<SellInvoiceItem>();
+            foreach (DataRow row in invoiceitems.Rows)
+            {
+                SellInvoiceItem bi = new SellInvoiceItem();
+                bi.MapToModel(row);
+                bi.Id = -1;
+                items.Add(bi);
+            }
+            invoice.InvoiceItems = items;
+
+            return Save(invoice, connection, transaction);
         }
 
         private bool Save(SellInvoice invoice, SqlConnection connection, SqlTransaction transaction)

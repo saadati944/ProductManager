@@ -27,6 +27,7 @@ namespace Tappe.Business
             _buyInvoicesRepository = container.Create<Data.Repositories.BuyInvoicesRepository>();
         }
 
+        public abstract bool EditInvoice(int lastNumber, DataTable invoicetable, DataTable invoiceitems);
         public abstract bool RemoveInvoice(int number);
         public abstract bool SaveInvoice(DataTable invoicetable, DataTable invoiceitems);
         public abstract Invoice GetInvoiceModel(int number);
@@ -47,7 +48,7 @@ namespace Tappe.Business
             return new StockSummary { Quantity = 0, ItemRef = itemRef, StockRef = stockRef };
         }
 
-        public static bool ValidateInvoiceDataTable(DataTable invoiceDataTable, InvoiceBusiness invoiceBusiness)
+        public static bool ValidateInvoiceDataTable(DataTable invoiceDataTable, InvoiceBusiness invoiceBusiness, int invoiceOriginamNumber = -1)
         {
             bool result = true;
 
@@ -66,7 +67,7 @@ namespace Tappe.Business
                     result = false;
                 }
 
-                if (row[Invoice.NumberColumnName] is DBNull || !invoiceBusiness.IsInvoiceNumberValid((int)row[Invoice.NumberColumnName]))
+                if (row[Invoice.NumberColumnName] is DBNull || (int)row[Invoice.NumberColumnName] != invoiceOriginamNumber && !invoiceBusiness.IsInvoiceNumberValid((int)row[Invoice.NumberColumnName]))
                 {
                     row.SetColumnError(Invoice.NumberColumnName, "شماره فاکتور معتبر نمیباشد");
                     result = false;

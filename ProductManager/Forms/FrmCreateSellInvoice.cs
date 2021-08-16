@@ -163,15 +163,14 @@ namespace Tappe.Forms
         private void btnSave_Click(object sender, EventArgs e)
         {
             _invoiceDataTable.Rows[0][Invoice.PartyRefColumnName] = GetPartyRef();
-            if (!Business.InvoiceBusiness.ValidateInvoiceDataTable(_invoiceDataTable, _sellInvoiceBusiness)
+            if (!Business.InvoiceBusiness.ValidateInvoiceDataTable(_invoiceDataTable, _sellInvoiceBusiness, _originalInvoiceNumber)
                 || !Business.InvoiceBusiness.ValidateInvoiceItemsDataTable(_invoiceItemsDataTable, true, (int)_invoiceDataTable.Rows[0][Invoice.StockRefColumnName]) || !ValidateChildren(ValidationConstraints.Enabled))
             {
                 return;
             }
 
             CalculateTotalPrice();
-
-            bool result = _sellInvoiceBusiness.SaveInvoice(_invoiceDataTable, _invoiceItemsDataTable);
+            bool result = _originalInvoiceNumber == -1 ? _sellInvoiceBusiness.SaveInvoice(_invoiceDataTable, _invoiceItemsDataTable) : _sellInvoiceBusiness.EditInvoice(_originalInvoiceNumber, _invoiceDataTable, _invoiceItemsDataTable);
             if (!result)
                 MessageBox.Show("هنگام ذخیره کردن فاکتور خطایی رخ داده است !!!");
             else
