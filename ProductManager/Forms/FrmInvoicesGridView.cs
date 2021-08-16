@@ -69,6 +69,7 @@ namespace Tappe.Forms
 
             ContextMenuStrip contextMenu = new ContextMenuStrip();
             contextMenu.Items.Add(new ToolStripMenuItem("حذف", null, RemoveMenueItem_Click));
+            contextMenu.Items.Add(new ToolStripMenuItem("ویرایش", null, EditMenueItem_Click));
             _contextMenu = contextMenu;
 
             _buyInvoicesRepository.DataChanged += Repositories_DataChanged;
@@ -120,6 +121,23 @@ namespace Tappe.Forms
                 _buyInvoicesRepository.Update();
             else
                 _sellInvoicesRepository.Update();
+        }
+
+        private void EditMenueItem_Click(object sender, EventArgs e)
+        {
+            var invoicetype = (string)dataGridView.CurrentRow.Cells[_typeColumnName].Value == _sellInvoiceColumnText ? InvoiceFormType.SellingInvoices : InvoiceFormType.BuyingInvoices;
+            var invoicenumber = (int)dataGridView.CurrentRow.Cells[_numberColumnName].Value;
+
+            if(invoicetype == InvoiceFormType.BuyingInvoices)
+            {
+                new FrmCreateBuyInvoice(invoicenumber).ShowDialog();
+                _buyInvoicesRepository.Update();
+            }
+            else
+            {
+                new FrmCreateSellInvoice(invoicenumber).ShowDialog();
+                _sellInvoicesRepository.Update();
+            }
         }
 
         private void Repositories_DataChanged()

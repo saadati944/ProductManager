@@ -91,7 +91,7 @@ namespace Tappe.Business
         }
         public override DataTable GetInvoiceItems(int invoiceid)
         {
-            DataTable table = _database.GetAllDataset<BuyInvoiceItem>(null, null, "InvoiceRef=" + invoiceid).Tables[0];
+            DataTable table = _database.GetAllDataset<BuyInvoiceItem>(null, null, "BuyInvoiceRef=" + invoiceid).Tables[0];
             return table;
         }
 
