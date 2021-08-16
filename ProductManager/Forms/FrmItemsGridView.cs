@@ -34,7 +34,6 @@ namespace Tappe.Forms
             _itemsRepository.Update();
 
             ContextMenuStrip contextMenu = new ContextMenuStrip();
-            // TOOD: check before deleting.
             contextMenu.Items.Add(new ToolStripMenuItem("حذف", null, RemoveMenueItem_Click));
             contextMenu.Items.Add(new ToolStripMenuItem("تغییر", null, EditMenueItem_Click));
             _contextMenu = contextMenu;

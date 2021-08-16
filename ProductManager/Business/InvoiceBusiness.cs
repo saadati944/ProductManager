@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Tappe.Data;
 using Tappe.Data.Models;
 using System.Data;
+using System.Data.SqlClient;
 
 namespace Tappe.Business
 {
@@ -26,6 +27,7 @@ namespace Tappe.Business
             _buyInvoicesRepository = container.Create<Data.Repositories.BuyInvoicesRepository>();
         }
 
+        public abstract bool RemoveInvoice(int number);
         public abstract bool SaveInvoice(DataTable invoicetable, DataTable invoiceitems);
         public abstract Invoice GetInvoiceModel(int number);
         public abstract DataTable GetInvoice(int number);
@@ -34,6 +36,16 @@ namespace Tappe.Business
         public abstract int GetLastInvoiceNumber();
         public abstract decimal GetTotalPrice();
         public abstract bool IsInvoiceNumberValid(int num);
+
+        protected StockSummary ItemQuantity(int itemRef, int stockRef, SqlConnection connection, SqlTransaction transaction)
+        {
+            try
+            {
+                return container.Create<Database>().GetAll<StockSummary>(connection, transaction, "StockRef=" + stockRef + " AND ItemRef=" + itemRef, null, 1).First();
+            }
+            catch { }
+            return new StockSummary { Quantity = 0, ItemRef = itemRef, StockRef = stockRef };
+        }
 
         public static bool ValidateInvoiceDataTable(DataTable invoiceDataTable, InvoiceBusiness invoiceBusiness)
         {

@@ -33,13 +33,13 @@ namespace Tappe.Business
                 return _database.BuyInvoiceItems;
             }
         }
-        public static BuyInvoice FullLoadBuyInvoice(int number)
+        public static BuyInvoice FullLoadBuyInvoice(int number, SqlConnection connection = null, SqlTransaction transaction = null)
         {
             Database db = container.Create<Database>();
             BuyInvoice buyInvoice = null;
             try
             {
-                buyInvoice = db.GetAll<BuyInvoice>(null, null, "Number=" + number, null, 1).First();
+                buyInvoice = db.GetAll<BuyInvoice>(connection, transaction, "Number=" + number, null, 1).First();
             }
             catch { }
             if (buyInvoice == null)
@@ -48,7 +48,7 @@ namespace Tappe.Business
             else if (!buyInvoice.Included)
                 buyInvoice.Include();
 
-            buyInvoice.InvoiceItems = db.GetAll<BuyInvoiceItem>(null, null, "BuyInvoiceRef=" + buyInvoice.Id);
+            buyInvoice.InvoiceItems = db.GetAll<BuyInvoiceItem>(connection, transaction, "BuyInvoiceRef=" + buyInvoice.Id);
             return buyInvoice;
         }
 
@@ -115,6 +115,44 @@ namespace Tappe.Business
             return 0;
         }
 
+
+        public override bool RemoveInvoice(int number)
+        {
+            var connection = _database.GetConnection();
+            var transaction = _database.BeginTransaction(connection);
+            if (RemoveInvoice(number, connection, transaction))
+            {
+                _database.CommitTransaction(transaction);
+                connection.Close();
+                return true;
+            }
+            _database.RollbackTransaction(transaction);
+            connection.Close();
+            return false;
+        }
+
+        private bool RemoveInvoice(int number, SqlConnection connection, SqlTransaction transaction)
+        {
+            try
+            {
+                var invoice = FullLoadBuyInvoice(number, connection, transaction);
+                foreach (BuyInvoiceItem x in invoice.InvoiceItems)
+                {
+                    //TODO : use stock of each item
+                    var q = ItemQuantity(x.ItemRef, invoice.StockRef, connection, transaction);
+                    q.Quantity -= x.Quantity;
+                    _database.Save(q, connection, transaction);
+                    _database.Delete(x, connection, transaction);
+                }
+                _database.Delete(invoice, connection, transaction);
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        }
         public override bool SaveInvoice(DataTable invoicetable, DataTable invoiceitems)
         {
             BuyInvoice invoice = new BuyInvoice();

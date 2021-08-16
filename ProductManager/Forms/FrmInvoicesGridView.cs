@@ -25,6 +25,12 @@ namespace Tappe.Forms
         private readonly Data.Repositories.BuyInvoicesRepository _buyInvoicesRepository;
         private readonly Data.Repositories.SellInvoicesRepository _sellInvoicesRepository;
 
+        private readonly Business.BuyInvoiceBusiness _buyInvoiceBusiness;
+        private readonly Business.SellInvoiceBusiness _sellInvoiceBusiness;
+
+        private readonly Business.Permissions _permissions;
+        private readonly ContextMenuStrip _contextMenu;
+
         //private readonly Color _sellInvoiceColor = Color.FromArgb(213, 255, 204);
         //private readonly Color _buyInvoiceColor = Color.FromArgb(255, 212, 204);
         private const string _sellInvoiceColumnText = "فروش";
@@ -45,6 +51,11 @@ namespace Tappe.Forms
             _buyInvoicesRepository = container.Create<Data.Repositories.BuyInvoicesRepository>();
             _sellInvoicesRepository = container.Create<Data.Repositories.SellInvoicesRepository>();
 
+            _buyInvoiceBusiness = container.Create<Business.BuyInvoiceBusiness>();
+            _sellInvoiceBusiness = container.Create<Business.SellInvoiceBusiness>();
+
+            _permissions = container.Create<Business.Permissions>();
+
             if (formType == InvoiceFormType.All || formType == InvoiceFormType.SellingInvoices)
             {
                 _showSells = true;
@@ -56,8 +67,9 @@ namespace Tappe.Forms
                 _buyInvoicesRepository.Update();
             }
 
-
-
+            ContextMenuStrip contextMenu = new ContextMenuStrip();
+            contextMenu.Items.Add(new ToolStripMenuItem("حذف", null, RemoveMenueItem_Click));
+            _contextMenu = contextMenu;
 
             _buyInvoicesRepository.DataChanged += Repositories_DataChanged;
             _sellInvoicesRepository.DataChanged += Repositories_DataChanged;
@@ -88,6 +100,27 @@ namespace Tappe.Forms
             }
             UpdateData();
         }
+        private void RemoveMenueItem_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("آیا مطمئن هستید که میخواهید این مورد را حذف کنید ؟", "تایید برای حذف", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                return;
+
+            var invoicetype = (string)dataGridView.CurrentRow.Cells[_typeColumnName].Value == _sellInvoiceColumnText ? InvoiceFormType.SellingInvoices : InvoiceFormType.BuyingInvoices;
+            var invoicenumber = (int)dataGridView.CurrentRow.Cells[_numberColumnName].Value;
+
+            var res = invoicetype == InvoiceFormType.BuyingInvoices ? _buyInvoiceBusiness.RemoveInvoice(invoicenumber) : _sellInvoiceBusiness.RemoveInvoice(invoicenumber);
+
+            if (!res)
+            {
+                MessageBox.Show("در هنگام حذف فاکتور خطایی رخ داده است");
+                return;
+            }
+
+            if (invoicetype == InvoiceFormType.BuyingInvoices)
+                _buyInvoicesRepository.Update();
+            else
+                _sellInvoicesRepository.Update();
+        }
 
         private void Repositories_DataChanged()
         {
@@ -97,7 +130,19 @@ namespace Tappe.Forms
         private void DataGridView_CellContextMenuStripNeeded(object sender, System.Windows.Forms.DataGridViewCellContextMenuStripNeededEventArgs e)
         {
             if (e.RowIndex == -1)
+            {
                 ShowCustomizeWindow();
+                return;
+            }
+            
+            // TODO : create a permission for removing invoices
+            //if (e.ColumnIndex == -1 || !_permissions.GetLoggedInUserPermission(Business.Permissions.))
+            //    return;
+
+            dataGridView.ClearSelection();
+            dataGridView.Rows[e.RowIndex].Selected = true;
+            dataGridView.CurrentCell = dataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex];
+            e.ContextMenuStrip = _contextMenu;
         }
         private void DataGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
