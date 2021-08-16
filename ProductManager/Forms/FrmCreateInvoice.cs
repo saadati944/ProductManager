@@ -14,6 +14,8 @@ namespace Tappe.Forms
 {
     public class FrmCreateInvoice : Form
     {
+        protected const string _itemNameColumnName = "ItemName";
+
         protected readonly int _idColumnIndex = 0;
         protected readonly int _itemColumnIndex = 1;
         protected readonly int _quantityColumnIndex = 2;
@@ -23,6 +25,8 @@ namespace Tappe.Forms
         protected readonly int _taxcolumnName = 6;
         protected readonly int _totalPriceColumnIndex = 7;
         protected readonly int _deleteBtnColumnIndex = 8;
+
+        protected int _originalInvoiceNumber = -1;
 
         protected DataTable _invoiceDataTable;
         protected DataTable _invoiceItemsDataTable;
@@ -47,6 +51,7 @@ namespace Tappe.Forms
 
         protected void InitilizeDataTable(int number)
         {
+            _originalInvoiceNumber = number;
             if (number == -1)
             {
                 _invoiceDataTable = NewInvoiceDataTable();
@@ -69,7 +74,41 @@ namespace Tappe.Forms
                 _invoiceItemsDataTable = _invoiceBusiness.GetInvoiceItems((int)_invoiceDataTable.Rows[0][Invoice.IdColumnName]);
             }
             _invoiceDataTable.Rows[0][Invoice.UserRefColumnName] = Program.LoggedInUser.Id;
+            _invoiceItemsDataTable.Columns.Add(_itemNameColumnName, typeof(string));
         }
 
+        protected void EditMode()
+        {
+            for(int i=0; i< _invoiceItemsDataTable.Rows.Count; i++)
+                _invoiceItemsDataTable.Rows[i][_itemNameColumnName] = _itemsBusiness.GetItemModel((int)_invoiceItemsDataTable.Rows[i][InvoiceItem.ItemRefColumnName]);
+        }
+
+        protected void UpdateTotalPrices()
+        {
+            for(int i=0; i<_invoiceItemsDataTable.Rows.Count; i++)
+                ItemsGridView_CellEndEdit(null, new DataGridViewCellEventArgs(_quantityColumnIndex, i));
+        }
+
+        protected virtual void ItemsGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected void DateToString(object sender, ConvertEventArgs cevent)
+        {
+            if (cevent.DesiredType != typeof(string)) return;
+            cevent.Value = PersianDate.PersianDateStringFromDateTime((DateTime)cevent.Value);
+        }
+
+        protected void StringToDate(object sender, ConvertEventArgs cevent)
+        {
+            if (cevent.DesiredType != typeof(DateTime)) return;
+
+            DateTime dt;
+            if (!PersianDate.DateTimeFromPersianDateString((string)cevent.Value, out dt))
+                return;
+
+            cevent.Value = dt;
+        }
     }
 }

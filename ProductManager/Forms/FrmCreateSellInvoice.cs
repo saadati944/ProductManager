@@ -59,7 +59,13 @@ namespace Tappe.Forms
 
             cmbParties.Text = cmbParties.Items.Count != 0 ? "" : cmbParties.Items[0].ToString();
             BindDataTable();
-            
+
+            if (number != -1)
+                EditMode();
+
+            itemsGridView.Columns[_idColumnIndex].Visible = false;
+
+
         }
 
 
@@ -97,6 +103,7 @@ namespace Tappe.Forms
             itemsGridView.Columns[_feeColumnIndex].DataPropertyName = InvoiceItem.FeeColumnName;
             itemsGridView.Columns[_discountColumnIndex].DataPropertyName = InvoiceItem.DiscountColumnName;
             itemsGridView.Columns[_taxcolumnName].DataPropertyName = InvoiceItem.TaxColumnName;
+            itemsGridView.Columns[_itemColumnIndex].DataPropertyName = _itemNameColumnName;
         }
 
         private void ItemsGridView_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -112,7 +119,7 @@ namespace Tappe.Forms
             }
         }
 
-        private void ItemsGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        protected override void ItemsGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
             if (e.ColumnIndex == _quantityColumnIndex)
             {
@@ -197,28 +204,14 @@ namespace Tappe.Forms
             decimal totalprice = 0;
             for (int i = 0; i < itemsGridView.Rows.Count - 1; i++)
             {
+                if (itemsGridView.Rows[i].Cells[_totalPriceColumnIndex].Value == null)
+                    continue;
                 totalprice += (decimal) itemsGridView.Rows[i].Cells[_totalPriceColumnIndex].Value;
             }
             
             lblTotalPrice.Text = totalprice.ToString();
         }
 
-        private void DateToString(object sender, ConvertEventArgs cevent)
-        {
-            if (cevent.DesiredType != typeof(string)) return;
-            cevent.Value = PersianDate.PersianDateStringFromDateTime((DateTime)cevent.Value);
-        }
-
-        private void StringToDate(object sender, ConvertEventArgs cevent)
-        {
-            if (cevent.DesiredType != typeof(DateTime)) return;
-
-            DateTime dt;
-            if (!PersianDate.DateTimeFromPersianDateString((string)cevent.Value, out dt))
-                return;
-
-            cevent.Value = dt;
-        }
         private void SelectedIndexToStockId(object sender, ConvertEventArgs cevent)
         {
             if (cevent.DesiredType != typeof(int)) return;
@@ -273,6 +266,11 @@ namespace Tappe.Forms
                 e.Cancel = false;
                 errorProvider.SetError(cmbParties, null);
             }
+        }
+
+        private void FrmCreateSellInvoice_Load(object sender, EventArgs e)
+        {
+            UpdateTotalPrices();
         }
     }
 }

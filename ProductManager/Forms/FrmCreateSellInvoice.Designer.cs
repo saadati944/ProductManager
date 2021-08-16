@@ -370,6 +370,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "فاکتور فروش";
+            this.Load += new System.EventHandler(this.FrmCreateSellInvoice_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmCreateSellInvoice_KeyDown);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
