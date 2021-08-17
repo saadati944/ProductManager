@@ -40,7 +40,7 @@ namespace Tappe.Business
             SellInvoice sellInvoice = null;
             try
             {
-                sellInvoice = db.GetAll<SellInvoice>(null, null, "number=" + number, null, 1).First();
+                sellInvoice = db.GetAll<SellInvoice>(connection, transaction, "number=" + number, null, 1).First();
             }
             catch { }
             if (sellInvoice == null)
@@ -49,7 +49,7 @@ namespace Tappe.Business
             else if (!sellInvoice.Included)
                 sellInvoice.Include();
 
-            sellInvoice.InvoiceItems = db.GetAll<SellInvoiceItem>(null, null, "SellInvoiceRef=" + sellInvoice.Id);
+            sellInvoice.InvoiceItems = db.GetAll<SellInvoiceItem>(connection, transaction, "SellInvoiceRef=" + sellInvoice.Id);
             return sellInvoice;
         }
 
@@ -98,7 +98,7 @@ namespace Tappe.Business
         }
         public override int GetLockedInvoiceNumber()
         {
-            int l = GetLastInvoiceNumber();
+            int l = GetLastInvoiceNumber()+1;
             while (!LockInvoiceNumber(l))
                 l++;
             return l;
@@ -158,8 +158,7 @@ namespace Tappe.Business
                 var invoice = FullLoadSellInvoice(number, connection, transaction);
                 foreach(SellInvoiceItem x in invoice.InvoiceItems)
                 {
-                    //TODO : use stock of each item
-                    var q = ItemQuantity(x.ItemRef, invoice.StockRef, connection, transaction);
+                    var q = ItemQuantity(x.ItemRef, x.StockRef, connection, transaction);
                     q.Quantity += x.Quantity;
                     _database.Save(q, connection, transaction);
                     _database.Delete(x, connection, transaction);
@@ -219,8 +218,6 @@ namespace Tappe.Business
                 if (_database.GetAllDataset<SellInvoice>(connection, transaction, "Number=" + invoice.Number, null, 2).Tables[0].Rows.Count != 1)
                     return false;
 
-                var stocks = _database.GetAll<StockSummary>(connection, transaction, "StockRef=" + invoice.StockRef);
-
                 foreach (SellInvoiceItem x in invoice.InvoiceItems)
                 {
                     x.InvoiceRef = invoice.Id;
@@ -229,7 +226,7 @@ namespace Tappe.Business
                     if (x.Quantity == 0)
                         continue;
 
-                    var q = ItemQuantity(x.ItemRef, stocks);
+                    var q = ItemQuantity(x.ItemRef, x.StockRef, connection, transaction);
 
                     if (q == null || q.Quantity < x.Quantity)
                         return false;
@@ -245,19 +242,12 @@ namespace Tappe.Business
             }
             return true;
         }
-        private StockSummary ItemQuantity(int itemRef, IEnumerable<StockSummary> stockSummaries)
-        {
-            foreach (var x in stockSummaries)
-                if (itemRef == x.ItemRef)
-                    return x;
-            return null;
-        }
 
         public override bool IsInvoiceNumberValid(int num)
         {
             try
             {
-                return _database.GetAll<SellInvoice>(null, null, "Number=" + num, null, 1).Count() == 0 && _database.GetAll<SellInvoice>(null, null, String.Format("{0}={1} AND {2}={3}", InvoiceLock.InvoiceNumberColumnName, num, InvoiceLock.InvoiceTypeColumnName, 1), null, 1).Count() == 0;
+                return _database.GetAll<SellInvoice>(null, null, "Number=" + num, null, 1).Count() == 0 && _database.GetAll<InvoiceLock>(null, null, String.Format("{0}={1} AND {2}={3}", InvoiceLock.InvoiceNumberColumnName, num, InvoiceLock.InvoiceTypeColumnName, 1), null, 1).Count() == 0;
             }
             catch { }
             return false;

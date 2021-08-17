@@ -25,10 +25,10 @@ namespace Tappe.Forms
             itemsGridView.AutoGenerateColumns = false;
 
             InitilizeDataTable(number);
-            
 
             cmbParties.Items.AddRange(_database.Parties.ToArray());
-            cmbParties.SelectedIndex = 0;
+
+            //TODO: remove this combobox
             cmbStocks.Items.AddRange(_database.Stocks.ToArray());
             cmbStocks_SelectedIndexChanged(null, null);
 
@@ -36,10 +36,12 @@ namespace Tappe.Forms
 
             SuspendLayout();
             for (int i=0; i<6; i++)
-                itemsGridView.Columns.Insert(2, new CustomControls.NumericUpDownColumn());
+                itemsGridView.Columns.Insert(3, new CustomControls.NumericUpDownColumn());
 
-            ((DataGridViewComboBoxColumn)itemsGridView.Columns[_itemColumnIndex]).Items.AddRange(_itemsBusiness.Items.Select(x => x.Name).ToArray());
+            ((DataGridViewComboBoxColumn)itemsGridView.Columns[_stockColumnIndex]).Items.AddRange(_database.Stocks.Select(x => x.Name).ToArray());
 
+            errorProviderHeader.DataSource = _invoiceDataTable;
+            errorProviderItems.DataSource = _invoiceItemsDataTable;
 
             itemsGridView.Columns[_TotalAfterDiscountColumnIndex].ReadOnly = true;
             itemsGridView.Columns[_totalPriceColumnIndex].ReadOnly = true;
@@ -66,6 +68,11 @@ namespace Tappe.Forms
 
             itemsGridView.Columns[_idColumnIndex].Visible = false;
             _invoiceDataTable.Rows[0][Invoice.NumberColumnName] = invoiceNumber;
+            _lockedInvoiceNumber = invoiceNumber;
+
+            cmbParties.SelectedIndex = 0;
+            if (_originalInvoiceNumber != -1)
+                lblTitle.Text = "ویرایش فاکتور خرید";
         }
 
         protected override DataTable NewInvoiceDataTable()
@@ -79,11 +86,15 @@ namespace Tappe.Forms
 
         private void BindDataTable()
         {
+            foreach (Control x in pnlControls.Controls)
+                x.DataBindings.Clear();
+            lblTotalPrice.DataBindings.Clear();
+
             //header bindings
             numInvoiceNumber.DataBindings.Add("Value", _invoiceDataTable, Invoice.NumberColumnName, false, DataSourceUpdateMode.OnPropertyChanged);
             lblTotalPrice.DataBindings.Add("Text", _invoiceDataTable, Invoice.TotalPriceColumnName, false, DataSourceUpdateMode.OnPropertyChanged);
 
-            cmbParties.DataBindings.Add("SelectedIndex", _invoiceDataTable, Invoice.PartyRefColumnName, false, DataSourceUpdateMode.Never);
+            // cmbParties.DataBindings.Add("SelectedIndex", _invoiceDataTable, Invoice.PartyRefColumnName, false, DataSourceUpdateMode.Never);
 
             Binding b = new Binding("Text", _invoiceDataTable, Invoice.DateColumnName, false, DataSourceUpdateMode.OnPropertyChanged);
             b.Format += new ConvertEventHandler(DateToString);
@@ -96,6 +107,8 @@ namespace Tappe.Forms
             cmbStocks.DataBindings.Add(b);
 
             //items bindings
+            if (itemsGridView.DataSource != null)
+                return;
             itemsGridView.DataSource = _invoiceItemsDataTable;
             itemsGridView.Columns[_idColumnIndex].DataPropertyName = InvoiceItem.ItemRefColumnName;
             itemsGridView.Columns[_quantityColumnIndex].DataPropertyName = InvoiceItem.QuantityColumnName;
@@ -109,9 +122,9 @@ namespace Tappe.Forms
         {
             if (e.ColumnIndex == _deleteBtnColumnIndex)
             {
-                if (e.RowIndex != itemsGridView.Rows.Count - 1)
+                if (e.RowIndex != itemsGridView.Rows.Count - 1 && e.RowIndex > -1)
                 {
-                    itemsGridView.Rows.RemoveAt(e.RowIndex);
+                    _invoiceItemsDataTable.Rows.RemoveAt(e.RowIndex);
                     CalculateTotalPrice();
                 }
                 return;
@@ -126,9 +139,26 @@ namespace Tappe.Forms
                     itemsGridView.Rows[e.RowIndex].Cells[_quantityColumnIndex].Value = (int)(decimal)itemsGridView.Rows[e.RowIndex].Cells[_quantityColumnIndex].Value;
 
             }
-            if (e.ColumnIndex == _itemColumnIndex)
+            if (e.ColumnIndex == _stockColumnIndex)
             {
-                if (itemsGridView.Rows[e.RowIndex].Cells[_itemColumnIndex].Value == null)
+                ((DataGridViewComboBoxCell)itemsGridView.Rows[e.RowIndex].Cells[_itemColumnIndex]).Items.Clear();
+                itemsGridView.Rows[e.RowIndex].Cells[_idColumnIndex].Value =
+                itemsGridView.Rows[e.RowIndex].Cells[_feeColumnIndex].Value =
+                itemsGridView.Rows[e.RowIndex].Cells[_quantityColumnIndex].Value =
+                itemsGridView.Rows[e.RowIndex].Cells[_discountColumnIndex].Value =
+                itemsGridView.Rows[e.RowIndex].Cells[_taxcolumnName].Value =
+                itemsGridView.Rows[e.RowIndex].Cells[_totalPriceColumnIndex].Value =
+                itemsGridView.Rows[e.RowIndex].Cells[_TotalAfterDiscountColumnIndex].Value = DBNull.Value;
+
+                if (!(itemsGridView.Rows[e.RowIndex].Cells[_stockColumnIndex].Value is DBNull))
+                {
+                    int stockref = _stockNameRefs[(string)itemsGridView.Rows[e.RowIndex].Cells[_stockColumnIndex].Value];
+                    ((DataGridViewComboBoxCell)itemsGridView.Rows[e.RowIndex].Cells[_itemColumnIndex]).Items.AddRange(_itemsBusiness.Items.Select(x=>x.Name).ToArray());
+                }
+            }
+            else if (e.ColumnIndex == _itemColumnIndex)
+            {
+                if (itemsGridView.Rows[e.RowIndex].Cells[_itemColumnIndex].Value is DBNull)
                     return;
                 ((DataGridViewButtonCell)itemsGridView.Rows[e.RowIndex].Cells[_deleteBtnColumnIndex]).Value = "حذف";
                 var item = _itemsBusiness.GetItemModel((string)itemsGridView.Rows[e.RowIndex].Cells[_itemColumnIndex].Value);
@@ -157,16 +187,21 @@ namespace Tappe.Forms
 
         private void ItemsGridView_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
         {
-            if (e.RowIndex == itemsGridView.Rows.Count - 1 && e.ColumnIndex != _itemColumnIndex)
+            if (e.RowIndex == itemsGridView.Rows.Count - 1 && e.ColumnIndex != _stockColumnIndex
+                || (e.ColumnIndex != _itemColumnIndex && e.ColumnIndex != _stockColumnIndex && itemsGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value is DBNull))
                 e.Cancel = true;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
+            errorProviderHeader.Clear();
+            errorProviderItems.Clear();
+            SetInvoiceItemsStockRef(itemsGridView);
             _invoiceDataTable.Rows[0][Invoice.PartyRefColumnName] = GetPartyRef();
-            if( !Business.InvoiceBusiness.ValidateInvoiceDataTable(_invoiceDataTable, _buyInvoiceBusiness, _originalInvoiceNumber) 
-                | !Business.InvoiceBusiness.ValidateInvoiceItemsDataTable(_invoiceItemsDataTable) || !ValidateChildren(ValidationConstraints.Enabled))
+            if (!Business.InvoiceBusiness.ValidateInvoiceDataTable(_invoiceDataTable, _sellInvoiceBusiness, _originalInvoiceNumber == -1 ? _lockedInvoiceNumber : _originalInvoiceNumber)
+                | !Business.InvoiceBusiness.ValidateInvoiceItemsDataTable(_invoiceItemsDataTable) | !ValidateChildren(ValidationConstraints.Enabled))
             {
+                BindDataTable();
                 return;
             }
 

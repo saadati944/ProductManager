@@ -44,7 +44,7 @@ namespace Tappe.Business
         {
             try
             {
-                return container.Create<Database>().GetAll<StockSummary>(connection, transaction, "StockRef=" + stockRef + " AND ItemRef=" + itemRef, null, 1).First();
+                return container.Create<Database>().GetAll<StockSummary>(connection, transaction, String.Format("{0}={1} AND {2}={3}", StockSummary.StockRefColumnName, stockRef, StockSummary.ItemRefColumnName, itemRef), null, 1).First();
             }
             catch { }
             return new StockSummary { Quantity = 0, ItemRef = itemRef, StockRef = stockRef };
@@ -81,11 +81,11 @@ namespace Tappe.Business
                     result = false;
                 }
 
-                if (row[Invoice.StockRefColumnName] is DBNull || (int)row[Invoice.StockRefColumnName] == -1)
-                {
-                    row.SetColumnError(Invoice.StockRefColumnName, "این فیلد اجباری میباشد");
-                    result = false;
-                }
+                //if (row[Invoice.StockRefColumnName] is DBNull || (int)row[Invoice.StockRefColumnName] == -1)
+                //{
+                //    row.SetColumnError(Invoice.StockRefColumnName, "این فیلد اجباری میباشد");
+                //    result = false;
+                //}
 
                 if (row[Invoice.TotalPriceColumnName] is DBNull)
                 {
@@ -98,26 +98,35 @@ namespace Tappe.Business
         }
 
         // todo : move stock to each item
-        public static bool ValidateInvoiceItemsDataTable(DataTable invoiceItemsDataTable, bool checkQuantity = false, int stockref = -1)
+        public static bool ValidateInvoiceItemsDataTable(DataTable invoiceItemsDataTable, bool checkQuantity = false)
         {
             bool result = true;
 
             foreach (DataRow row in invoiceItemsDataTable.Rows)
             {
+                bool item = true;
                 if (row[InvoiceItem.ItemRefColumnName] is DBNull || (int)row[InvoiceItem.ItemRefColumnName] == -1)
                 {
                     result = false;
                     row.SetColumnError(InvoiceItem.ItemRefColumnName, "این فیلد اجباری میباشد");
+                    item = false;
                 }
 
-                // TODO: check inventory in sell invoice
+                bool stock = true;
+                if (row[InvoiceItem.StockRefColumnName] is DBNull || (int)row[InvoiceItem.StockRefColumnName] == -1)
+                {
+                    result = false;
+                    row.SetColumnError(Invoice.StockRefColumnName, "این فیلد اجباری میباشد");
+                    stock = false;
+                }
+
                 if (row[InvoiceItem.QuantityColumnName] is DBNull)
                 {
                     result = false;
                     row.SetColumnError(InvoiceItem.QuantityColumnName, "این فیلد اجباری میباشد");
                 }
-                else if (checkQuantity && !(row[InvoiceItem.ItemRefColumnName] is DBNull || (int)row[InvoiceItem.ItemRefColumnName] == -1)
-                    && ItemsBusiness.GetItemQuantity((int)row[InvoiceItem.ItemRefColumnName], stockref) < (int)row[InvoiceItem.QuantityColumnName])
+                else if (checkQuantity && item && stock
+                    && ItemsBusiness.GetItemQuantity((int)row[InvoiceItem.ItemRefColumnName], (int)row[InvoiceItem.StockRefColumnName]) < (int)row[InvoiceItem.QuantityColumnName])
                 {
                     result = false;
                     row.SetColumnError(InvoiceItem.QuantityColumnName, "موجودی ناکافی");
@@ -140,6 +149,7 @@ namespace Tappe.Business
                     result = false;
                     row.SetColumnError(InvoiceItem.TaxColumnName, "این فیلد اجباری میباشد");
                 }
+
             }
 
             return result;

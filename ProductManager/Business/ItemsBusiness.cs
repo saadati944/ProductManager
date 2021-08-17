@@ -51,6 +51,17 @@ namespace Tappe.Business
             return 0;
         }
 
+        public  string[] GetItemNamesInStock(int stockref)
+        {
+            var itemsBusiness = container.Create<ItemsBusiness>();
+            var stockSummaries = _database.GetAll<StockSummary>(null, null, "StockRef=" + stockref);
+            List<string> items = new List<string>();
+            foreach(var x in stockSummaries)
+                if(x.Quantity > 0)
+                    items.Add((string) itemsBusiness.GetItem(x.ItemRef).Rows[0][Item.NameColumnName]);
+            return items.ToArray();
+        }
+
         public Item GetItemModel(string name)
         {
             foreach (DataRow x in _itemsRepository.DataTable.Rows)

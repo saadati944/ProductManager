@@ -171,12 +171,12 @@ namespace Tappe.Forms
         private void btnAddSellingInvoice_Click(object sender, EventArgs e)
         {
             int invoiceNumber = _sellInvoiceBusiness.GetLockedInvoiceNumber();
-            try
-            {
+            //try
+            //{
                 new FrmCreateSellInvoice(invoiceNumber).ShowDialog();
                 UpdateInvoicesRepo();
-            }
-            catch { }
+            //}
+            //catch { }
             _sellInvoiceBusiness.UnlockInvoiceNumber(invoiceNumber);
         }
 

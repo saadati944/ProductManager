@@ -130,7 +130,7 @@ namespace Tappe.Forms
             {
                 if (_buyInvoiceBusiness.LockInvoiceNumber(invoicenumber))
                 {
-                    new FrmCreateBuyInvoice(invoicenumber).ShowDialog();
+                    new FrmCreateBuyInvoice(invoicenumber, invoicenumber).ShowDialog();
                     _buyInvoiceBusiness.UnlockInvoiceNumber(invoicenumber);
                     _buyInvoicesRepository.Update();
                 }
@@ -142,7 +142,7 @@ namespace Tappe.Forms
             {
                 if (_sellInvoiceBusiness.LockInvoiceNumber(invoicenumber))
                 {
-                    new FrmCreateSellInvoice(invoicenumber).ShowDialog();
+                    new FrmCreateSellInvoice(invoicenumber, invoicenumber).ShowDialog();
                     _sellInvoiceBusiness.UnlockInvoiceNumber(invoicenumber);
                     _sellInvoicesRepository.Update();
                 }

@@ -96,7 +96,7 @@ namespace Tappe.Business
         }
         public override int GetLockedInvoiceNumber()
         {
-            int l = GetLastInvoiceNumber();
+            int l = GetLastInvoiceNumber()+1;
             while (!LockInvoiceNumber(l))
                 l++;
             return l;
@@ -157,8 +157,7 @@ namespace Tappe.Business
                 var invoice = FullLoadBuyInvoice(number, connection, transaction);
                 foreach (BuyInvoiceItem x in invoice.InvoiceItems)
                 {
-                    //TODO : use stock of each item
-                    var q = ItemQuantity(x.ItemRef, invoice.StockRef, connection, transaction);
+                    var q = ItemQuantity(x.ItemRef, x.StockRef, connection, transaction);
                     q.Quantity -= x.Quantity;
                     _database.Save(q, connection, transaction);
                     _database.Delete(x, connection, transaction);
@@ -216,8 +215,6 @@ namespace Tappe.Business
                 if (_database.GetAllDataset<BuyInvoice>(connection, transaction, "Number=" + invoice.Number, null, 2).Tables[0].Rows.Count != 1)
                     return false;
 
-                var stocks = _database.GetAll<StockSummary>(connection, transaction, "StockRef=" + invoice.StockRef);
-
                 foreach (BuyInvoiceItem x in invoice.InvoiceItems)
                 {
                     x.InvoiceRef = invoice.Id;
@@ -226,7 +223,7 @@ namespace Tappe.Business
                     if (x.Quantity == 0)
                         continue;
 
-                    var q = ItemQuantity(x.ItemRef, stocks);
+                    var q = ItemQuantity(x.ItemRef, x.StockRef, connection, transaction);
                     if (q == null)
                         q = new StockSummary { ItemRef = x.ItemRef, StockRef = invoice.StockRef, Quantity = 0 };
                     q.Quantity += x.Quantity;
@@ -239,19 +236,12 @@ namespace Tappe.Business
             }
             return true;
         }
-        private StockSummary ItemQuantity(int itemRef, IEnumerable<StockSummary> stockSummaries)
-        {
-            foreach (var x in stockSummaries)
-                if (itemRef == x.ItemRef)
-                    return x;
-            return null;
-        }
 
         public override bool IsInvoiceNumberValid(int num)
         {
             try
             {
-                return _database.GetAll<BuyInvoice>(null, null, "Number=" + num, null, 1).Count() == 0 && _database.GetAll<SellInvoice>(null, null, String.Format("{0}={1} AND {2}={3}", InvoiceLock.InvoiceNumberColumnName, num, InvoiceLock.InvoiceTypeColumnName, 0), null, 1).Count() == 0;
+                return _database.GetAll<BuyInvoice>(null, null, "Number=" + num, null, 1).Count() == 0 && _database.GetAll<InvoiceLock>(null, null, String.Format("{0}={1} AND {2}={3}", InvoiceLock.InvoiceNumberColumnName, num, InvoiceLock.InvoiceTypeColumnName, 0), null, 1).Count() == 0;
             }
             catch { }
             return false;
