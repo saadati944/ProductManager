@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnAddUser = new System.Windows.Forms.Button();
             this.btnPermissions = new System.Windows.Forms.Button();
             this.btnLogOut = new System.Windows.Forms.Button();
             this.btnUserInfo = new System.Windows.Forms.Button();
@@ -51,7 +52,6 @@
             this.lblGridTitle = new System.Windows.Forms.Label();
             this.lblStatus = new System.Windows.Forms.Label();
             this.pnlForms = new System.Windows.Forms.Panel();
-            this.btnAddUser = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -84,6 +84,23 @@
             this.panel1.Padding = new System.Windows.Forms.Padding(10, 0, 10, 0);
             this.panel1.Size = new System.Drawing.Size(257, 698);
             this.panel1.TabIndex = 0;
+            // 
+            // btnAddUser
+            // 
+            this.btnAddUser.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.btnAddUser.Dock = System.Windows.Forms.DockStyle.Top;
+            this.btnAddUser.FlatAppearance.BorderSize = 0;
+            this.btnAddUser.FlatAppearance.CheckedBackColor = System.Drawing.Color.MediumSeaGreen;
+            this.btnAddUser.FlatAppearance.MouseDownBackColor = System.Drawing.Color.MediumSeaGreen;
+            this.btnAddUser.FlatAppearance.MouseOverBackColor = System.Drawing.Color.MediumSeaGreen;
+            this.btnAddUser.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnAddUser.Location = new System.Drawing.Point(10, 441);
+            this.btnAddUser.Name = "btnAddUser";
+            this.btnAddUser.Size = new System.Drawing.Size(237, 23);
+            this.btnAddUser.TabIndex = 16;
+            this.btnAddUser.Text = "افزودن کاربر جدید";
+            this.btnAddUser.UseVisualStyleBackColor = false;
+            this.btnAddUser.Click += new System.EventHandler(this.btnAddUser_Click);
             // 
             // btnPermissions
             // 
@@ -408,23 +425,6 @@
             this.pnlForms.TabIndex = 5;
             this.pnlForms.Resize += new System.EventHandler(this.pnlForms_Resize);
             // 
-            // btnAddUser
-            // 
-            this.btnAddUser.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.btnAddUser.Dock = System.Windows.Forms.DockStyle.Top;
-            this.btnAddUser.FlatAppearance.BorderSize = 0;
-            this.btnAddUser.FlatAppearance.CheckedBackColor = System.Drawing.Color.MediumSeaGreen;
-            this.btnAddUser.FlatAppearance.MouseDownBackColor = System.Drawing.Color.MediumSeaGreen;
-            this.btnAddUser.FlatAppearance.MouseOverBackColor = System.Drawing.Color.MediumSeaGreen;
-            this.btnAddUser.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnAddUser.Location = new System.Drawing.Point(10, 441);
-            this.btnAddUser.Name = "btnAddUser";
-            this.btnAddUser.Size = new System.Drawing.Size(237, 23);
-            this.btnAddUser.TabIndex = 16;
-            this.btnAddUser.Text = "افزودن کاربر جدید";
-            this.btnAddUser.UseVisualStyleBackColor = false;
-            this.btnAddUser.Click += new System.EventHandler(this.btnAddUser_Click);
-            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -436,12 +436,14 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.lblStatus);
             this.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
+            this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(907, 635);
             this.Name = "FrmMain";
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Tappe";
             this.Load += new System.EventHandler(this.FrmMain_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmMain_KeyDown);
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
 

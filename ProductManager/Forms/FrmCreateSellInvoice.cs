@@ -15,9 +15,10 @@ namespace Tappe.Forms
 {
     public partial class FrmCreateSellInvoice : FrmCreateInvoice
     {
-
+        private int number;
         public FrmCreateSellInvoice(int invoiceNumber,int number = -1)
         {
+            this.number = number;
             InitializeComponent();
 
             _invoiceBusiness = _sellInvoiceBusiness;
@@ -28,10 +29,7 @@ namespace Tappe.Forms
 
             cmbParties.Items.AddRange(_database.Parties.ToArray());
 
-            //TODO: remove this combobox
-            cmbStocks.Items.AddRange(_database.Stocks.ToArray());
-            cmbStocks_SelectedIndexChanged(null, null);
-     
+
             txtSeller.Text = Program.LoggedInUser.ToString();
      
      
@@ -63,9 +61,7 @@ namespace Tappe.Forms
             cmbParties.Text = cmbParties.Items.Count != 0 ? "" : cmbParties.Items[0].ToString();
             BindDataTable();
 
-            if (number != -1)
-                EditMode();
-
+            
             itemsGridView.Columns[_idColumnIndex].Visible = false;
             _invoiceDataTable.Rows[0][Invoice.NumberColumnName] = invoiceNumber;
             _lockedInvoiceNumber = invoiceNumber;
@@ -117,6 +113,7 @@ namespace Tappe.Forms
             itemsGridView.Columns[_discountColumnIndex].DataPropertyName = InvoiceItem.DiscountColumnName;
             itemsGridView.Columns[_taxcolumnName].DataPropertyName = InvoiceItem.TaxColumnName;
             itemsGridView.Columns[_itemColumnIndex].DataPropertyName = _itemNameColumnName;
+            itemsGridView.Columns[_stockColumnIndex].DataPropertyName = _stockNameColumnName;
         }
         private void ItemsGridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -147,12 +144,12 @@ namespace Tappe.Forms
                 itemsGridView.Rows[e.RowIndex].Cells[_discountColumnIndex].Value =
                 itemsGridView.Rows[e.RowIndex].Cells[_taxcolumnName].Value = 
                 itemsGridView.Rows[e.RowIndex].Cells[_totalPriceColumnIndex].Value = 
-                itemsGridView.Rows[e.RowIndex].Cells[_TotalAfterDiscountColumnIndex].Value = DBNull.Value;
+                itemsGridView.Rows[e.RowIndex].Cells[_TotalAfterDiscountColumnIndex].Value = (decimal)0;
 
                 if (!(itemsGridView.Rows[e.RowIndex].Cells[_stockColumnIndex].Value is DBNull))
                 {
                     int stockref = _stockNameRefs[(string)itemsGridView.Rows[e.RowIndex].Cells[_stockColumnIndex].Value];
-                    ((DataGridViewComboBoxCell)itemsGridView.Rows[e.RowIndex].Cells[_itemColumnIndex]).Items.AddRange(_itemsBusiness.GetItemNamesInStock(stockref));
+                    ((DataGridViewComboBoxCell)itemsGridView.Rows[e.RowIndex].Cells[_itemColumnIndex]).Items.AddRange(StockItems(stockref));
                 }
             }
             else if (e.ColumnIndex == _itemColumnIndex)
@@ -182,6 +179,11 @@ namespace Tappe.Forms
                 CalculateTotalPrice();
             }
 
+        }
+
+        protected override string[] StockItems(int stockref)
+        {
+            return _itemsBusiness.GetItemNamesInStock(stockref);
         }
 
         private void ItemsGridView_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
@@ -241,6 +243,7 @@ namespace Tappe.Forms
                 if (itemsGridView.Rows[i].Cells[_totalPriceColumnIndex].Value == null)
                     continue;
                 totalprice += (decimal) itemsGridView.Rows[i].Cells[_totalPriceColumnIndex].Value;
+                ((DataGridViewButtonCell)itemsGridView.Rows[i].Cells[_deleteBtnColumnIndex]).Value = "حذف";
             }
             
             lblTotalPrice.Text = totalprice.ToString();
@@ -304,7 +307,25 @@ namespace Tappe.Forms
 
         private void FrmCreateSellInvoice_Load(object sender, EventArgs e)
         {
-            UpdateTotalPrices();
+            if (number != -1)
+            {
+                EditMode(itemsGridView, cmbParties);
+                UpdateTotalPrices();
+            }
+        }
+
+        private void itemsGridView_Validating(object sender, CancelEventArgs e)
+        {
+            if (itemsGridView.Rows.Count == 1)
+            {
+                e.Cancel = true;
+                errorProviderHeader.SetError(lblTotalPriceLable, "موردی را برای فروش انتخاب کنید");
+            }
+            else
+            {
+                e.Cancel = false;
+                errorProviderHeader.SetError(lblTotalPriceLable, null);
+            }
         }
     }
 }

@@ -86,5 +86,11 @@ namespace Tappe.Forms
         {
             Application.Exit();
         }
+
+        private void FrmLogin_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+                btnEnter_Click(null, null);
+        }
     }
 }

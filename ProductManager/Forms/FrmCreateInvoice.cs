@@ -15,6 +15,7 @@ namespace Tappe.Forms
     public class FrmCreateInvoice : Form
     {
         protected const string _itemNameColumnName = "ItemName";
+        protected const string _stockNameColumnName = "StockName";
 
         protected readonly int _idColumnIndex = 0;
         protected readonly int _stockColumnIndex = 1;
@@ -89,15 +90,54 @@ namespace Tappe.Forms
                 _invoiceItemsDataTable = _invoiceBusiness.GetInvoiceItems((int)_invoiceDataTable.Rows[0][Invoice.IdColumnName]);
             }
             _invoiceDataTable.Rows[0][Invoice.UserRefColumnName] = Program.LoggedInUser.Id;
+
             _invoiceItemsDataTable.Columns.Add(_itemNameColumnName, typeof(string));
+            _invoiceItemsDataTable.Columns.Add(_stockNameColumnName, typeof(string));
         }
 
-        protected void EditMode()
+        protected void EditMode(DataGridView dgv, ComboBox parties)
         {
-            for(int i=0; i< _invoiceItemsDataTable.Rows.Count; i++)
-                _invoiceItemsDataTable.Rows[i][_itemNameColumnName] = _itemsBusiness.GetItemModel((int)_invoiceItemsDataTable.Rows[i][InvoiceItem.ItemRefColumnName]);
-        }
+            Party p = new Party { Id = (int)_invoiceDataTable.Rows[0][Invoice.PartyRefColumnName] };
+            p.Load();
+            parties.Text = p.Name;
 
+            for (int i = 0; i < _invoiceItemsDataTable.Rows.Count; i++)
+            {
+                string itemname = _itemsBusiness.GetItemModel((int)_invoiceItemsDataTable.Rows[i][InvoiceItem.ItemRefColumnName]).Name;
+                string stockname = "";
+                int stockref = (int)_invoiceItemsDataTable.Rows[i][InvoiceItem.StockRefColumnName];
+                foreach (var x in _stockNameRefs)
+                    if (x.Value == stockref)
+                    {
+                        stockname = x.Key;
+                        break;
+                    }
+
+
+                //if ((DataGridViewComboBoxCell)dgv.Rows[i].Cells[_stockColumnIndex] == null)
+                //    dgv.Rows[i].Cells[_stockColumnIndex] = new DataGridViewComboBoxCell();
+                var stockcombosell = (DataGridViewComboBoxCell)dgv.Rows[i].Cells[_stockColumnIndex];
+                if (!stockcombosell.Items.Contains(stockname))
+                    stockcombosell.Items.Add(stockname);
+
+                // stockcombosell.Value = stockname;
+                _invoiceItemsDataTable.Rows[i][_stockNameColumnName] = stockname;
+
+                var itemcombosell = (DataGridViewComboBoxCell)dgv.Rows[i].Cells[_itemColumnIndex];
+                
+                itemcombosell.Items.AddRange(StockItems(stockref));
+                if (!itemcombosell.Items.Contains(itemname))
+                    itemcombosell.Items.Add(itemname);
+
+
+                // itemcombosell.Value = itemname;
+                _invoiceItemsDataTable.Rows[i][_itemNameColumnName] = itemname;
+            }
+        }
+        protected virtual string[] StockItems(int stockref)
+        {
+            throw new NotImplementedException();
+        }
         protected void UpdateTotalPrices()
         {
             for(int i=0; i<_invoiceItemsDataTable.Rows.Count; i++)

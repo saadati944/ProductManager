@@ -164,20 +164,24 @@ namespace Tappe.Forms
                 new FrmCreateBuyInvoice(invoiceNumber).ShowDialog();
                 UpdateInvoicesRepo();
             }
-            catch { }
-            _buyInvoiceBusiness.UnlockInvoiceNumber(invoiceNumber);
+            finally
+            {
+                _buyInvoiceBusiness.UnlockInvoiceNumber(invoiceNumber);
+            }
         }
 
         private void btnAddSellingInvoice_Click(object sender, EventArgs e)
         {
             int invoiceNumber = _sellInvoiceBusiness.GetLockedInvoiceNumber();
-            //try
-            //{
+            try
+            {
                 new FrmCreateSellInvoice(invoiceNumber).ShowDialog();
                 UpdateInvoicesRepo();
-            //}
-            //catch { }
-            _sellInvoiceBusiness.UnlockInvoiceNumber(invoiceNumber);
+            }
+            finally
+            {
+                _sellInvoiceBusiness.UnlockInvoiceNumber(invoiceNumber);
+            }
         }
 
         private void btnMeasurementUnits_Click(object sender, EventArgs e)
@@ -235,6 +239,12 @@ namespace Tappe.Forms
         private void btnAddUser_Click(object sender, EventArgs e)
         {
             new FrmSignUp().ShowDialog();
+        }
+
+        private void FrmMain_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.Escape)
+                btnLogOut_Click(null, null);
         }
     }
 }

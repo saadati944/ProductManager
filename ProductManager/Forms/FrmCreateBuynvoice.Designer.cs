@@ -33,7 +33,7 @@
             this.btnCancele = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.lblTotalPrice = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.lblTotalPriceLable = new System.Windows.Forms.Label();
             this.pnlControls = new System.Windows.Forms.Panel();
             this.label8 = new System.Windows.Forms.Label();
             this.cmbStocks = new System.Windows.Forms.ComboBox();
@@ -48,20 +48,18 @@
             this.cmbParties = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.lblTitle = new System.Windows.Forms.Label();
-            this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.itemsGridView = new System.Windows.Forms.DataGridView();
-            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.errorProviderHeader = new System.Windows.Forms.ErrorProvider(this.components);
-            this.errorProviderItems = new System.Windows.Forms.ErrorProvider(this.components);
             this.Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Stock = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.ItemName = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Delete = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.errorProviderHeader = new System.Windows.Forms.ErrorProvider(this.components);
+            this.errorProviderItems = new System.Windows.Forms.ErrorProvider(this.components);
             this.panel2.SuspendLayout();
             this.pnlControls.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numInvoiceNumber)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.itemsGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProviderHeader)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProviderItems)).BeginInit();
@@ -73,7 +71,7 @@
             this.panel2.Controls.Add(this.btnCancele);
             this.panel2.Controls.Add(this.btnSave);
             this.panel2.Controls.Add(this.lblTotalPrice);
-            this.panel2.Controls.Add(this.label3);
+            this.panel2.Controls.Add(this.lblTotalPriceLable);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel2.Location = new System.Drawing.Point(0, 496);
             this.panel2.Name = "panel2";
@@ -113,21 +111,21 @@
             // lblTotalPrice
             // 
             this.lblTotalPrice.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblTotalPrice.Location = new System.Drawing.Point(563, 20);
+            this.lblTotalPrice.Location = new System.Drawing.Point(529, 20);
             this.lblTotalPrice.Name = "lblTotalPrice";
             this.lblTotalPrice.Size = new System.Drawing.Size(182, 18);
             this.lblTotalPrice.TabIndex = 5;
             this.lblTotalPrice.Text = "0";
             // 
-            // label3
+            // lblTotalPriceLable
             // 
-            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(751, 20);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(104, 13);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "مجموع قیمت فاکتور :";
+            this.lblTotalPriceLable.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblTotalPriceLable.AutoSize = true;
+            this.lblTotalPriceLable.Location = new System.Drawing.Point(751, 20);
+            this.lblTotalPriceLable.Name = "lblTotalPriceLable";
+            this.lblTotalPriceLable.Size = new System.Drawing.Size(104, 13);
+            this.lblTotalPriceLable.TabIndex = 4;
+            this.lblTotalPriceLable.Text = "مجموع قیمت فاکتور :";
             // 
             // pnlControls
             // 
@@ -292,12 +290,6 @@
             this.lblTitle.TabIndex = 0;
             this.lblTitle.Text = "فاکتور خرید";
             // 
-            // errorProvider
-            // 
-            this.errorProvider.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
-            this.errorProvider.ContainerControl = this;
-            this.errorProvider.RightToLeft = true;
-            // 
             // itemsGridView
             // 
             this.itemsGridView.AllowUserToResizeRows = false;
@@ -315,30 +307,7 @@
             this.itemsGridView.Size = new System.Drawing.Size(867, 370);
             this.itemsGridView.TabIndex = 0;
             this.itemsGridView.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.itemsGridView_DataError);
-            // 
-            // dataGridViewTextBoxColumn1
-            // 
-            this.dataGridViewTextBoxColumn1.HeaderText = "Id";
-            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            this.dataGridViewTextBoxColumn1.ReadOnly = true;
-            this.dataGridViewTextBoxColumn1.Visible = false;
-            // 
-            // dataGridViewTextBoxColumn2
-            // 
-            this.dataGridViewTextBoxColumn2.FillWeight = 200F;
-            this.dataGridViewTextBoxColumn2.HeaderText = "نام محصول";
-            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
-            this.dataGridViewTextBoxColumn2.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridViewTextBoxColumn2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.dataGridViewTextBoxColumn2.Width = 761;
-            // 
-            // errorProviderHeader
-            // 
-            this.errorProviderHeader.ContainerControl = this;
-            // 
-            // errorProviderItems
-            // 
-            this.errorProviderItems.ContainerControl = this;
+            this.itemsGridView.Validating += new System.ComponentModel.CancelEventHandler(this.itemsGridView_Validating);
             // 
             // Id
             // 
@@ -371,6 +340,32 @@
             this.Delete.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             this.Delete.Width = 66;
             // 
+            // dataGridViewTextBoxColumn1
+            // 
+            this.dataGridViewTextBoxColumn1.HeaderText = "Id";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            this.dataGridViewTextBoxColumn1.ReadOnly = true;
+            this.dataGridViewTextBoxColumn1.Visible = false;
+            // 
+            // dataGridViewTextBoxColumn2
+            // 
+            this.dataGridViewTextBoxColumn2.FillWeight = 200F;
+            this.dataGridViewTextBoxColumn2.HeaderText = "نام محصول";
+            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            this.dataGridViewTextBoxColumn2.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridViewTextBoxColumn2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.dataGridViewTextBoxColumn2.Width = 761;
+            // 
+            // errorProviderHeader
+            // 
+            this.errorProviderHeader.ContainerControl = this;
+            this.errorProviderHeader.RightToLeft = true;
+            // 
+            // errorProviderItems
+            // 
+            this.errorProviderItems.ContainerControl = this;
+            this.errorProviderItems.RightToLeft = true;
+            // 
             // FrmCreateBuyInvoice
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -397,7 +392,6 @@
             this.pnlControls.ResumeLayout(false);
             this.pnlControls.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numInvoiceNumber)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.itemsGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProviderHeader)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProviderItems)).EndInit();
@@ -411,7 +405,7 @@
         private System.Windows.Forms.Button btnCancele;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Label lblTotalPrice;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label lblTotalPriceLable;
         private System.Windows.Forms.Panel pnlControls;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ComboBox cmbParties;
@@ -423,7 +417,6 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.NumericUpDown numInvoiceNumber;
-        private System.Windows.Forms.ErrorProvider errorProvider;
         private System.Windows.Forms.MaskedTextBox txtDate;
         private System.Windows.Forms.DataGridView itemsGridView;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
