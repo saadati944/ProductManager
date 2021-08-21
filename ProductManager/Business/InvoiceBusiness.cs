@@ -60,13 +60,13 @@ namespace Tappe.Business
             for (int i = 0; i < invoiceDataTable.Rows.Count; i++)
             {
                 DataRow row = invoiceDataTable.Rows[i];
-                if (row[Invoice.PartyRefColumnName] is DBNull || (int)row[Invoice.PartyRefColumnName] == -1)
+                if (row[Invoice.PartyRefColumnName] is DBNull || (int)row[Invoice.PartyRefColumnName] < 1)
                 {
                     row.SetColumnError(Invoice.PartyRefColumnName, "این فیلد اجباری میباشد");
                     result = false;
                 }
 
-                if (row[Invoice.UserRefColumnName] is DBNull || (int)row[Invoice.UserRefColumnName] == -1)
+                if (row[Invoice.UserRefColumnName] is DBNull || (int)row[Invoice.UserRefColumnName] < 1)
                 {
                     row.SetColumnError(Invoice.UserRefColumnName, "این فیلد اجباری میباشد");
                     result = false;
@@ -101,7 +101,7 @@ namespace Tappe.Business
             foreach (DataRow row in invoiceItemsDataTable.Rows)
             {
                 bool item = true;
-                if (row[InvoiceItem.ItemRefColumnName] is DBNull || (int)row[InvoiceItem.ItemRefColumnName] == -1)
+                if (row[InvoiceItem.ItemRefColumnName] is DBNull || (int)row[InvoiceItem.ItemRefColumnName] < 1)
                 {
                     result = false;
                     row.SetColumnError(InvoiceItem.ItemRefColumnName, "این فیلد اجباری میباشد");
@@ -109,7 +109,7 @@ namespace Tappe.Business
                 }
 
                 bool stock = true;
-                if (row[InvoiceItem.StockRefColumnName] is DBNull || (int)row[InvoiceItem.StockRefColumnName] == -1)
+                if (row[InvoiceItem.StockRefColumnName] is DBNull || (int)row[InvoiceItem.StockRefColumnName] < 1)
                 {
                     result = false;
                     row.SetColumnError(InvoiceItem.StockRefColumnName, "این فیلد اجباری میباشد");

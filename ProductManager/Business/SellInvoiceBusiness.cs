@@ -217,6 +217,9 @@ namespace Tappe.Business
         {
             try
             {
+                if (invoice.UserRef < 1 || invoice.UserRef < 1)
+                    return false;
+
                 _database.Save(invoice, connection, transaction);
 
                 if (_database.GetAllDataset<SellInvoice>(connection, transaction, "Number=" + invoice.Number, null, 2).Tables[0].Rows.Count != 1)
@@ -224,6 +227,9 @@ namespace Tappe.Business
 
                 foreach (SellInvoiceItem x in invoice.InvoiceItems)
                 {
+                    if (x.ItemRef < 1 || x.StockRef < 1)
+                        return false;
+
                     x.InvoiceRef = invoice.Id;
                     _database.Save(x, connection, transaction);
 

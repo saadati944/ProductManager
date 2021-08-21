@@ -58,9 +58,8 @@ namespace Tappe.Forms
      
             ResumeLayout();
 
-            cmbParties.Text = cmbParties.Items.Count != 0 ? "" : cmbParties.Items[0].ToString();
+            cmbParties.Text = cmbParties.Items.Count == 0 ? "" : cmbParties.Items[0].ToString();
 
-            
             itemsGridView.Columns[_itemIdColumnIndex].Visible = false;
 
             itemsGridView.Columns.Add(_stockIdColumnName, "StockId");
@@ -71,7 +70,6 @@ namespace Tappe.Forms
             _invoiceDataTable.Rows[0][Invoice.NumberColumnName] = invoiceNumber;
             _lockedInvoiceNumber = invoiceNumber;
 
-            cmbParties.SelectedIndex = 0;
             if (_originalInvoiceNumber != -1)
                 lblTitle.Text = "ویرایش فاکتور فروش";
         }
@@ -154,19 +152,24 @@ namespace Tappe.Forms
                     ((DataGridViewComboBoxCell)itemsGridView.Rows[e.RowIndex].Cells[_itemColumnIndex]).Items.AddRange(StockItems(stockref));
                     itemsGridView.Rows[e.RowIndex].Cells[_stockIdColumnName].Value = stockref;
                 }
+                else
+                    itemsGridView.Rows[e.RowIndex].Cells[_stockIdColumnName].Value = -1;
             }
             else if (e.ColumnIndex == _itemColumnIndex)
             {
                 if (itemsGridView.Rows[e.RowIndex].Cells[_itemColumnIndex].Value is DBNull)
+                {
+                    itemsGridView.Rows[e.RowIndex].Cells[_itemIdColumnIndex].Value = -1;
                     return;
+                }
                 ((DataGridViewButtonCell)itemsGridView.Rows[e.RowIndex].Cells[_deleteBtnColumnIndex]).Value = "حذف";
                 var item = _itemsBusiness.GetItemModel((string)itemsGridView.Rows[e.RowIndex].Cells[_itemColumnIndex].Value);
                 itemsGridView.Rows[e.RowIndex].Cells[_itemIdColumnIndex].Value = item.Id;
                 itemsGridView.Rows[e.RowIndex].Cells[_feeColumnIndex].Value = _itemsBusiness.GetItemPrice(item.Id, (DateTime)_invoiceDataTable.Rows[0][Invoice.DateColumnName]).Price;
                 itemsGridView.Rows[e.RowIndex].Cells[_quantityColumnIndex].Value = (int) 0;
-                itemsGridView.Rows[e.RowIndex].Cells[_discountColumnIndex].Value = (decimal)0;
-                itemsGridView.Rows[e.RowIndex].Cells[_taxcolumnName].Value = (decimal)0;
-                itemsGridView.Rows[e.RowIndex].Cells[_totalPriceColumnIndex].Value = (decimal)0;
+                itemsGridView.Rows[e.RowIndex].Cells[_discountColumnIndex].Value =
+                itemsGridView.Rows[e.RowIndex].Cells[_taxcolumnName].Value =
+                itemsGridView.Rows[e.RowIndex].Cells[_totalPriceColumnIndex].Value =
                 itemsGridView.Rows[e.RowIndex].Cells[_TotalAfterDiscountColumnIndex].Value = (decimal)0;
             }
             else

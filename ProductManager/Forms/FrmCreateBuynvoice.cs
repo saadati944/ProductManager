@@ -59,7 +59,7 @@ namespace Tappe.Forms
 
             ResumeLayout();
 
-            cmbParties.Text = cmbParties.Items.Count != 0 ? "" : cmbParties.Items[0].ToString();
+            cmbParties.Text = cmbParties.Items.Count == 0 ? "" : cmbParties.Items[0].ToString();
 
             itemsGridView.Columns[_itemIdColumnIndex].Visible = false;
 
@@ -71,7 +71,6 @@ namespace Tappe.Forms
             _invoiceDataTable.Rows[0][Invoice.NumberColumnName] = invoiceNumber;
             _lockedInvoiceNumber = invoiceNumber;
 
-            cmbParties.SelectedIndex = 0;
             if (_originalInvoiceNumber != -1)
                 lblTitle.Text = "ویرایش فاکتور خرید";
         }
@@ -147,7 +146,7 @@ namespace Tappe.Forms
                 itemsGridView.Rows[e.RowIndex].Cells[_discountColumnIndex].Value =
                 itemsGridView.Rows[e.RowIndex].Cells[_taxcolumnName].Value =
                 itemsGridView.Rows[e.RowIndex].Cells[_totalPriceColumnIndex].Value =
-                itemsGridView.Rows[e.RowIndex].Cells[_TotalAfterDiscountColumnIndex].Value = (decimal) 0;
+                itemsGridView.Rows[e.RowIndex].Cells[_TotalAfterDiscountColumnIndex].Value = (decimal)0;
 
                 if (!(itemsGridView.Rows[e.RowIndex].Cells[_stockColumnIndex].Value is DBNull))
                 {
@@ -155,19 +154,24 @@ namespace Tappe.Forms
                     ((DataGridViewComboBoxCell)itemsGridView.Rows[e.RowIndex].Cells[_itemColumnIndex]).Items.AddRange(StockItems(stockref));
                     itemsGridView.Rows[e.RowIndex].Cells[_stockIdColumnName].Value = stockref;
                 }
+                else
+                    itemsGridView.Rows[e.RowIndex].Cells[_stockIdColumnName].Value = -1;
             }
             else if (e.ColumnIndex == _itemColumnIndex)
             {
                 if (itemsGridView.Rows[e.RowIndex].Cells[_itemColumnIndex].Value is DBNull)
+                {
+                    itemsGridView.Rows[e.RowIndex].Cells[_itemIdColumnIndex].Value = -1;
                     return;
+                }
                 ((DataGridViewButtonCell)itemsGridView.Rows[e.RowIndex].Cells[_deleteBtnColumnIndex]).Value = "حذف";
                 var item = _itemsBusiness.GetItemModel((string)itemsGridView.Rows[e.RowIndex].Cells[_itemColumnIndex].Value);
                 itemsGridView.Rows[e.RowIndex].Cells[_itemIdColumnIndex].Value = item.Id;
                 itemsGridView.Rows[e.RowIndex].Cells[_feeColumnIndex].Value = _itemsBusiness.GetItemPrice(item.Id, (DateTime)_invoiceDataTable.Rows[0][Invoice.DateColumnName]).Price;
                 itemsGridView.Rows[e.RowIndex].Cells[_quantityColumnIndex].Value = (int) 0;
-                itemsGridView.Rows[e.RowIndex].Cells[_discountColumnIndex].Value = (decimal)0;
-                itemsGridView.Rows[e.RowIndex].Cells[_taxcolumnName].Value = (decimal)0;
-                itemsGridView.Rows[e.RowIndex].Cells[_totalPriceColumnIndex].Value = (decimal)0;
+                itemsGridView.Rows[e.RowIndex].Cells[_discountColumnIndex].Value =
+                itemsGridView.Rows[e.RowIndex].Cells[_taxcolumnName].Value =
+                itemsGridView.Rows[e.RowIndex].Cells[_totalPriceColumnIndex].Value =
                 itemsGridView.Rows[e.RowIndex].Cells[_TotalAfterDiscountColumnIndex].Value = (decimal)0;
             }
             else
@@ -202,7 +206,7 @@ namespace Tappe.Forms
             errorProviderItems.Clear();
 
             _invoiceDataTable.Rows[0][Invoice.PartyRefColumnName] = GetPartyRef();
-            if (!Business.InvoiceBusiness.ValidateInvoiceDataTable(_invoiceDataTable, _sellInvoiceBusiness, _originalInvoiceNumber == -1 ? _lockedInvoiceNumber : _originalInvoiceNumber)
+            if (!Business.InvoiceBusiness.ValidateInvoiceDataTable(_invoiceDataTable, _buyInvoiceBusiness, _originalInvoiceNumber == -1 ? _lockedInvoiceNumber : _originalInvoiceNumber)
                 | !Business.InvoiceBusiness.ValidateInvoiceItemsDataTable(_invoiceItemsDataTable) | !ValidateChildren(ValidationConstraints.Enabled))
             {
                 BindDataTable();
@@ -221,7 +225,7 @@ namespace Tappe.Forms
 
         private int GetPartyRef()
         {
-            if(cmbParties.SelectedIndex != -1 && ((Party)cmbParties.SelectedItem).Name == cmbParties.Text)
+            if (cmbParties.SelectedIndex != -1 && ((Party)cmbParties.SelectedItem).Name == cmbParties.Text)
                 return ((Party)cmbParties.SelectedItem).Id;
             
             var party = new Party { Name = cmbParties.Text };
