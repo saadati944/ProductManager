@@ -48,13 +48,13 @@
             this.lblTitle = new System.Windows.Forms.Label();
             this.errorProviderHeader = new System.Windows.Forms.ErrorProvider(this.components);
             this.itemsGridView = new System.Windows.Forms.DataGridView();
-            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.errorProviderItems = new System.Windows.Forms.ErrorProvider(this.components);
             this.Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.StockName = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.ItemName = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Delete = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.errorProviderItems = new System.Windows.Forms.ErrorProvider(this.components);
             this.panel2.SuspendLayout();
             this.pnlControls.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numInvoiceNumber)).BeginInit();
@@ -147,11 +147,11 @@
             // txtDate
             // 
             this.txtDate.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtDate.Location = new System.Drawing.Point(12, 95);
+            this.txtDate.Location = new System.Drawing.Point(39, 95);
             this.txtDate.Mask = "0000/00/00";
             this.txtDate.Name = "txtDate";
             this.txtDate.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.txtDate.Size = new System.Drawing.Size(200, 14);
+            this.txtDate.Size = new System.Drawing.Size(173, 14);
             this.txtDate.TabIndex = 2;
             this.txtDate.Text = "00000000";
             this.txtDate.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -169,14 +169,14 @@
             // numInvoiceNumber
             // 
             this.numInvoiceNumber.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.numInvoiceNumber.Location = new System.Drawing.Point(12, 54);
+            this.numInvoiceNumber.Location = new System.Drawing.Point(39, 54);
             this.numInvoiceNumber.Maximum = new decimal(new int[] {
             1316134912,
             2328,
             0,
             0});
             this.numInvoiceNumber.Name = "numInvoiceNumber";
-            this.numInvoiceNumber.Size = new System.Drawing.Size(200, 17);
+            this.numInvoiceNumber.Size = new System.Drawing.Size(173, 17);
             this.numInvoiceNumber.TabIndex = 4;
             this.numInvoiceNumber.Value = new decimal(new int[] {
             1,
@@ -209,7 +209,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(226, 95);
+            this.label5.Location = new System.Drawing.Point(264, 95);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(35, 13);
             this.label5.TabIndex = 6;
@@ -219,9 +219,9 @@
             // 
             this.txtSeller.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtSeller.Enabled = false;
-            this.txtSeller.Location = new System.Drawing.Point(305, 95);
+            this.txtSeller.Location = new System.Drawing.Point(331, 95);
             this.txtSeller.Name = "txtSeller";
-            this.txtSeller.Size = new System.Drawing.Size(195, 14);
+            this.txtSeller.Size = new System.Drawing.Size(169, 14);
             this.txtSeller.TabIndex = 1;
             // 
             // label4
@@ -241,9 +241,9 @@
             this.cmbParties.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.cmbParties.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbParties.FormattingEnabled = true;
-            this.cmbParties.Location = new System.Drawing.Point(553, 92);
+            this.cmbParties.Location = new System.Drawing.Point(579, 92);
             this.cmbParties.Name = "cmbParties";
-            this.cmbParties.Size = new System.Drawing.Size(221, 21);
+            this.cmbParties.Size = new System.Drawing.Size(195, 21);
             this.cmbParties.TabIndex = 0;
             this.cmbParties.Validating += new System.ComponentModel.CancelEventHandler(this.cmbParties_Validating);
             // 
@@ -292,27 +292,6 @@
             this.itemsGridView.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.itemsGridView_DataError);
             this.itemsGridView.Validating += new System.ComponentModel.CancelEventHandler(this.itemsGridView_Validating);
             // 
-            // dataGridViewTextBoxColumn1
-            // 
-            this.dataGridViewTextBoxColumn1.HeaderText = "Id";
-            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            this.dataGridViewTextBoxColumn1.ReadOnly = true;
-            this.dataGridViewTextBoxColumn1.Visible = false;
-            // 
-            // dataGridViewTextBoxColumn2
-            // 
-            this.dataGridViewTextBoxColumn2.FillWeight = 200F;
-            this.dataGridViewTextBoxColumn2.HeaderText = "نام محصول";
-            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
-            this.dataGridViewTextBoxColumn2.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridViewTextBoxColumn2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.dataGridViewTextBoxColumn2.Width = 761;
-            // 
-            // errorProviderItems
-            // 
-            this.errorProviderItems.ContainerControl = this;
-            this.errorProviderItems.RightToLeft = true;
-            // 
             // Id
             // 
             this.Id.HeaderText = "Id";
@@ -343,6 +322,27 @@
             this.Delete.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.Delete.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             this.Delete.Width = 66;
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            this.dataGridViewTextBoxColumn1.HeaderText = "Id";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            this.dataGridViewTextBoxColumn1.ReadOnly = true;
+            this.dataGridViewTextBoxColumn1.Visible = false;
+            // 
+            // dataGridViewTextBoxColumn2
+            // 
+            this.dataGridViewTextBoxColumn2.FillWeight = 200F;
+            this.dataGridViewTextBoxColumn2.HeaderText = "نام محصول";
+            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            this.dataGridViewTextBoxColumn2.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridViewTextBoxColumn2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.dataGridViewTextBoxColumn2.Width = 761;
+            // 
+            // errorProviderItems
+            // 
+            this.errorProviderItems.ContainerControl = this;
+            this.errorProviderItems.RightToLeft = true;
             // 
             // FrmCreateSellInvoice
             // 

@@ -55,17 +55,16 @@ namespace Tappe.Forms
             foreach (Stock x in _database.Stocks)
                 _stockNameRefs.Add(x.Name, x.Id);
         }
-        //protected void SetInvoiceItemsStockRef(DataGridView itemsGridView)
-        //{
-        //    for (int i = 0; i < _invoiceItemsDataTable.Rows.Count; i++)
-        //    {
-        //        if (itemsGridView.Rows[i].Cells[_stockColumnIndex].Value is DBNull || itemsGridView.Rows[i].Cells[_stockColumnIndex].Value == null)
-        //            continue;
-        //        string sn = (string)itemsGridView.Rows[i].Cells[_stockColumnIndex].Value;
-        //        int stockref = _stockNameRefs[(string)itemsGridView.Rows[i].Cells[_stockColumnIndex].Value];
-        //            _invoiceItemsDataTable.Rows[i][_stockColumnIndex] = stockref;
-        //    }
-        //}
+
+        protected void SetErrorProviderPadding(Control container, ErrorProvider errorProvider, int value, bool children = false)
+        {
+            foreach (Control x in container.Controls)
+            {
+                errorProvider.SetIconPadding(x, value);
+                if (children)
+                    SetErrorProviderPadding(x, errorProvider, value, true);
+            }
+        }
 
         protected virtual DataTable NewInvoiceDataTable() { throw new NotImplementedException(); }
         protected virtual DataTable NewInvoiceItemDataTable() { throw new NotImplementedException(); }

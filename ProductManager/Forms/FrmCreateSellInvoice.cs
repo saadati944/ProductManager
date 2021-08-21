@@ -72,6 +72,7 @@ namespace Tappe.Forms
 
             if (_originalInvoiceNumber != -1)
                 lblTitle.Text = "ویرایش فاکتور فروش";
+            SetErrorProviderPadding(pnlControls, errorProviderHeader, 10);
         }
 
 

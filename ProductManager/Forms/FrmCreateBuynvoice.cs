@@ -73,6 +73,7 @@ namespace Tappe.Forms
 
             if (_originalInvoiceNumber != -1)
                 lblTitle.Text = "ویرایش فاکتور خرید";
+            SetErrorProviderPadding(pnlControls, errorProviderHeader, 10);
         }
 
         protected override DataTable NewInvoiceDataTable()
