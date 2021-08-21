@@ -32,13 +32,13 @@ namespace Tappe.Forms
             lblInformation = new System.Windows.Forms.Label();
             Controls.Add(lblInformation);
 
-            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _itemColumnName, DisplayName = "محصول" });
-            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _quantityColumnName, DisplayName = "مقدار" });
-            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _feeColumnName, DisplayName = "فی" });
-            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _discountColumnName, DisplayName = "تخفیف" });
-            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _taxColumnName, DisplayName = "مالیات و عوارض" });
-            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _totalPriceColumnName, DisplayName = "مبلغ کل" });
-            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _stockColumnName, DisplayName = "انبار"});
+            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _itemColumnName, DisplayName = "محصول", Checked = true });
+            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _quantityColumnName, DisplayName = "مقدار", Checked = true });
+            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _feeColumnName, DisplayName = "فی", Checked = true });
+            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _discountColumnName, DisplayName = "تخفیف", Checked = true });
+            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _taxColumnName, DisplayName = "مالیات و عوارض", Checked = true });
+            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _totalPriceColumnName, DisplayName = "مبلغ کل", Checked = true });
+            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _stockColumnName, DisplayName = "انبار", Checked = true });
             LoadColumnSettings();
 
             lblInformation.Dock = System.Windows.Forms.DockStyle.Top;

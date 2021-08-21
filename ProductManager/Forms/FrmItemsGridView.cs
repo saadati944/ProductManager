@@ -41,12 +41,12 @@ namespace Tappe.Forms
             _itemsRepository.DataChanged += Repository_DataChanged;
 
             // default settings
-            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _idColumnName, DisplayName = "شماره" });
-            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _nameColumnName, DisplayName = "نام"});
-            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _descColumnName, DisplayName = "توضیحات" });
-            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _measurementUnitColumnName, DisplayName = "واحد اندازه گیری"});
-            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _priceColumnName, DisplayName = "قیمت" });
-            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _creatorColumnName, DisplayName = "سازنده" });
+            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _idColumnName, DisplayName = "شماره", Checked = true });
+            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _nameColumnName, DisplayName = "نام", Checked = true });
+            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _descColumnName, DisplayName = "توضیحات", Checked = true });
+            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _measurementUnitColumnName, DisplayName = "واحد اندازه گیری", Checked = true });
+            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _priceColumnName, DisplayName = "قیمت", Checked = true });
+            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _creatorColumnName, DisplayName = "سازنده", Checked = true });
             LoadColumnSettings();
 
             dataGridView.CellContextMenuStripNeeded += DataGridView_CellContextMenuStripNeeded;

@@ -17,8 +17,8 @@ namespace Tappe.Forms
             _item = container.GetInstance<Business.ItemsBusiness>().GetItemModel(itemRef);
             SetTitle("لیست قیمت های " + _item.Name);
 
-            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _persianDateColumnName, DisplayName = "تاریخ" });
-            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _priceColumnName, DisplayName = "قیمت" });
+            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _persianDateColumnName, DisplayName = "تاریخ", Checked = true });
+            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _priceColumnName, DisplayName = "قیمت", Checked = true });
             LoadColumnSettings();
             UpdateData();
         }

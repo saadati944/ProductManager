@@ -35,9 +35,9 @@ namespace Tappe.Forms
             
             _itemsRepository.Update();
 
-            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _itemNameColumnName, DisplayName = "نام محصول" });
-            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _dateColumnName, DisplayName = "تاریخ آخرین قیمت" });
-            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _priceColumnName, DisplayName = "آخرین قیمت" });
+            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _itemNameColumnName, DisplayName = "نام محصول", Checked = true });
+            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _dateColumnName, DisplayName = "تاریخ آخرین قیمت", Checked = true });
+            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _priceColumnName, DisplayName = "آخرین قیمت", Checked = true });
             LoadColumnSettings();
 
             dataGridView.CellDoubleClick += DataGridView_CellDoubleClick;
