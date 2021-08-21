@@ -67,7 +67,7 @@ namespace Tappe.Forms
             if (e.ColumnIndex == -1)
                 return;
 
-            if (!_permissions.GetLoggedInUserPermission(Permissions.CreateEditRemoveItemPermission))
+            if (!_permissions.GetLoggedInUserPermission(Permissions.EditItemPermission))
                 return;
 
             dataGridView.ClearSelection();
@@ -86,8 +86,7 @@ namespace Tappe.Forms
         {
             if (e.RowIndex == -1 || e.ColumnIndex == -1)
                 return;
-            if (!_permissions.GetLoggedInUserPermission(Permissions.CreateEditRemoveItemPermission))
-                return;
+            
             dataGridView.ClearSelection();
             dataGridView.Rows[e.RowIndex].Selected = true;
             dataGridView.CurrentCell = dataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex];
@@ -128,12 +127,18 @@ namespace Tappe.Forms
 
         private void EditMenueItem_Click(object sender, EventArgs e)
         {
+            if (!_permissions.GetLoggedInUserPermission(Permissions.EditItemPermission))
+                return;
+
             new FrmCreateItem(Program.Container, (int)dataGridView.CurrentRow.Cells[_idColumnName].Value).ShowDialog();
             _itemsRepository.Update();
         }
 
         private void RemoveMenueItem_Click(object sender, EventArgs e)
         {
+            if (!_permissions.GetLoggedInUserPermission(Permissions.RemoveItemPermission))
+                return;
+
             if (MessageBox.Show("آیا مطمئن هستید که میخواهید این مورد را حذف کنید ؟", "تایید برای حذف", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
                 return;
 

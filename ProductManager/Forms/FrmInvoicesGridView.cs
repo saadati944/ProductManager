@@ -104,10 +104,14 @@ namespace Tappe.Forms
         }
         private void RemoveMenueItem_Click(object sender, EventArgs e)
         {
+            var invoicetype = (string)dataGridView.CurrentRow.Cells[_typeColumnName].Value == _sellInvoiceColumnText ? InvoiceFormType.SellingInvoices : InvoiceFormType.BuyingInvoices;
+
+            if (!_permissions.GetLoggedInUserPermission(invoicetype == InvoiceFormType.SellingInvoices ? Business.Permissions.RemoveSellInvoicePermission : Business.Permissions.RemoveBuyInvoicePermission))
+                return;
+
             if (MessageBox.Show("آیا مطمئن هستید که میخواهید این مورد را حذف کنید ؟", "تایید برای حذف", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
                 return;
 
-            var invoicetype = (string)dataGridView.CurrentRow.Cells[_typeColumnName].Value == _sellInvoiceColumnText ? InvoiceFormType.SellingInvoices : InvoiceFormType.BuyingInvoices;
             var invoicenumber = (int)dataGridView.CurrentRow.Cells[_numberColumnName].Value;
 
             var res = invoicetype == InvoiceFormType.BuyingInvoices ? _buyInvoiceBusiness.RemoveInvoice(invoicenumber) : _sellInvoiceBusiness.RemoveInvoice(invoicenumber);
@@ -127,6 +131,10 @@ namespace Tappe.Forms
         private void EditMenueItem_Click(object sender, EventArgs e)
         {
             var invoicetype = (string)dataGridView.CurrentRow.Cells[_typeColumnName].Value == _sellInvoiceColumnText ? InvoiceFormType.SellingInvoices : InvoiceFormType.BuyingInvoices;
+
+            if (!_permissions.GetLoggedInUserPermission(invoicetype == InvoiceFormType.SellingInvoices ? Business.Permissions.EditSellInvoicePermission : Business.Permissions.EditBuyInvoicePermission))
+                return;
+
             var invoicenumber = (int)dataGridView.CurrentRow.Cells[_numberColumnName].Value;
             
             if(invoicetype == InvoiceFormType.BuyingInvoices)

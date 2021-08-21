@@ -21,8 +21,16 @@ namespace Tappe.Business
 
         // create/add permissions
         public const string CreateSellInvoicePermission = "CreateSellInvoicePermission";
+        public const string EditSellInvoicePermission = "EditSellInvoicePermission";
+        public const string RemoveSellInvoicePermission = "RemoveSellInvoicePermission";
         public const string CreateBuyInvoicePermission = "CreateBuyInvoicePermission";
-        public const string CreateEditRemoveItemPermission = "CreateEditRemoveItemPermission";
+        public const string EditBuyInvoicePermission = "EditBuyInvoicePermission";
+        public const string RemoveBuyInvoicePermission = "RemoveBuyInvoicePermission";
+
+        public const string CreateItemPermission = "CreateItemPermission";
+        public const string EditItemPermission = "CreateItemPermission";
+        public const string RemoveItemPermission = "CreateItemPermission";
+
         public const string CreateStockPermission = "CreateStockPermission";
         public const string CreateMeasurementUnitPermission = "CreateMeasurementUnitPermission";
         public const string AddItemPricePermission = "AddItemPricePermission";
@@ -38,10 +46,20 @@ namespace Tappe.Business
         {
             List<PermissionViewModel> ps = new List<PermissionViewModel>();
             ps.Add(new PermissionViewModel { Key = CreateSellInvoicePermission, DisplayName = "ثبت فاکتور فروش" });
+            ps.Add(new PermissionViewModel { Key = EditSellInvoicePermission, DisplayName = "ویرایش فاکتور فروش" });
+            ps.Add(new PermissionViewModel { Key = RemoveSellInvoicePermission, DisplayName = "حذف فاکتور فروش" });
+
             ps.Add(new PermissionViewModel { Key = CreateBuyInvoicePermission, DisplayName = "ثبت فاکتور خرید" });
-            ps.Add(new PermissionViewModel { Key = CreateEditRemoveItemPermission, DisplayName = "افزودن/ تغییر/ حذف محصولات" });
+            ps.Add(new PermissionViewModel { Key = EditBuyInvoicePermission, DisplayName = "ویرایش فاکتور خرید" });
+            ps.Add(new PermissionViewModel { Key = RemoveBuyInvoicePermission, DisplayName = "حذف فاکتور خرید" });
+
+            ps.Add(new PermissionViewModel { Key = CreateItemPermission, DisplayName = "افزودن محصولات" });
+            ps.Add(new PermissionViewModel { Key = EditItemPermission, DisplayName = "ویرایش محصولات" });
+            ps.Add(new PermissionViewModel { Key = RemoveItemPermission, DisplayName = "حذف محصولات" });
             ps.Add(new PermissionViewModel { Key = CreateStockPermission, DisplayName = "مدیریت انبار ها" });
-            ps.Add(new PermissionViewModel { Key = CreateMeasurementUnitPermission, DisplayName = "افزودن/حذف/تغییر واحد های اندازه گیری" });
+
+            ps.Add(new PermissionViewModel { Key = CreateMeasurementUnitPermission, DisplayName = "مدیریت واحد های اندازه گیری" });
+
             ps.Add(new PermissionViewModel { Key = AddItemPricePermission, DisplayName = "ثبت قیمت برای محصولات" });
             ps.Add(new PermissionViewModel { Key = ViewInventoryPermission, DisplayName = "مشاهده موجودی محصولات" });
             ps.Add(new PermissionViewModel { Key = ViewItemsPermission, DisplayName = "مشاهده لیست محصولات" });

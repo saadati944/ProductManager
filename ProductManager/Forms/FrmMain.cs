@@ -65,7 +65,7 @@ namespace Tappe.Forms
 
             btnPricesList.Visible = _permissions.GetLoggedInUserPermission(Permissions.ViewItemsPriceListPermission);
 
-            btnAddProduct.Visible = _permissions.GetLoggedInUserPermission(Permissions.CreateEditRemoveItemPermission);
+            btnAddProduct.Visible = _permissions.GetLoggedInUserPermission(Permissions.CreateItemPermission);
             btnAddSellingInvoice.Visible = _permissions.GetLoggedInUserPermission(Permissions.CreateSellInvoicePermission);
             btnAddBuyingInvoice.Visible = _permissions.GetLoggedInUserPermission(Permissions.CreateBuyInvoicePermission);
             btnAddItemPrice.Visible = _permissions.GetLoggedInUserPermission(Permissions.AddItemPricePermission);

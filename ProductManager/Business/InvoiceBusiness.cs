@@ -13,9 +13,6 @@ namespace Tappe.Business
 
     public abstract class InvoiceBusiness
     {
-        private static readonly int _stockRefColumnIndex = 1;
-
-
         protected readonly Data.Repositories.SellInvoicesRepository _sellInvoicesRepository;
         protected readonly Data.Repositories.BuyInvoicesRepository _buyInvoicesRepository;
         protected readonly Database _database;
