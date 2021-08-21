@@ -60,7 +60,7 @@ namespace Tappe.Data
             return rows.Select(x => { T t = new T(); t.MapToModel(x); return t; });
         }
 
-        //TODO: use transaction in these function
+        //TODO: use transaction in these functions
         public SqlDataAdapter GetDataAdapter<T>(SqlConnection connection, string condition = null, string orderby = null, int top = -1)
             where T : Models.Model, new()
         {
@@ -68,7 +68,7 @@ namespace Tappe.Data
             return new Commands.SelectCommand(connection, null, temp.TableName(), temp.Columns(), condition, orderby, top).GetDataAdapter();
         }
 
-        public System.Data.DataSet CustomeQuery(string query, string[] parameterNames = null, object[] parameterValues = null)
+        public DataSet CustomeQuery(string query, string[] parameterNames = null, object[] parameterValues = null)
         {
             return new Commands.SelectCommand(_connection, query, parameterNames, parameterValues).ExecuteDataset();
         }

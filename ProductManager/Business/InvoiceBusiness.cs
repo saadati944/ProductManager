@@ -15,6 +15,8 @@ namespace Tappe.Business
     {
         protected readonly Data.Repositories.SellInvoicesRepository _sellInvoicesRepository;
         protected readonly Data.Repositories.BuyInvoicesRepository _buyInvoicesRepository;
+        protected const string _itemNameColumnName = "ItemName";
+        protected const string _stockNameColumnName = "StockName";
         protected readonly Database _database;
 
         public IEnumerable<Invoice> Invoices { get { return null; } }
@@ -57,6 +59,7 @@ namespace Tappe.Business
             for (int i = 0; i < invoiceDataTable.Rows.Count; i++)
             {
                 DataRow row = invoiceDataTable.Rows[i];
+                row.ClearErrors();
                 if (row[Invoice.PartyRefColumnName] is DBNull || (int)row[Invoice.PartyRefColumnName] < 1)
                 {
                     row.SetColumnError(Invoice.PartyRefColumnName, "این فیلد اجباری میباشد");
@@ -94,14 +97,18 @@ namespace Tappe.Business
         public static bool ValidateInvoiceItemsDataTable(DataTable invoiceItemsDataTable, bool checkQuantity = false)
         {
             bool result = true;
-
+            
             foreach (DataRow row in invoiceItemsDataTable.Rows)
             {
+                row.ClearErrors();
                 bool item = true;
                 if (row[InvoiceItem.ItemRefColumnName] is DBNull || (int)row[InvoiceItem.ItemRefColumnName] < 1)
                 {
                     result = false;
-                    row.SetColumnError(InvoiceItem.ItemRefColumnName, "این فیلد اجباری میباشد");
+                    if (invoiceItemsDataTable.Columns.Contains(_itemNameColumnName))
+                        row.SetColumnError(_itemNameColumnName, "این فیلد اجباری میباشد");
+                    else
+                        row.SetColumnError(InvoiceItem.ItemRefColumnName, "این فیلد اجباری میباشد");
                     item = false;
                 }
 
@@ -109,7 +116,10 @@ namespace Tappe.Business
                 if (row[InvoiceItem.StockRefColumnName] is DBNull || (int)row[InvoiceItem.StockRefColumnName] < 1)
                 {
                     result = false;
-                    row.SetColumnError(InvoiceItem.StockRefColumnName, "این فیلد اجباری میباشد");
+                    if (invoiceItemsDataTable.Columns.Contains(_stockNameColumnName))
+                        row.SetColumnError(_stockNameColumnName, "این فیلد اجباری میباشد");
+                    else
+                        row.SetColumnError(InvoiceItem.StockRefColumnName, "این فیلد اجباری میباشد");
                     stock = false;
                 }
 

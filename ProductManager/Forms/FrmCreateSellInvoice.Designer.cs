@@ -52,7 +52,7 @@
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.errorProviderItems = new System.Windows.Forms.ErrorProvider(this.components);
             this.Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Stock = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.StockName = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.ItemName = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Delete = new System.Windows.Forms.DataGridViewButtonColumn();
             this.panel2.SuspendLayout();
@@ -281,7 +281,7 @@
             this.itemsGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.itemsGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Id,
-            this.Stock,
+            this.StockName,
             this.ItemName,
             this.Delete});
             this.itemsGridView.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -320,12 +320,12 @@
             this.Id.ReadOnly = true;
             this.Id.Visible = false;
             // 
-            // Stock
+            // StockName
             // 
-            this.Stock.FillWeight = 150F;
-            this.Stock.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Stock.HeaderText = "انبار";
-            this.Stock.Name = "Stock";
+            this.StockName.FillWeight = 150F;
+            this.StockName.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.StockName.HeaderText = "انبار";
+            this.StockName.Name = "StockName";
             // 
             // ItemName
             // 
@@ -402,7 +402,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
         private System.Windows.Forms.ErrorProvider errorProviderItems;
         private System.Windows.Forms.DataGridViewTextBoxColumn Id;
-        private System.Windows.Forms.DataGridViewComboBoxColumn Stock;
+        private System.Windows.Forms.DataGridViewComboBoxColumn StockName;
         private System.Windows.Forms.DataGridViewComboBoxColumn ItemName;
         private System.Windows.Forms.DataGridViewButtonColumn Delete;
     }

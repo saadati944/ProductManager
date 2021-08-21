@@ -162,7 +162,6 @@ namespace Tappe.Forms
                     itemsGridView.Rows[e.RowIndex].Cells[_itemIdColumnIndex].Value = -1;
                     return;
                 }
-                ((DataGridViewButtonCell)itemsGridView.Rows[e.RowIndex].Cells[_deleteBtnColumnIndex]).Value = "حذف";
                 var item = _itemsBusiness.GetItemModel((string)itemsGridView.Rows[e.RowIndex].Cells[_itemColumnIndex].Value);
                 itemsGridView.Rows[e.RowIndex].Cells[_itemIdColumnIndex].Value = item.Id;
                 itemsGridView.Rows[e.RowIndex].Cells[_feeColumnIndex].Value = _itemsBusiness.GetItemPrice(item.Id, (DateTime)_invoiceDataTable.Rows[0][Invoice.DateColumnName]).Price;
@@ -185,6 +184,8 @@ namespace Tappe.Forms
                 CalculateTotalPrice();
             }
 
+            if(((DataGridViewButtonCell)itemsGridView.Rows[e.RowIndex].Cells[_deleteBtnColumnIndex]).Value == null)
+                ((DataGridViewButtonCell)itemsGridView.Rows[e.RowIndex].Cells[_deleteBtnColumnIndex]).Value = "حذف";
         }
 
         protected override string[] StockItems(int stockref)

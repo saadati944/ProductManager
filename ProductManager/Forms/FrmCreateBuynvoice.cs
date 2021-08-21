@@ -186,6 +186,8 @@ namespace Tappe.Forms
                     + (decimal)itemsGridView.Rows[e.RowIndex].Cells[_taxcolumnName].Value;
                 CalculateTotalPrice();
             }
+            if (((DataGridViewButtonCell)itemsGridView.Rows[e.RowIndex].Cells[_deleteBtnColumnIndex]).Value == null)
+                ((DataGridViewButtonCell)itemsGridView.Rows[e.RowIndex].Cells[_deleteBtnColumnIndex]).Value = "حذف";
         }
 
         protected override string[] StockItems(int stockref)
