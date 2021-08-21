@@ -43,12 +43,12 @@ namespace Tappe.Forms
         protected readonly Dictionary<string, int> _stockNameRefs;
 
 
-        public FrmCreateInvoice()
+        public FrmCreateInvoice(StructureMap.IContainer container)
         {
-            _database = container.Create<Database>();
-            _buyInvoiceBusiness = container.Create<BuyInvoiceBusiness>();
-            _sellInvoiceBusiness = container.Create<SellInvoiceBusiness>();
-            _itemsBusiness = container.Create<ItemsBusiness>();
+            _database = container.GetInstance<Database>();
+            _buyInvoiceBusiness = container.GetInstance<BuyInvoiceBusiness>();
+            _sellInvoiceBusiness = container.GetInstance<SellInvoiceBusiness>();
+            _itemsBusiness = container.GetInstance<ItemsBusiness>();
             _stockNameRefs = new Dictionary<string, int>();
             foreach (Stock x in _database.Stocks)
                 _stockNameRefs.Add(x.Name, x.Id);
@@ -57,8 +57,11 @@ namespace Tappe.Forms
         {
             for (int i = 0; i < _invoiceItemsDataTable.Rows.Count; i++)
             {
+                if (itemsGridView.Rows[i].Cells[_stockColumnIndex].Value is DBNull || itemsGridView.Rows[i].Cells[_stockColumnIndex].Value == null)
+                    continue;
+                string sn = (string)itemsGridView.Rows[i].Cells[_stockColumnIndex].Value;
                 int stockref = _stockNameRefs[(string)itemsGridView.Rows[i].Cells[_stockColumnIndex].Value];
-                _invoiceItemsDataTable.Rows[i][Invoice.StockRefColumnName] = stockref;
+                    _invoiceItemsDataTable.Rows[i][_stockColumnIndex] = stockref;
             }
         }
 
@@ -78,7 +81,6 @@ namespace Tappe.Forms
                 row[Invoice.NumberColumnName] = 0;
                 row[Invoice.DateColumnName] = DateTime.Now;
                 row[Invoice.TotalPriceColumnName] = 0;
-                row[Invoice.StockRefColumnName] = -1;
                 row[Invoice.PartyRefColumnName] = -1;
                 row[Invoice.UserRefColumnName] = -1;
 

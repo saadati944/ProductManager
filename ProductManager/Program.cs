@@ -9,6 +9,7 @@ namespace Tappe
 {
     static class Program
     {
+        public static StructureMap.IContainer Container;
         public static Data.Models.User LoggedInUser;
 
         /// <summary>
@@ -17,6 +18,7 @@ namespace Tappe
         [STAThread]
         static void Main()
         {
+            Container = StructureMap.Container.For<InstanceScanner>();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 

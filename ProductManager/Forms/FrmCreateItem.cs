@@ -18,11 +18,11 @@ namespace Tappe.Forms
         private readonly Data.Repositories.MeasurementUnitsRepository _measurementUnitsRepository;
         private DataTable _dataTable;
 
-        public FrmCreateItem(int itemId = -1)
+        public FrmCreateItem(StructureMap.IContainer container, int itemId = -1)
         {
             InitializeComponent();
-            _itemsBusiness = container.Create<Business.ItemsBusiness>();
-            _measurementUnitsRepository = container.Create<Data.Repositories.MeasurementUnitsRepository>();
+            _itemsBusiness = container.GetInstance<Business.ItemsBusiness>();
+            _measurementUnitsRepository = container.GetInstance<Data.Repositories.MeasurementUnitsRepository>();
             _measurementUnitsRepository.Update();
             cmbMeasurementUnits.Items.AddRange(_measurementUnitsRepository.MeasurementUnits.ToArray());
 

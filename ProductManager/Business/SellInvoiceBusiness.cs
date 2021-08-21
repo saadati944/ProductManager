@@ -34,9 +34,14 @@ namespace Tappe.Business
             }
         }
 
+        public SellInvoiceBusiness(Database database, Data.Repositories.SellInvoicesRepository sellInvoicesRepository, Data.Repositories.BuyInvoicesRepository buyInvoicesRepository) : base(database, sellInvoicesRepository, buyInvoicesRepository)
+        {
+
+        }
+
         public static SellInvoice FullLoadSellInvoice(int number, SqlConnection connection = null, SqlTransaction transaction = null)
         {
-            Database db = container.Create<Database>();
+            Database db = Program.Container.GetInstance<Data.Database>();
             SellInvoice sellInvoice = null;
             try
             {
@@ -78,7 +83,6 @@ namespace Tappe.Business
                 newRow[SellInvoice.NumberColumnName] = row[SellInvoice.NumberColumnName];
                 newRow[SellInvoice.PartyRefColumnName] = row[SellInvoice.PartyRefColumnName];
                 newRow[SellInvoice.UserRefColumnName] = row[SellInvoice.UserRefColumnName];
-                newRow[SellInvoice.StockRefColumnName] = row[SellInvoice.StockRefColumnName];
                 newRow[SellInvoice.DateColumnName] = row[SellInvoice.DateColumnName];
                 newRow[SellInvoice.TotalPriceColumnName] = row[SellInvoice.TotalPriceColumnName];
                 table.Rows.Add(newRow);

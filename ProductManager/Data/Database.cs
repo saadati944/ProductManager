@@ -259,17 +259,17 @@ namespace Tappe.Data
     {
         public static void Save(this Models.Model model)
         {
-            container.Create<Database>().Save(model);
+            Program.Container.GetInstance<Database>().Save(model);
         }
 
         public static void Load(this Models.Model model)
         {
-            container.Create<Database>().Load(model);
+            Program.Container.GetInstance<Database>().Load(model);
         }
 
         public static void Delete(this Models.Model model)
         {
-            container.Create<Database>().Delete(model);
+            Program.Container.GetInstance<Database>().Delete(model);
         }
     }
 }

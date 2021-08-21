@@ -57,9 +57,9 @@ namespace Tappe.Business
 
         public const string Permission = "";
 
-        public Permissions()
+        public Permissions(Database database)
         {
-            _database = container.Create<Database>();
+            _database = database;
         }
 
         public bool GetLoggedInUserPermission(string name)

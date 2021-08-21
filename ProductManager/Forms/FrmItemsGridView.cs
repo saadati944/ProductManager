@@ -25,10 +25,10 @@ namespace Tappe.Forms
         private readonly ItemsRepository _itemsRepository;
         private readonly Permissions _permissions;
 
-        public FrmItemsGridView(ItemsRepository itemsRepository) : base()
+        public FrmItemsGridView(Database database, Settings settings, ItemsRepository itemsRepository, Permissions permissions) : base(database, settings)
         {
             _itemsRepository = itemsRepository;
-            _permissions = container.Create<Permissions>();
+            _permissions = permissions;
             SetTitle(_title);
 
             _itemsRepository.Update();
@@ -73,7 +73,7 @@ namespace Tappe.Forms
             dataGridView.ClearSelection();
             dataGridView.Rows[e.RowIndex].Selected = true;
             dataGridView.CurrentCell = dataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex];
-            new FrmCreateItem((int)dataGridView.CurrentRow.Cells[_idColumnName].Value).ShowDialog();
+            new FrmCreateItem(Program.Container, (int)dataGridView.CurrentRow.Cells[_idColumnName].Value).ShowDialog();
             _itemsRepository.Update();
         }
 
@@ -128,7 +128,7 @@ namespace Tappe.Forms
 
         private void EditMenueItem_Click(object sender, EventArgs e)
         {
-            new FrmCreateItem((int)dataGridView.CurrentRow.Cells[_idColumnName].Value).ShowDialog();
+            new FrmCreateItem(Program.Container, (int)dataGridView.CurrentRow.Cells[_idColumnName].Value).ShowDialog();
             _itemsRepository.Update();
         }
 

@@ -15,10 +15,10 @@ namespace Tappe.Forms
         private readonly Data.Database _database;
         private Data.Models.MeasurementUnit _measurementUnit;
 
-        public FrmMeasurementUnits()
+        public FrmMeasurementUnits(Data.Database database)
         {
             InitializeComponent();
-            _database = container.Create<Data.Database>();
+            _database = database;
             _measurementUnit = new Data.Models.MeasurementUnit();
             changeMode(false);
             updateList();

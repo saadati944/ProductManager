@@ -16,7 +16,7 @@ namespace Tappe.Forms
     public partial class FrmCreateSellInvoice : FrmCreateInvoice
     {
         private int number;
-        public FrmCreateSellInvoice(int invoiceNumber,int number = -1)
+        public FrmCreateSellInvoice(int invoiceNumber, StructureMap.IContainer container, int number = -1) : base(container)
         {
             this.number = number;
             InitializeComponent();
@@ -98,11 +98,7 @@ namespace Tappe.Forms
             b.Parse += new ConvertEventHandler(StringToDate);
             txtDate.DataBindings.Add(b);
 
-            b = new Binding("SelectedIndex", _invoiceDataTable, Invoice.StockRefColumnName, false, DataSourceUpdateMode.OnPropertyChanged);
-            b.Format += new ConvertEventHandler(StockIdToSelectedIndex);
-            b.Parse += new ConvertEventHandler(SelectedIndexToStockId);
-            cmbStocks.DataBindings.Add(b);
-
+            
             //items bindings
             if (itemsGridView.DataSource != null)
                 return;
@@ -150,6 +146,7 @@ namespace Tappe.Forms
                 {
                     int stockref = _stockNameRefs[(string)itemsGridView.Rows[e.RowIndex].Cells[_stockColumnIndex].Value];
                     ((DataGridViewComboBoxCell)itemsGridView.Rows[e.RowIndex].Cells[_itemColumnIndex]).Items.AddRange(StockItems(stockref));
+                    SetInvoiceItemsStockRef(itemsGridView);
                 }
             }
             else if (e.ColumnIndex == _itemColumnIndex)
@@ -249,39 +246,10 @@ namespace Tappe.Forms
             lblTotalPrice.Text = totalprice.ToString();
         }
 
-        private void SelectedIndexToStockId(object sender, ConvertEventArgs cevent)
-        {
-            if (cevent.DesiredType != typeof(int)) return;
-            cevent.Value = ((int)cevent.Value) == -1 ? -1 : ((Stock)cmbStocks.SelectedItem).Id;
-        }
-
-        private void StockIdToSelectedIndex(object sender, ConvertEventArgs cevent)
-        {
-            if (cevent.DesiredType != typeof(int)) return;
-            for (int i = 0; i < cmbStocks.Items.Count; i++)
-            {
-                Stock x = (Stock)cmbStocks.Items[i];
-                if (x.Id == (int)cevent.Value)
-                {
-                    cevent.Value = i;
-                    return;
-                }
-            }
-            cevent.Value = -1;
-        }
-
         private void FrmCreateSellInvoice_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
                 btnCancele_Click(null, null);
-        }
-
-        private void cmbStocks_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (cmbStocks.SelectedIndex == -1)
-                cmbStocks.SelectedIndex = 0;
-
-            _invoiceDataTable.Rows[0][Invoice.StockRefColumnName] = ((Stock)cmbStocks.SelectedItem).Id;
         }
 
         private void txtDate_Leave(object sender, EventArgs e)

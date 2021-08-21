@@ -18,11 +18,11 @@ namespace Tappe.Forms
         private readonly List<Stock> _stocks;
         private readonly Stock _stock;
 
-        public FrmAddStock()
+        public FrmAddStock(Database database)
         {
             InitializeComponent();
 
-            _database = container.Create<Database>();
+            _database = database;
 
             _stocks = _database.Stocks.ToList();
             lstStocks.Items.AddRange(_stocks.ToArray());

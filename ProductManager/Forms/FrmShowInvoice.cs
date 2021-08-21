@@ -24,7 +24,7 @@ namespace Tappe.Forms
         private const string _stockColumnName = "Stock";
 
 
-        public FrmShowInvoice(FrmInvoicesGridView.InvoiceFormType formtype, int number) : base()
+        public FrmShowInvoice(FrmInvoicesGridView.InvoiceFormType formtype, int number, StructureMap.IContainer container) : base(container.GetInstance<Database>(), container.GetInstance<Business.Settings>())
         {
             _number = number;
             _formType = formtype;

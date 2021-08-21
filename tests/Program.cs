@@ -13,7 +13,7 @@ namespace tests
         static void Main(string[] args)
         {
             //var y = Tappe.container.Create<Tappe.Data.Repositories.MeasurementUnitsRepository>();
-            var x = Tappe.container.Create<Tappe.Data.Repositories.ItemsRepository>();
+            // var x = Tappe.cccontainer.Create<Tappe.Data.Repositories.ItemsRepository>();
             //y.Update();
             // Console.WriteLine(x.GetItemPrice(2, new DateTime(2020, 01, 04)));
 

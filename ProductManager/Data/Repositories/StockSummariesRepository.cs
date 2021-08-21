@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Tappe.Data.Repositories
 {
-    class StockSummariesRepository : IRepository
+    public class StockSummariesRepository : IRepository
     {
         private DataTable _dataTable = null;
         private readonly Database _database;
@@ -40,13 +40,13 @@ namespace Tappe.Data.Repositories
 
         public event DataChangeHandler DataChanged;
 
-        public StockSummariesRepository()
+        public StockSummariesRepository(Database database, Business.ItemsBusiness itemsBusiness, SellInvoicesRepository sellInvoicesRepository, BuyInvoicesRepository buyInvoicesRepository, MeasurementUnitsRepository measurementUnitsRepository)
         {
-            _database = container.Create<Database>();
-            _itemsBusiness = container.Create<Business.ItemsBusiness>();
-            _sellInvoicesRepository = container.Create<SellInvoicesRepository>();
-            _buyInvoicesRepository = container.Create<BuyInvoicesRepository>();
-            _measurementUnitsRepository = container.Create<MeasurementUnitsRepository>();
+            _database = database;
+            _itemsBusiness = itemsBusiness;
+            _sellInvoicesRepository = sellInvoicesRepository;
+            _buyInvoicesRepository = buyInvoicesRepository;
+            _measurementUnitsRepository = measurementUnitsRepository;
 
             _itemsBusiness.ItemsRepository.DataChanged += Update;
             _sellInvoicesRepository.DataChanged += Update;

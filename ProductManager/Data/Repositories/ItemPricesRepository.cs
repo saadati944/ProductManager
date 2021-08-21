@@ -43,10 +43,10 @@ namespace Tappe.Data.Repositories
 
         public event DataChangeHandler DataChanged;
 
-        public ItemPricesRepository()
+        public ItemPricesRepository(Database database, Business.ItemsBusiness itemsbusiness)
         {
-            _database = container.Create<Database>();
-            _itemsBusiness = container.Create<Business.ItemsBusiness>();
+            _database = database;
+            _itemsBusiness = itemsbusiness;
             _itemsRepository = _itemsBusiness.ItemsRepository;
 
 

@@ -36,9 +36,9 @@ namespace Tappe.Data.Repositories
 
         public event DataChangeHandler DataChanged;
 
-        public MeasurementUnitsRepository()
+        public MeasurementUnitsRepository(Database database)
         {
-            _database = container.Create<Database>();
+            _database = database;
         }
 
         public Models.MeasurementUnit GetUnit(string name)

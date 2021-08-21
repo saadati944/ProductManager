@@ -16,11 +16,11 @@ namespace Tappe.Forms
         private readonly Permissions _permissions;
         private int _userref;
 
-        public FrmPermissions()
+        public FrmPermissions(Permissions permissions, Data.Database database)
         {
             InitializeComponent();
-            _permissions = container.Create<Permissions>();
-            foreach (var x in container.Create<Data.Database>().Users)
+            _permissions = permissions;
+            foreach (var x in database.Users)
                 if(x.Id != Program.LoggedInUser.Id)
                     cmbUsers.Items.Add(x);
         }

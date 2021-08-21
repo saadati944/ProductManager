@@ -12,9 +12,9 @@ namespace Tappe.Forms
         private readonly Data.Models.Item _item;
         private DataTable _dataTable;
 
-        public FrmItemLastPrices(int itemRef)
+        public FrmItemLastPrices(int itemRef, StructureMap.IContainer container) : base(container.GetInstance<Data.Database>(), container.GetInstance<Business.Settings>())
         {
-            _item = container.Create<Business.ItemsBusiness>().GetItemModel(itemRef);
+            _item = container.GetInstance<Business.ItemsBusiness>().GetItemModel(itemRef);
             SetTitle("لیست قیمت های " + _item.Name);
 
             _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _persianDateColumnName, DisplayName = "تاریخ" });

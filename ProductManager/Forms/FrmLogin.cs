@@ -21,7 +21,7 @@ namespace Tappe.Forms
         private void UpdateUsersList()
         {
             cmbUsers.Items.Clear();
-            cmbUsers.Items.AddRange(container.Create<Data.Database>().Users.ToArray());
+            cmbUsers.Items.AddRange(Program.Container.GetInstance<Data.Database>().Users.ToArray());
             cmbUsers.SelectedIndex = 0;
         }
 

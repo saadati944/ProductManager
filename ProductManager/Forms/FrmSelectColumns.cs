@@ -20,7 +20,7 @@ namespace Tappe.Forms
         public FrmSelectColumns(List<ColumnSelectInfo> columns)
         {
             InitializeComponent();
-            _settings = container.Create<Business.Settings>();
+            _settings = Program.Container.GetInstance<Business.Settings>();
             _columns = columns;
             TopLevel = false;
             AddCheckboxes();

@@ -12,9 +12,9 @@ namespace Tappe.Business
     {
         private readonly Database _database;
 
-        public Settings()
+        public Settings(Database database)
         {
-            _database = container.Create<Database>();
+            _database = database;
         }
 
         public string GetSetting(string name, string def = null)

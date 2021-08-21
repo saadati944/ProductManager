@@ -31,10 +31,10 @@ namespace Tappe.Business
             }
         }
 
-        public ItemsBusiness()
+        public ItemsBusiness(Database database, Data.Repositories.ItemsRepository itemsrepo)
         {
-            _database = container.Create<Database>();
-            _itemsRepository = container.Create<Data.Repositories.ItemsRepository>();
+            _database = database;
+            _itemsRepository = itemsrepo;
         }
         public bool IsItemNameExists(string name)
         {
@@ -45,20 +45,19 @@ namespace Tappe.Business
         {
             try
             {
-                return container.Create<Database>().GetAll<StockSummary>(null, null, "StockRef="+stockRef+" AND ItemRef=" + itemRef, null, 1).First().Quantity;
+                return Program.Container.GetInstance<Database>().GetAll<StockSummary>(null, null, "StockRef="+stockRef+" AND ItemRef=" + itemRef, null, 1).First().Quantity;
             }
             catch { }
             return 0;
         }
 
-        public  string[] GetItemNamesInStock(int stockref)
+        public string[] GetItemNamesInStock(int stockref)
         {
-            var itemsBusiness = container.Create<ItemsBusiness>();
             var stockSummaries = _database.GetAll<StockSummary>(null, null, "StockRef=" + stockref);
             List<string> items = new List<string>();
             foreach(var x in stockSummaries)
                 if(x.Quantity > 0)
-                    items.Add((string) itemsBusiness.GetItem(x.ItemRef).Rows[0][Item.NameColumnName]);
+                    items.Add((string) GetItem(x.ItemRef).Rows[0][Item.NameColumnName]);
             return items.ToArray();
         }
 

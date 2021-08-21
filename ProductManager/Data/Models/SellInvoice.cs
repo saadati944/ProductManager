@@ -23,23 +23,21 @@ namespace Tappe.Data.Models
 
         public override string[] Columns()
         {
-            return new string[] { NumberColumnName, PartyRefColumnName, UserRefColumnName, DateColumnName, TotalPriceColumnName, StockRefColumnName};
+            return new string[] { NumberColumnName, PartyRefColumnName, UserRefColumnName, DateColumnName, TotalPriceColumnName};
         }
 
         public override string[] GetValues()
         {
-            return new string[] { Number.ToString(), PartyRef.ToString(), UserRef.ToString(), Date.ToString("yyyy-MM-dd"), TotalPrice.ToString(), StockRef.ToString()};
+            return new string[] { Number.ToString(), PartyRef.ToString(), UserRef.ToString(), Date.ToString("yyyy-MM-dd"), TotalPrice.ToString()};
         }
 
         public override void Include()
         {
             User = new User { Id = UserRef };
             Party = new Party { Id = PartyRef };
-            Stock = new Stock { Id = StockRef };
 
             User.Load();
             Party.Load();
-            Stock.Load();
         }
 
         public override void MapToModel(DataRow row)
@@ -50,7 +48,6 @@ namespace Tappe.Data.Models
             UserRef = GetField(row, UserRefColumnName, UserRef);
             Date = GetField(row, DateColumnName, Date);
             TotalPrice = GetField(row, TotalPriceColumnName, TotalPrice);
-            StockRef = GetField(row, StockRefColumnName, StockRef);
         }
 
         public override string TableName()

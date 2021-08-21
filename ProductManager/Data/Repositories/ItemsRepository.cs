@@ -39,10 +39,10 @@ namespace Tappe.Data.Repositories
 
         public event DataChangeHandler DataChanged;
         
-        public ItemsRepository()
+        public ItemsRepository(Database database, MeasurementUnitsRepository measurementUnitsRepository)
         {
-            _database = container.Create<Database>();
-            _measurementUnitsRepository = container.Create<MeasurementUnitsRepository>();
+            _database = database;
+            _measurementUnitsRepository = measurementUnitsRepository;
 
             if (_measurementUnitsRepository.DataTable == null)
                 _measurementUnitsRepository.Update();

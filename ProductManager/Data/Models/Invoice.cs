@@ -14,7 +14,6 @@ namespace Tappe.Data.Models
         public const string UserRefColumnName = "UserRef";
         public const string DateColumnName = "Date";
         public const string TotalPriceColumnName = "TotalPrice";
-        public const string StockRefColumnName = "StockRef";
 
         public enum InvoiceType
         {
@@ -28,15 +27,13 @@ namespace Tappe.Data.Models
         public User User { get; set; }
         public DateTime Date { get; set; }
         public decimal TotalPrice { get; set; }
-        public int StockRef { get; set; }
-        public Stock Stock { get; set; }
 
 
         public new bool Included
         {
             get
             {
-                return Party != null && User != null && Stock != null;
+                return Party != null && User != null;
             }
         }
 

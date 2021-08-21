@@ -16,10 +16,10 @@ namespace Tappe.Forms
         private readonly Business.ItemsBusiness _itemsBusiness;
         private Data.Models.ItemPrice _itemPrice = new Data.Models.ItemPrice();
 
-        public FrmAddItemPrice()
+        public FrmAddItemPrice(Business.ItemsBusiness itemsBusiness)
         {
             InitializeComponent();
-            _itemsBusiness = container.Create<Business.ItemsBusiness>();
+            _itemsBusiness = itemsBusiness;
             cmbItems.Items.AddRange(_itemsBusiness.Items.ToArray());
             _itemPrice.Date = DateTime.Now;
 

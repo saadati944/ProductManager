@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="StructureMap, Version=4.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\StructureMap.4.7.1\lib\net45\StructureMap.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -51,7 +54,7 @@
     <Compile Include="Business\ItemsBusiness.cs" />
     <Compile Include="Business\Permissions.cs" />
     <Compile Include="Business\SellInvoiceBusiness.cs" />
-    <Compile Include="container.cs" />
+    <Compile Include="cccontainer.cs" />
     <Compile Include="CustomControls\NumericUpDownEditingControl.cs" />
     <Compile Include="Data\Commands\DeleteCommand.cs" />
     <Compile Include="Data\Commands\InsertCommand.cs" />
@@ -182,6 +185,7 @@
     <Compile Include="Forms\FrmUserInfo.Designer.cs">
       <DependentUpon>FrmUserInfo.cs</DependentUpon>
     </Compile>
+    <Compile Include="InstanceScanner.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\Repositories\ItemsRepository.cs" />
@@ -233,6 +237,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="packages.config" />
     <None Include="Properties\DataSources\System.Data.DataTable.datasource" />
     <None Include="Properties\DataSources\Tappe.Data.Models.Item.datasource" />
     <None Include="Properties\DataSources\Tappe.Data.Models.User.datasource" />

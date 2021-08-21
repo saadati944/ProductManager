@@ -35,8 +35,6 @@
             this.lblTotalPrice = new System.Windows.Forms.Label();
             this.lblTotalPriceLable = new System.Windows.Forms.Label();
             this.pnlControls = new System.Windows.Forms.Panel();
-            this.label8 = new System.Windows.Forms.Label();
-            this.cmbStocks = new System.Windows.Forms.ComboBox();
             this.txtDate = new System.Windows.Forms.MaskedTextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.numInvoiceNumber = new System.Windows.Forms.NumericUpDown();
@@ -129,8 +127,6 @@
             // 
             // pnlControls
             // 
-            this.pnlControls.Controls.Add(this.label8);
-            this.pnlControls.Controls.Add(this.cmbStocks);
             this.pnlControls.Controls.Add(this.txtDate);
             this.pnlControls.Controls.Add(this.label7);
             this.pnlControls.Controls.Add(this.numInvoiceNumber);
@@ -147,25 +143,6 @@
             this.pnlControls.Name = "pnlControls";
             this.pnlControls.Size = new System.Drawing.Size(867, 126);
             this.pnlControls.TabIndex = 8;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(506, 53);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(31, 13);
-            this.label8.TabIndex = 14;
-            this.label8.Text = "انبار :";
-            // 
-            // cmbStocks
-            // 
-            this.cmbStocks.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbStocks.FormattingEnabled = true;
-            this.cmbStocks.Location = new System.Drawing.Point(305, 50);
-            this.cmbStocks.Name = "cmbStocks";
-            this.cmbStocks.Size = new System.Drawing.Size(195, 21);
-            this.cmbStocks.TabIndex = 3;
-            this.cmbStocks.SelectedIndexChanged += new System.EventHandler(this.cmbStocks_SelectedIndexChanged);
             // 
             // txtDate
             // 
@@ -421,8 +398,6 @@
         private System.Windows.Forms.DataGridView itemsGridView;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.ComboBox cmbStocks;
         private System.Windows.Forms.ErrorProvider errorProviderHeader;
         private System.Windows.Forms.ErrorProvider errorProviderItems;
         private System.Windows.Forms.DataGridViewTextBoxColumn Id;

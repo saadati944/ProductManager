@@ -18,10 +18,10 @@ namespace Tappe.Forms
         private const string _stockNameColumnName = "Stock";
         private const string _quantityColumnName = "Quantity";
         private const string _measurementUnitColumnName = "MeasurementUnit";
-        public FrmInventoryGridView() : base()
+        public FrmInventoryGridView(Database database, Business.Settings settings, MeasurementUnitsRepository measurementUnitsRepository, StockSummariesRepository stockSummariesRepository) : base(database, settings)
         {
-            _stockSummariesRepository = container.Create<StockSummariesRepository>();
-            _measurementUnitsRepository = container.Create<MeasurementUnitsRepository>();
+            _stockSummariesRepository = stockSummariesRepository;
+            _measurementUnitsRepository = measurementUnitsRepository;
             _measurementUnitsRepository.DataChanged += RepositoriesChanged;
 
 

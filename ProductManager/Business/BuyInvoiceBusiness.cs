@@ -33,9 +33,15 @@ namespace Tappe.Business
                 return _database.BuyInvoiceItems;
             }
         }
+
+        public BuyInvoiceBusiness(Database database, Data.Repositories.SellInvoicesRepository sellInvoicesRepository, Data.Repositories.BuyInvoicesRepository buyInvoicesRepository) : base(database, sellInvoicesRepository, buyInvoicesRepository)
+        {
+
+        }
+
         public static BuyInvoice FullLoadBuyInvoice(int number, SqlConnection connection = null, SqlTransaction transaction = null)
         {
-            Database db = container.Create<Database>();
+            Database db = Program.Container.GetInstance<Database>();
             BuyInvoice buyInvoice = null;
             try
             {
@@ -76,7 +82,6 @@ namespace Tappe.Business
                 newRow[BuyInvoice.NumberColumnName] = row[BuyInvoice.NumberColumnName];
                 newRow[BuyInvoice.PartyRefColumnName] = row[BuyInvoice.PartyRefColumnName];
                 newRow[BuyInvoice.UserRefColumnName] = row[BuyInvoice.UserRefColumnName];
-                newRow[BuyInvoice.StockRefColumnName] = row[BuyInvoice.StockRefColumnName];
                 newRow[BuyInvoice.DateColumnName] = row[BuyInvoice.DateColumnName];
                 newRow[BuyInvoice.TotalPriceColumnName] = row[BuyInvoice.TotalPriceColumnName];
                 table.Rows.Add(newRow);
@@ -225,7 +230,7 @@ namespace Tappe.Business
 
                     var q = ItemQuantity(x.ItemRef, x.StockRef, connection, transaction);
                     if (q == null)
-                        q = new StockSummary { ItemRef = x.ItemRef, StockRef = invoice.StockRef, Quantity = 0 };
+                        q = new StockSummary { ItemRef = x.ItemRef, StockRef = x.StockRef, Quantity = 0 };
                     q.Quantity += x.Quantity;
                     _database.Save(q, connection, transaction);
                 }

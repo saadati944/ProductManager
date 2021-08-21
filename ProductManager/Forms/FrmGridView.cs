@@ -16,12 +16,12 @@ namespace Tappe.Forms
         protected readonly Business.Settings _settings;
         protected readonly List<ColumnSelectInfo> _columnSettings = new List<ColumnSelectInfo>();
 
-        public FrmGridView()
+        public FrmGridView(Data.Database database, Business.Settings settings)
         {
             TopLevel = false;
             InitializeComponent();
-            _database = container.Create<Data.Database>();
-            _settings = container.Create<Business.Settings>();
+            _database = database;
+            _settings = settings;
         }
 
 

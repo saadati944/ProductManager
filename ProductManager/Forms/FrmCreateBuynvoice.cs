@@ -16,7 +16,7 @@ namespace Tappe.Forms
     public partial class FrmCreateBuyInvoice : FrmCreateInvoice
     {
         private int number;
-        public FrmCreateBuyInvoice(int invoiceNumber, int number = -1)
+        public FrmCreateBuyInvoice(int invoiceNumber, StructureMap.IContainer container, int number = -1) : base(container)
         {
             this.number = number;
             InitializeComponent();
@@ -98,10 +98,6 @@ namespace Tappe.Forms
             b.Parse += new ConvertEventHandler(StringToDate);
             txtDate.DataBindings.Add(b);
 
-            b = new Binding("SelectedIndex", _invoiceDataTable, Invoice.StockRefColumnName, false, DataSourceUpdateMode.OnPropertyChanged);
-            b.Format += new ConvertEventHandler(StockIdToSelectedIndex);
-            b.Parse += new ConvertEventHandler(SelectedIndexToStockId);
-            cmbStocks.DataBindings.Add(b);
 
             //items bindings
             if (itemsGridView.DataSource != null)
@@ -152,6 +148,7 @@ namespace Tappe.Forms
                 {
                     int stockref = _stockNameRefs[(string)itemsGridView.Rows[e.RowIndex].Cells[_stockColumnIndex].Value];
                     ((DataGridViewComboBoxCell)itemsGridView.Rows[e.RowIndex].Cells[_itemColumnIndex]).Items.AddRange(StockItems(stockref));
+                    SetInvoiceItemsStockRef(itemsGridView);
                 }
             }
             else if (e.ColumnIndex == _itemColumnIndex)
@@ -198,7 +195,9 @@ namespace Tappe.Forms
         {
             errorProviderHeader.Clear();
             errorProviderItems.Clear();
-            SetInvoiceItemsStockRef(itemsGridView);
+
+            // SetInvoiceItemsStockRef(itemsGridView);
+
             _invoiceDataTable.Rows[0][Invoice.PartyRefColumnName] = GetPartyRef();
             if (!Business.InvoiceBusiness.ValidateInvoiceDataTable(_invoiceDataTable, _sellInvoiceBusiness, _originalInvoiceNumber == -1 ? _lockedInvoiceNumber : _originalInvoiceNumber)
                 | !Business.InvoiceBusiness.ValidateInvoiceItemsDataTable(_invoiceItemsDataTable) | !ValidateChildren(ValidationConstraints.Enabled))
@@ -250,35 +249,6 @@ namespace Tappe.Forms
             }
 
             lblTotalPrice.Text = totalprice.ToString();
-        }
-
-        private void SelectedIndexToStockId(object sender, ConvertEventArgs cevent)
-        {
-            if (cevent.DesiredType != typeof(int)) return;
-            cevent.Value = ((int)cevent.Value) == -1 ? -1 : ((Stock)cmbStocks.SelectedItem).Id;
-        }
-
-        private void StockIdToSelectedIndex(object sender, ConvertEventArgs cevent)
-        {
-            if (cevent.DesiredType != typeof(int)) return;
-            for(int i=0; i<cmbStocks.Items.Count; i++)
-            {
-            Stock x = (Stock) cmbStocks.Items[i];
-                if(x.Id == (int)cevent.Value)
-                {
-                    cevent.Value = i;
-                    return;
-                }
-            }
-            cevent.Value = -1;
-        }
-
-        private void cmbStocks_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (cmbStocks.SelectedIndex == -1)
-                cmbStocks.SelectedIndex = 0;
-
-            _invoiceDataTable.Rows[0][Invoice.StockRefColumnName] = ((Stock)cmbStocks.SelectedItem).Id;
         }
 
         private void FrmCreateBuyInvoice_KeyDown(object sender, KeyEventArgs e)

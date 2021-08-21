@@ -8,11 +8,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Tappe.Business;
+using StructureMap;
 
 namespace Tappe.Forms
 {
     public partial class FrmMain : Form
     {
+        private readonly StructureMap.IContainer container;
+
         private readonly Data.Repositories.ItemsRepository _itemsRepository;
         private readonly Data.Repositories.MeasurementUnitsRepository _measurementUnitsRepository;
         private readonly Data.Repositories.SellInvoicesRepository _sellInvoicesRepository;
@@ -28,17 +31,17 @@ namespace Tappe.Forms
         private int childFormTop = 0;
         public FrmMain()
         {
-            container.Reset();
+            container = Program.Container;
             InitializeComponent();
-            _itemsRepository = container.Create<Data.Repositories.ItemsRepository>();
-            _measurementUnitsRepository = container.Create<Data.Repositories.MeasurementUnitsRepository>();
+            _itemsRepository = container.GetInstance<Data.Repositories.ItemsRepository>();
+            _measurementUnitsRepository = container.GetInstance<Data.Repositories.MeasurementUnitsRepository>();
             _measurementUnitsRepository.Update();
 
-            _buyInvoiceBusiness = container.Create<BuyInvoiceBusiness>();
-            _sellInvoiceBusiness = container.Create<SellInvoiceBusiness>();
+            _buyInvoiceBusiness = container.GetInstance<BuyInvoiceBusiness>();
+            _sellInvoiceBusiness = container.GetInstance<SellInvoiceBusiness>();
             _sellInvoicesRepository = _sellInvoiceBusiness.SellInvoicesRepository;
             _buyInvoicesRepository = _buyInvoiceBusiness.BuyInvoicesRepository;
-            _permissions = container.Create<Permissions>();
+            _permissions = container.GetInstance<Permissions>();
 
             UserUpdated();
         }
@@ -80,12 +83,12 @@ namespace Tappe.Forms
 
         private void AddItemsGridViewForm()
         {
-            var frm = new FrmItemsGridView(_itemsRepository);
+            var frm = container.GetInstance<FrmItemsGridView>();
             ShowChildForm(frm);
         }
         private void AddInvoiceGridViewForm(FrmInvoicesGridView.InvoiceFormType formtype)
         {
-            var frm = new FrmInvoicesGridView(formtype, this);
+            var frm = new FrmInvoicesGridView(formtype, this, container);
             ShowChildForm(frm);
         }
         public void ShowChildForm(FrmGridView frm)
@@ -124,7 +127,7 @@ namespace Tappe.Forms
 
         private void btnInventory_Click(object sender, EventArgs e)
         {
-            var frm = new FrmInventoryGridView();
+            var frm = container.GetInstance<FrmInventoryGridView>();
             ShowChildForm(frm);
         }
 
@@ -152,7 +155,7 @@ namespace Tappe.Forms
         }
         private void btnAddProduct_Click(object sender, EventArgs e)
         {
-            new FrmCreateItem().ShowDialog();
+            container.GetInstance<FrmCreateItem>().ShowDialog();
             UpdateItemsRepo();
         }
 
@@ -161,7 +164,7 @@ namespace Tappe.Forms
             int invoiceNumber = _buyInvoiceBusiness.GetLockedInvoiceNumber();
             try
             {
-                new FrmCreateBuyInvoice(invoiceNumber).ShowDialog();
+                new FrmCreateBuyInvoice(invoiceNumber, container).ShowDialog();
                 UpdateInvoicesRepo();
             }
             finally
@@ -175,7 +178,7 @@ namespace Tappe.Forms
             int invoiceNumber = _sellInvoiceBusiness.GetLockedInvoiceNumber();
             try
             {
-                new FrmCreateSellInvoice(invoiceNumber).ShowDialog();
+                new FrmCreateSellInvoice(invoiceNumber, container).ShowDialog();
                 UpdateInvoicesRepo();
             }
             finally
@@ -186,7 +189,7 @@ namespace Tappe.Forms
 
         private void btnMeasurementUnits_Click(object sender, EventArgs e)
         {
-            new FrmMeasurementUnits().ShowDialog();
+            container.GetInstance<FrmMeasurementUnits>().ShowDialog();
             UpdateMeasurementUnitsRepo();
         }
 
@@ -198,18 +201,18 @@ namespace Tappe.Forms
 
         private void btnStocks_Click(object sender, EventArgs e)
         {
-            new FrmAddStock().ShowDialog();
+            container.GetInstance <FrmAddStock>().ShowDialog();
             UpdateItemsRepo();
         }
 
         private void btnPricesList_Click(object sender, EventArgs e)
         {
-            ShowChildForm(new FrmItemsLastPrice(this));
+            ShowChildForm(new FrmItemsLastPrice(this, container));
         }
 
         private void btnAddItemPrice_Click(object sender, EventArgs e)
         {
-            new FrmAddItemPrice().ShowDialog();
+            container.GetInstance < FrmAddItemPrice>().ShowDialog();
             UpdateMeasurementUnitsRepo();
         }
 
@@ -220,13 +223,13 @@ namespace Tappe.Forms
 
         private void btnUserInfo_Click(object sender, EventArgs e)
         {
-            new FrmUserInfo().ShowDialog();
+            container.GetInstance < FrmUserInfo >().ShowDialog();
             UserUpdated();
         }
 
         private void btnPermissions_Click(object sender, EventArgs e)
         {
-            new FrmPermissions().ShowDialog();
+            container.GetInstance < FrmPermissions>().ShowDialog();
         }
 
         private void FrmMain_Load(object sender, EventArgs e)
@@ -238,7 +241,7 @@ namespace Tappe.Forms
 
         private void btnAddUser_Click(object sender, EventArgs e)
         {
-            new FrmSignUp().ShowDialog();
+            container.GetInstance < FrmSignUp>().ShowDialog();
         }
 
         private void FrmMain_KeyDown(object sender, KeyEventArgs e)

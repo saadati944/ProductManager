@@ -21,12 +21,15 @@ namespace Tappe.Forms
         private DataTable _dataTable;
         private readonly FrmMain _frmMain;
 
-        public FrmItemsLastPrice(FrmMain frmMain)
+        private StructureMap.IContainer container;
+
+        public FrmItemsLastPrice(FrmMain frmMain, StructureMap.IContainer container) : base(container.GetInstance<Data.Database>(), container.GetInstance<Business.Settings>())
         {
+            this.container = container;
             _frmMain = frmMain;
             SetTitle("لیست آخرین قیمت محصولات");
             dataGridView.AutoGenerateColumns = false;
-            _itemsBusiness = container.Create<Business.ItemsBusiness>();
+            _itemsBusiness = container.GetInstance<Business.ItemsBusiness>();
             _itemsRepository = _itemsBusiness.ItemsRepository;
 
             
@@ -47,7 +50,7 @@ namespace Tappe.Forms
         {
             if (e.RowIndex == -1)
                 return;
-            _frmMain.ShowChildForm(new FrmItemLastPrices(int.Parse((string)dataGridView.Rows[e.RowIndex].Cells[_itemIdColumnName].Value)));
+            _frmMain.ShowChildForm(new FrmItemLastPrices(int.Parse((string)dataGridView.Rows[e.RowIndex].Cells[_itemIdColumnName].Value), container));
         }
 
         public override void UpdateData()

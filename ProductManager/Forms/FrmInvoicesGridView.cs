@@ -43,17 +43,20 @@ namespace Tappe.Forms
         private const string _persianDateColumnName = "PersianDate";
         private const string _TotalPriceColumnName = "TotalPrice";
 
-        public FrmInvoicesGridView(InvoiceFormType formType, FrmMain frmMain) : base()
+        private StructureMap.IContainer container;
+
+        public FrmInvoicesGridView(InvoiceFormType formType, FrmMain frmMain, StructureMap.IContainer container) : base(container.GetInstance<Data.Database>(), container.GetInstance<Business.Settings>())
         {
+            this.container = container;
             _frmMain = frmMain;
 
-            _buyInvoicesRepository = container.Create<Data.Repositories.BuyInvoicesRepository>();
-            _sellInvoicesRepository = container.Create<Data.Repositories.SellInvoicesRepository>();
+            _buyInvoicesRepository = container.GetInstance<Data.Repositories.BuyInvoicesRepository>();
+            _sellInvoicesRepository = container.GetInstance<Data.Repositories.SellInvoicesRepository>();
 
-            _buyInvoiceBusiness = container.Create<Business.BuyInvoiceBusiness>();
-            _sellInvoiceBusiness = container.Create<Business.SellInvoiceBusiness>();
+            _buyInvoiceBusiness = container.GetInstance<Business.BuyInvoiceBusiness>();
+            _sellInvoiceBusiness = container.GetInstance<Business.SellInvoiceBusiness>();
 
-            _permissions = container.Create<Business.Permissions>();
+            _permissions = container.GetInstance<Business.Permissions>();
 
             if (formType == InvoiceFormType.All || formType == InvoiceFormType.SellingInvoices)
             {
@@ -130,7 +133,7 @@ namespace Tappe.Forms
             {
                 if (_buyInvoiceBusiness.LockInvoiceNumber(invoicenumber))
                 {
-                    new FrmCreateBuyInvoice(invoicenumber, invoicenumber).ShowDialog();
+                    new FrmCreateBuyInvoice(invoicenumber, container, invoicenumber).ShowDialog();
                     _buyInvoiceBusiness.UnlockInvoiceNumber(invoicenumber);
                     _buyInvoicesRepository.Update();
                 }
@@ -142,7 +145,7 @@ namespace Tappe.Forms
             {
                 if (_sellInvoiceBusiness.LockInvoiceNumber(invoicenumber))
                 {
-                    new FrmCreateSellInvoice(invoicenumber, invoicenumber).ShowDialog();
+                    new FrmCreateSellInvoice(invoicenumber, container, invoicenumber).ShowDialog();
                     _sellInvoiceBusiness.UnlockInvoiceNumber(invoicenumber);
                     _sellInvoicesRepository.Update();
                 }
@@ -179,7 +182,7 @@ namespace Tappe.Forms
                 return;
             dataGridView.Rows[e.RowIndex].Selected = true;
             InvoiceFormType formtype = (string)dataGridView.Rows[e.RowIndex].Cells[_typeColumnName].Value == _sellInvoiceColumnText ? InvoiceFormType.SellingInvoices : InvoiceFormType.BuyingInvoices;
-            var frm = new FrmShowInvoice(formtype, (int)dataGridView.Rows[e.RowIndex].Cells[_numberColumnName].Value);
+            var frm = new FrmShowInvoice(formtype, (int)dataGridView.Rows[e.RowIndex].Cells[_numberColumnName].Value, container);
 
             _frmMain.ShowChildForm(frm);
         }

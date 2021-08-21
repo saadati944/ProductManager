@@ -31,9 +31,9 @@ namespace Tappe.Data.Repositories
 
         public event DataChangeHandler DataChanged;
 
-        public SellInvoicesRepository()
+        public SellInvoicesRepository(Database database)
         {
-            _database = container.Create<Database>();
+            _database = database;
         }
 
         public DataTable DataTable
@@ -82,10 +82,6 @@ namespace Tappe.Data.Repositories
                 User user = new User { Id = (int)dr[_userRefColumnName] };
                 user.Load();
                 dr[_userColumnName] = user;
-
-                Stock stock = new Stock { Id = (int)dr[_stockRefColumnName] };
-                stock.Load();
-                dr[_stockColumnName] = stock;
 
                 dr[_persianDateColumnName] = PersianDate.PersianDateStringFromDateTime((DateTime)dr[_dateColumnName]);
 

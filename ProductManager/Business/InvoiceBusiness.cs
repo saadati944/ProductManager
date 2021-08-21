@@ -13,6 +13,9 @@ namespace Tappe.Business
 
     public abstract class InvoiceBusiness
     {
+        private static readonly int _stockRefColumnIndex = 1;
+
+
         protected readonly Data.Repositories.SellInvoicesRepository _sellInvoicesRepository;
         protected readonly Data.Repositories.BuyInvoicesRepository _buyInvoicesRepository;
         protected readonly Database _database;
@@ -20,11 +23,11 @@ namespace Tappe.Business
         public IEnumerable<Invoice> Invoices { get { return null; } }
         public IEnumerable<InvoiceItem> InvoiceItems { get { return null; } }
 
-        public InvoiceBusiness()
+        public InvoiceBusiness(Database database, Data.Repositories.SellInvoicesRepository sellInvoicesRepository, Data.Repositories.BuyInvoicesRepository buyInvoicesRepository)
         {
-            _database = container.Create<Database>();
-            _sellInvoicesRepository = container.Create<Data.Repositories.SellInvoicesRepository>();
-            _buyInvoicesRepository = container.Create<Data.Repositories.BuyInvoicesRepository>();
+            _database = database;
+            _sellInvoicesRepository = sellInvoicesRepository;
+            _buyInvoicesRepository = buyInvoicesRepository;
         }
 
         public abstract bool EditInvoice(int lastNumber, DataTable invoicetable, DataTable invoiceitems);
@@ -44,7 +47,7 @@ namespace Tappe.Business
         {
             try
             {
-                return container.Create<Database>().GetAll<StockSummary>(connection, transaction, String.Format("{0}={1} AND {2}={3}", StockSummary.StockRefColumnName, stockRef, StockSummary.ItemRefColumnName, itemRef), null, 1).First();
+                return _database.GetAll<StockSummary>(connection, transaction, String.Format("{0}={1} AND {2}={3}", StockSummary.StockRefColumnName, stockRef, StockSummary.ItemRefColumnName, itemRef), null, 1).First();
             }
             catch { }
             return new StockSummary { Quantity = 0, ItemRef = itemRef, StockRef = stockRef };
@@ -113,10 +116,10 @@ namespace Tappe.Business
                 }
 
                 bool stock = true;
-                if (row[InvoiceItem.StockRefColumnName] is DBNull || (int)row[InvoiceItem.StockRefColumnName] == -1)
+                if (row[_stockRefColumnIndex] is DBNull || (int)row[_stockRefColumnIndex] == -1)
                 {
                     result = false;
-                    row.SetColumnError(Invoice.StockRefColumnName, "این فیلد اجباری میباشد");
+                    row.SetColumnError(InvoiceItem.StockRefColumnName, "این فیلد اجباری میباشد");
                     stock = false;
                 }
 
