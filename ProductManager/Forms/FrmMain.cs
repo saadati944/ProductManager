@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Tappe.Business;
+using Tappe.Data.Repositories;
 using StructureMap;
 
 namespace Tappe.Forms
@@ -29,19 +30,19 @@ namespace Tappe.Forms
 
         private int childFormLeft = 0;
         private int childFormTop = 0;
-        public FrmMain()
+        public FrmMain(ItemsRepository itemsRepository, MeasurementUnitsRepository measurementUnitsRepository, SellInvoicesRepository sellInvoicesRepository, BuyInvoicesRepository buyInvoicesRepository, BuyInvoiceBusiness buyInvoiceBusiness, SellInvoiceBusiness sellInvoiceBusiness, Permissions permissions)
         {
             container = Program.Container;
             InitializeComponent();
-            _itemsRepository = container.GetInstance<Data.Repositories.ItemsRepository>();
-            _measurementUnitsRepository = container.GetInstance<Data.Repositories.MeasurementUnitsRepository>();
+            _itemsRepository = itemsRepository;
+            _measurementUnitsRepository = measurementUnitsRepository;
             _measurementUnitsRepository.Update();
 
-            _buyInvoiceBusiness = container.GetInstance<BuyInvoiceBusiness>();
-            _sellInvoiceBusiness = container.GetInstance<SellInvoiceBusiness>();
+            _buyInvoiceBusiness = buyInvoiceBusiness;
+            _sellInvoiceBusiness = sellInvoiceBusiness;
             _sellInvoicesRepository = _sellInvoiceBusiness.SellInvoicesRepository;
             _buyInvoicesRepository = _buyInvoiceBusiness.BuyInvoicesRepository;
-            _permissions = container.GetInstance<Permissions>();
+            _permissions = permissions;
 
             UserUpdated();
         }

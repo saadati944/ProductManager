@@ -29,6 +29,7 @@ namespace Tappe.Business
                 s = new Setting();
             s.Name = name;
             s.Value = value;
+            s.UserRef = Program.LoggedInUser.Id;
             _database.Save(s);
         }
 
@@ -36,7 +37,7 @@ namespace Tappe.Business
         {
             try
             {
-                return _database.GetAll<Setting>(null, null, "Name='" + name.Replace("''", "''") + "'").First();
+                return _database.GetAll<Setting>(null, null, String.Format("Name='{0}' AND UserRef={1}", name.Replace("''", "''"), Program.LoggedInUser.Id)).First();
             }
             catch { }
             return null;

@@ -39,7 +39,7 @@ namespace Tappe.Forms
             var user = (Data.Models.User)cmbUsers.SelectedItem;
 
             Program.LoggedInUser = user;
-            FrmMain mainform = new FrmMain();
+            FrmMain mainform = Program.Container.GetInstance<FrmMain>();
             mainform.Shown += delegate (object se, EventArgs ev) { Hide(); };
             mainform.FormClosed += delegate (object se, FormClosedEventArgs ev)
             {
