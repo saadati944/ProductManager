@@ -19,21 +19,6 @@ namespace Tappe.Forms
             InitializeComponent();
             var defaultUser = Program.LoggedInUser;
 
-            //bindingSource.DataSource = new Data.Models.User
-            //{
-            //    Id = defaultUser.Id,
-            //    FirstName = defaultUser.FirstName,
-            //    LastName = defaultUser.LastName,
-            //    Age = defaultUser.Age,
-            //    Gender = defaultUser.Gender,
-            //    Password = defaultUser.Password
-            //};
-
-            //txtFirstName.DataBindings.Add("Text", _user, "FirstName");
-            //txtLastName.DataBindings.Add("Text", _user, "LastName");
-            //numAge.DataBindings.Add("Value", _user, "Age");
-            //radMale.DataBindings.Add("Checked", _user, "Gender");
-
             _user = new Data.Models.User
             {
                 Id = defaultUser.Id,
@@ -43,6 +28,16 @@ namespace Tappe.Forms
                 Gender = radMale.Checked = defaultUser.Gender,
                 Password = defaultUser.Password
             };
+            SetErrorProviderPadding(this, errorProvider, 10, true);
+        }
+        private void SetErrorProviderPadding(Control container, ErrorProvider errorProvider, int value, bool children = false)
+        {
+            foreach (Control x in container.Controls)
+            {
+                errorProvider.SetIconPadding(x, value);
+                if (children)
+                    SetErrorProviderPadding(x, errorProvider, value, true);
+            }
         }
 
         private void Bind()

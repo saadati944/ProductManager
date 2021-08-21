@@ -19,6 +19,7 @@ namespace Tappe.Forms
         public FrmAddItemPrice(Business.ItemsBusiness itemsBusiness)
         {
             InitializeComponent();
+            SetErrorProviderPadding(this, errorProvider, 10);
             _itemsBusiness = itemsBusiness;
             cmbItems.Items.AddRange(_itemsBusiness.Items.ToArray());
             _itemPrice.Date = DateTime.Now;
@@ -28,6 +29,15 @@ namespace Tappe.Forms
             b.Parse += new ConvertEventHandler(StringToDate);
             txtDate.DataBindings.Add(b);
             numPrice.DataBindings.Add("Value", _itemPrice, "Price");
+        }
+        private void SetErrorProviderPadding(Control container, ErrorProvider errorProvider, int value, bool children = false)
+        {
+            foreach(Control x in container.Controls)
+            {
+                errorProvider.SetIconPadding(x, value);
+                if (children)
+                    SetErrorProviderPadding(x, errorProvider, value, true);
+            }
         }
 
         private void FrmAddItemPrice_KeyDown(object sender, KeyEventArgs e)
@@ -96,6 +106,7 @@ namespace Tappe.Forms
 
         private void btnSave_Click(object sender, EventArgs e)
         {
+            errorProvider.Clear();
             if (!ValidateChildren())
                 return;
 

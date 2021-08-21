@@ -10,6 +10,7 @@ namespace Tappe.Data.Repositories
 {
     public class StockSummariesRepository : IRepository
     {
+        //TODO: add a different table for total quantity
         private DataTable _dataTable = null;
         private readonly Database _database;
         private SqlConnection _connection;
@@ -19,7 +20,7 @@ namespace Tappe.Data.Repositories
         private readonly BuyInvoicesRepository _buyInvoicesRepository;
         private readonly MeasurementUnitsRepository _measurementUnitsRepository;
 
-        private List<ItemQuantity> _itemTotalQuantities = new List<ItemQuantity>();
+        //private List<ItemQuantity> _itemTotalQuantities = new List<ItemQuantity>();
 
         private const string _stockRefColumnName = "StockRef";
         private const string _stockColumnName = "Stock";
@@ -55,7 +56,7 @@ namespace Tappe.Data.Repositories
 
         public void Update()
         {
-            _itemTotalQuantities.Clear();
+            //_itemTotalQuantities.Clear();
             if (_connection == null)
             {
                 _connection = _database.GetConnection();
@@ -86,30 +87,30 @@ namespace Tappe.Data.Repositories
                 Models.Stock stock = new Models.Stock { Id = (int)dr[_stockRefColumnName] };
                 stock.Load();
                 dr[_stockColumnName] = stock;
-                AddItemQuantity((int)dr[_itemRefColumnName], (int)dr[_quantityColumnName], (string)dr[_measurementUnitColumnName]);
+                //AddItemQuantity((int)dr[_itemRefColumnName], (int)dr[_quantityColumnName], (string)dr[_measurementUnitColumnName]);
             }
 
-            foreach(var x in _itemTotalQuantities)
-            {
-                Models.Item item = _itemsBusiness.GetItemModel(x.ItemRef);
-                _dataTable.Rows.Add(-1, x.ItemRef, -1, x.Quantity, "مجموع موجودی", item, x.MeasurementUnit);
-            }
+            //foreach(var x in _itemTotalQuantities)
+            //{
+            //    Models.Item item = _itemsBusiness.GetItemModel(x.ItemRef);
+            //    _dataTable.Rows.Add(-1, x.ItemRef, -1, x.Quantity, "مجموع موجودی", item, x.MeasurementUnit);
+            //}
 
             if (DataChanged != null)
                 DataChanged();
         }
 
-        private void AddItemQuantity(int itemref, int quantity, string unit)
-        {
-            foreach(var x in _itemTotalQuantities)
-                if(x.ItemRef == itemref)
-                {
-                    x.Quantity += quantity;
-                    return;
-                }
+        //private void AddItemQuantity(int itemref, int quantity, string unit)
+        //{
+        //    foreach(var x in _itemTotalQuantities)
+        //        if(x.ItemRef == itemref)
+        //        {
+        //            x.Quantity += quantity;
+        //            return;
+        //        }
 
-            _itemTotalQuantities.Add(new ItemQuantity { ItemRef = itemref, Quantity = quantity, MeasurementUnit = unit });
-        }
+        //    _itemTotalQuantities.Add(new ItemQuantity { ItemRef = itemref, Quantity = quantity, MeasurementUnit = unit });
+        //}
 
         private class ItemQuantity
         {

@@ -33,13 +33,22 @@ namespace Tappe.Forms
 
         private void txtName_Validating(object sender, CancelEventArgs e)
         {
-            foreach (Stock x in _stocks)
-                if (x.Name == txtName.Text)
-                {
-                    errorProvider.SetError(txtName, "این نام قبلا ثبت شده است");
-                    e.Cancel = true;
-                    return;
-                }
+            if (String.IsNullOrEmpty(txtName.Text))
+            {
+                errorProvider.SetIconPadding(txtName, 10);
+                errorProvider.SetError(txtName, "نامی را انتخاب کنید");
+                e.Cancel = true;
+                return;
+            }
+            else
+                foreach (Stock x in _stocks)
+                    if (x.Name == txtName.Text)
+                    {
+                        errorProvider.SetIconPadding(txtName, 10);
+                        errorProvider.SetError(txtName, "این نام قبلا ثبت شده است");
+                        e.Cancel = true;
+                        return;
+                    }
 
             errorProvider.SetError(txtName, null);
             e.Cancel = false;
@@ -52,6 +61,7 @@ namespace Tappe.Forms
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
+            errorProvider.Clear();
             if (!ValidateChildren())
                 return;
 

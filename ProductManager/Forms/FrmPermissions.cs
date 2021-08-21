@@ -42,6 +42,7 @@ namespace Tappe.Forms
             chbox.CheckedChanged += Chbox_CheckedChanged;
             chbox.Tag = pvm.Key;
             chbox.FlatStyle = FlatStyle.Flat;
+            chbox.Font = Font;
             chbox.Dock = DockStyle.Top;
             chbox.Height = 25;
             chbox.RightToLeft = RightToLeft.Yes;

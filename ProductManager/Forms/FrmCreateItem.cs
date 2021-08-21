@@ -34,8 +34,17 @@ namespace Tappe.Forms
 
             BindDataTable();
             errorProvider.DataSource = _dataTable;
+            SetErrorProviderPadding(this, errorProvider, 10);
         }
-
+        private void SetErrorProviderPadding(Control container, ErrorProvider errorProvider, int value, bool children = false)
+        {
+            foreach (Control x in container.Controls)
+            {
+                errorProvider.SetIconPadding(x, value);
+                if (children)
+                    SetErrorProviderPadding(x, errorProvider, value, true);
+            }
+        }
         private void CreateDataTable(int itemId)
         {
             if (itemId != -1)

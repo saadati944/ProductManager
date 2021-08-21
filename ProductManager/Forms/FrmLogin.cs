@@ -16,8 +16,17 @@ namespace Tappe.Forms
         {
             InitializeComponent();
             UpdateUsersList();
+            SetErrorProviderPadding(this, errorProvider, 10);
         }
-
+        private void SetErrorProviderPadding(Control container, ErrorProvider errorProvider, int value, bool children = false)
+        {
+            foreach (Control x in container.Controls)
+            {
+                errorProvider.SetIconPadding(x, value);
+                if (children)
+                    SetErrorProviderPadding(x, errorProvider, value, true);
+            }
+        }
         private void UpdateUsersList()
         {
             cmbUsers.Items.Clear();

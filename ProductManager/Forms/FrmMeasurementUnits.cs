@@ -26,6 +26,7 @@ namespace Tappe.Forms
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
+            //TODO: input validation
             bool inedit = _measurementUnit.Id != -1;
             _measurementUnit.Name = txtName.Text;
             _database.Save(_measurementUnit);

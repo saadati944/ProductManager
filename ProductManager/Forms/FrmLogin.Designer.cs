@@ -43,11 +43,11 @@
             // 
             this.cmbUsers.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbUsers.FormattingEnabled = true;
-            this.cmbUsers.Location = new System.Drawing.Point(25, 54);
+            this.cmbUsers.Location = new System.Drawing.Point(35, 54);
             this.cmbUsers.Margin = new System.Windows.Forms.Padding(4);
             this.cmbUsers.Name = "cmbUsers";
             this.cmbUsers.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.cmbUsers.Size = new System.Drawing.Size(198, 27);
+            this.cmbUsers.Size = new System.Drawing.Size(188, 27);
             this.cmbUsers.TabIndex = 0;
             this.cmbUsers.Validating += new System.ComponentModel.CancelEventHandler(this.cmbUsers_Validating);
             // 
@@ -71,7 +71,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(245, 57);
+            this.label1.Location = new System.Drawing.Point(269, 57);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
             this.label1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -82,12 +82,12 @@
             // txtPassword
             // 
             this.txtPassword.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtPassword.Location = new System.Drawing.Point(25, 111);
+            this.txtPassword.Location = new System.Drawing.Point(35, 111);
             this.txtPassword.Margin = new System.Windows.Forms.Padding(4);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '*';
             this.txtPassword.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.txtPassword.Size = new System.Drawing.Size(198, 20);
+            this.txtPassword.Size = new System.Drawing.Size(188, 20);
             this.txtPassword.TabIndex = 1;
             this.txtPassword.Text = "123";
             this.txtPassword.Validating += new System.ComponentModel.CancelEventHandler(this.txtPassword_Validating);

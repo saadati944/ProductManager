@@ -78,9 +78,9 @@
             // txtName
             // 
             this.txtName.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtName.Location = new System.Drawing.Point(20, 270);
+            this.txtName.Location = new System.Drawing.Point(35, 270);
             this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(197, 14);
+            this.txtName.Size = new System.Drawing.Size(182, 14);
             this.txtName.TabIndex = 1;
             this.txtName.Validating += new System.ComponentModel.CancelEventHandler(this.txtName_Validating);
             // 
@@ -126,9 +126,9 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoValidate = System.Windows.Forms.AutoValidate.EnableAllowFocusChange;
+            this.AutoValidate = System.Windows.Forms.AutoValidate.Disable;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(255)))), ((int)(((byte)(220)))));
-            this.ClientSize = new System.Drawing.Size(291, 323);
+            this.ClientSize = new System.Drawing.Size(295, 327);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);

@@ -75,7 +75,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(222, 47);
+            this.label1.Location = new System.Drawing.Point(267, 47);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(27, 13);
             this.label1.TabIndex = 1;
@@ -84,7 +84,7 @@
             // txtFirstName
             // 
             this.txtFirstName.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtFirstName.Location = new System.Drawing.Point(19, 47);
+            this.txtFirstName.Location = new System.Drawing.Point(29, 47);
             this.txtFirstName.Name = "txtFirstName";
             this.txtFirstName.Size = new System.Drawing.Size(187, 14);
             this.txtFirstName.TabIndex = 0;
@@ -93,7 +93,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(222, 100);
+            this.label3.Location = new System.Drawing.Point(261, 100);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(33, 13);
             this.label3.TabIndex = 4;
@@ -111,7 +111,7 @@
             // txtLastName
             // 
             this.txtLastName.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtLastName.Location = new System.Drawing.Point(19, 74);
+            this.txtLastName.Location = new System.Drawing.Point(29, 74);
             this.txtLastName.Name = "txtLastName";
             this.txtLastName.Size = new System.Drawing.Size(187, 14);
             this.txtLastName.TabIndex = 1;
@@ -120,7 +120,7 @@
             // numAge
             // 
             this.numAge.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.numAge.Location = new System.Drawing.Point(19, 101);
+            this.numAge.Location = new System.Drawing.Point(29, 101);
             this.numAge.Name = "numAge";
             this.numAge.Size = new System.Drawing.Size(187, 17);
             this.numAge.TabIndex = 2;
@@ -128,7 +128,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(222, 126);
+            this.label6.Location = new System.Drawing.Point(243, 126);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(51, 13);
             this.label6.TabIndex = 9;
@@ -168,10 +168,10 @@
             // txtNewPass
             // 
             this.txtNewPass.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtNewPass.Location = new System.Drawing.Point(16, 74);
+            this.txtNewPass.Location = new System.Drawing.Point(31, 74);
             this.txtNewPass.Name = "txtNewPass";
             this.txtNewPass.PasswordChar = '*';
-            this.txtNewPass.Size = new System.Drawing.Size(187, 14);
+            this.txtNewPass.Size = new System.Drawing.Size(172, 14);
             this.txtNewPass.TabIndex = 1;
             this.txtNewPass.MouseEnter += new System.EventHandler(this.txtPassword_MouseEnter);
             this.txtNewPass.MouseLeave += new System.EventHandler(this.txtPassword_MouseLeave);
@@ -180,7 +180,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(219, 72);
+            this.label5.Location = new System.Drawing.Point(243, 72);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(77, 13);
             this.label5.TabIndex = 14;
@@ -189,10 +189,10 @@
             // txtPassword
             // 
             this.txtPassword.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtPassword.Location = new System.Drawing.Point(16, 47);
+            this.txtPassword.Location = new System.Drawing.Point(31, 47);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '*';
-            this.txtPassword.Size = new System.Drawing.Size(187, 14);
+            this.txtPassword.Size = new System.Drawing.Size(172, 14);
             this.txtPassword.TabIndex = 0;
             this.txtPassword.MouseEnter += new System.EventHandler(this.txtPassword_MouseEnter);
             this.txtPassword.MouseLeave += new System.EventHandler(this.txtPassword_MouseLeave);
@@ -201,7 +201,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(219, 45);
+            this.label7.Location = new System.Drawing.Point(234, 45);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(86, 13);
             this.label7.TabIndex = 12;
@@ -210,10 +210,10 @@
             // txtNewPassAgain
             // 
             this.txtNewPassAgain.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtNewPassAgain.Location = new System.Drawing.Point(16, 101);
+            this.txtNewPassAgain.Location = new System.Drawing.Point(31, 101);
             this.txtNewPassAgain.Name = "txtNewPassAgain";
             this.txtNewPassAgain.PasswordChar = '*';
-            this.txtNewPassAgain.Size = new System.Drawing.Size(187, 14);
+            this.txtNewPassAgain.Size = new System.Drawing.Size(172, 14);
             this.txtNewPassAgain.TabIndex = 2;
             this.txtNewPassAgain.MouseEnter += new System.EventHandler(this.txtPassword_MouseEnter);
             this.txtNewPassAgain.MouseLeave += new System.EventHandler(this.txtPassword_MouseLeave);

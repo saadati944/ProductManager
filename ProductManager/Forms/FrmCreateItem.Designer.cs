@@ -50,7 +50,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(240, 58);
+            this.label1.Location = new System.Drawing.Point(299, 58);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(27, 13);
             this.label1.TabIndex = 0;
@@ -58,16 +58,16 @@
             // 
             // txtItemName
             // 
-            this.txtItemName.Location = new System.Drawing.Point(21, 55);
+            this.txtItemName.Location = new System.Drawing.Point(33, 55);
             this.txtItemName.MaxLength = 50;
             this.txtItemName.Name = "txtItemName";
-            this.txtItemName.Size = new System.Drawing.Size(213, 21);
+            this.txtItemName.Size = new System.Drawing.Size(201, 21);
             this.txtItemName.TabIndex = 0;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(240, 93);
+            this.label2.Location = new System.Drawing.Point(272, 93);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(54, 13);
             this.label2.TabIndex = 2;
@@ -75,10 +75,10 @@
             // 
             // txtDescription
             // 
-            this.txtDescription.Location = new System.Drawing.Point(21, 90);
+            this.txtDescription.Location = new System.Drawing.Point(33, 90);
             this.txtDescription.MaxLength = 100;
             this.txtDescription.Name = "txtDescription";
-            this.txtDescription.Size = new System.Drawing.Size(213, 21);
+            this.txtDescription.Size = new System.Drawing.Size(201, 21);
             this.txtDescription.TabIndex = 1;
             // 
             // label3
@@ -93,7 +93,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(240, 206);
+            this.label4.Location = new System.Drawing.Point(280, 206);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(46, 13);
             this.label4.TabIndex = 6;
@@ -103,22 +103,22 @@
             // 
             this.numDefaultPrice.DecimalPlaces = 4;
             this.numDefaultPrice.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.numDefaultPrice.Location = new System.Drawing.Point(21, 126);
+            this.numDefaultPrice.Location = new System.Drawing.Point(33, 126);
             this.numDefaultPrice.Maximum = new decimal(new int[] {
             1316134912,
             2328,
             0,
             0});
             this.numDefaultPrice.Name = "numDefaultPrice";
-            this.numDefaultPrice.Size = new System.Drawing.Size(213, 21);
+            this.numDefaultPrice.Size = new System.Drawing.Size(201, 21);
             this.numDefaultPrice.TabIndex = 2;
             // 
             // txtCreator
             // 
             this.txtCreator.Enabled = false;
-            this.txtCreator.Location = new System.Drawing.Point(21, 203);
+            this.txtCreator.Location = new System.Drawing.Point(33, 203);
             this.txtCreator.Name = "txtCreator";
-            this.txtCreator.Size = new System.Drawing.Size(213, 21);
+            this.txtCreator.Size = new System.Drawing.Size(201, 21);
             this.txtCreator.TabIndex = 4;
             // 
             // lblTitle
@@ -163,9 +163,9 @@
             // cmbMeasurementUnits
             // 
             this.cmbMeasurementUnits.FormattingEnabled = true;
-            this.cmbMeasurementUnits.Location = new System.Drawing.Point(22, 163);
+            this.cmbMeasurementUnits.Location = new System.Drawing.Point(34, 163);
             this.cmbMeasurementUnits.Name = "cmbMeasurementUnits";
-            this.cmbMeasurementUnits.Size = new System.Drawing.Size(212, 21);
+            this.cmbMeasurementUnits.Size = new System.Drawing.Size(200, 21);
             this.cmbMeasurementUnits.TabIndex = 3;
             // 
             // label6

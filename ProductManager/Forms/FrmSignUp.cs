@@ -19,8 +19,17 @@ namespace Tappe.Forms
             InitializeComponent();
             bindingSource.DataSource = _user;
             radMale.Checked = true;
+            SetErrorProviderPadding(this, errorProvider, 10);
         }
-
+        private void SetErrorProviderPadding(Control container, ErrorProvider errorProvider, int value, bool children = false)
+        {
+            foreach (Control x in container.Controls)
+            {
+                errorProvider.SetIconPadding(x, value);
+                if (children)
+                    SetErrorProviderPadding(x, errorProvider, value, true);
+            }
+        }
         private void txtPassword_MouseLeave(object sender, EventArgs e)
         {
             ((TextBox)sender).PasswordChar = '*';
