@@ -84,12 +84,6 @@ namespace Tappe.Business
                     result = false;
                 }
 
-                //if (row[Invoice.StockRefColumnName] is DBNull || (int)row[Invoice.StockRefColumnName] == -1)
-                //{
-                //    row.SetColumnError(Invoice.StockRefColumnName, "این فیلد اجباری میباشد");
-                //    result = false;
-                //}
-
                 if (row[Invoice.TotalPriceColumnName] is DBNull)
                 {
                     row.SetColumnError(Invoice.TotalPriceColumnName, "این فیلد اجباری میباشد");
@@ -100,7 +94,6 @@ namespace Tappe.Business
             return result;
         }
 
-        // todo : move stock to each item
         public static bool ValidateInvoiceItemsDataTable(DataTable invoiceItemsDataTable, bool checkQuantity = false)
         {
             bool result = true;
@@ -116,7 +109,7 @@ namespace Tappe.Business
                 }
 
                 bool stock = true;
-                if (row[_stockRefColumnIndex] is DBNull || (int)row[_stockRefColumnIndex] == -1)
+                if (row[InvoiceItem.StockRefColumnName] is DBNull || (int)row[InvoiceItem.StockRefColumnName] == -1)
                 {
                     result = false;
                     row.SetColumnError(InvoiceItem.StockRefColumnName, "این فیلد اجباری میباشد");
@@ -160,7 +153,6 @@ namespace Tappe.Business
 
         protected void UnlockInvoiceNumber(int number, Invoice.InvoiceType invoiceType)
         {
-            //TODO: correct this
             var locks = _database.GetAll<InvoiceLock>(null, null, String.Format("{0}={1} AND {2}={3}", InvoiceLock.InvoiceNumberColumnName, number, InvoiceLock.InvoiceTypeColumnName, invoiceType == Invoice.InvoiceType.Selling ? 1 : 0), null, 1);
             if (locks.Count() == 0)
                 return;
@@ -187,7 +179,6 @@ namespace Tappe.Business
          {
             try
             {
-                //TODO: correct this
                 if(_database.GetAll<InvoiceLock>(connection, transaction, String.Format("{0}={1} AND {2}={3}", InvoiceLock.InvoiceNumberColumnName, number, InvoiceLock.InvoiceTypeColumnName, type == Invoice.InvoiceType.Selling ? 1:0), null, 1).Count() != 0)
                     return false;
 

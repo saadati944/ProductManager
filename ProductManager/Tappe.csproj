@@ -54,7 +54,6 @@
     <Compile Include="Business\ItemsBusiness.cs" />
     <Compile Include="Business\Permissions.cs" />
     <Compile Include="Business\SellInvoiceBusiness.cs" />
-    <Compile Include="cccontainer.cs" />
     <Compile Include="CustomControls\NumericUpDownEditingControl.cs" />
     <Compile Include="Data\Commands\DeleteCommand.cs" />
     <Compile Include="Data\Commands\InsertCommand.cs" />

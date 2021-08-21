@@ -60,10 +60,14 @@ namespace Tappe.Forms
             ResumeLayout();
 
             cmbParties.Text = cmbParties.Items.Count != 0 ? "" : cmbParties.Items[0].ToString();
+
+            itemsGridView.Columns[_itemIdColumnIndex].Visible = false;
+
+            itemsGridView.Columns.Add(_stockIdColumnName, "StockId");
+            itemsGridView.Columns[_stockIdColumnName].Visible = false;
+
             BindDataTable();
 
-
-            itemsGridView.Columns[_idColumnIndex].Visible = false;
             _invoiceDataTable.Rows[0][Invoice.NumberColumnName] = invoiceNumber;
             _lockedInvoiceNumber = invoiceNumber;
 
@@ -103,7 +107,8 @@ namespace Tappe.Forms
             if (itemsGridView.DataSource != null)
                 return;
             itemsGridView.DataSource = _invoiceItemsDataTable;
-            itemsGridView.Columns[_idColumnIndex].DataPropertyName = InvoiceItem.ItemRefColumnName;
+            itemsGridView.Columns[_itemIdColumnIndex].DataPropertyName = InvoiceItem.ItemRefColumnName;
+            itemsGridView.Columns[_stockIdColumnName].DataPropertyName = InvoiceItem.StockRefColumnName;
             itemsGridView.Columns[_quantityColumnIndex].DataPropertyName = InvoiceItem.QuantityColumnName;
             itemsGridView.Columns[_feeColumnIndex].DataPropertyName = InvoiceItem.FeeColumnName;
             itemsGridView.Columns[_discountColumnIndex].DataPropertyName = InvoiceItem.DiscountColumnName;
@@ -136,7 +141,7 @@ namespace Tappe.Forms
             if (e.ColumnIndex == _stockColumnIndex)
             {
                 ((DataGridViewComboBoxCell)itemsGridView.Rows[e.RowIndex].Cells[_itemColumnIndex]).Items.Clear();
-                itemsGridView.Rows[e.RowIndex].Cells[_idColumnIndex].Value =
+                itemsGridView.Rows[e.RowIndex].Cells[_itemIdColumnIndex].Value =
                 itemsGridView.Rows[e.RowIndex].Cells[_feeColumnIndex].Value =
                 itemsGridView.Rows[e.RowIndex].Cells[_quantityColumnIndex].Value =
                 itemsGridView.Rows[e.RowIndex].Cells[_discountColumnIndex].Value =
@@ -148,7 +153,7 @@ namespace Tappe.Forms
                 {
                     int stockref = _stockNameRefs[(string)itemsGridView.Rows[e.RowIndex].Cells[_stockColumnIndex].Value];
                     ((DataGridViewComboBoxCell)itemsGridView.Rows[e.RowIndex].Cells[_itemColumnIndex]).Items.AddRange(StockItems(stockref));
-                    SetInvoiceItemsStockRef(itemsGridView);
+                    itemsGridView.Rows[e.RowIndex].Cells[_stockIdColumnName].Value = stockref;
                 }
             }
             else if (e.ColumnIndex == _itemColumnIndex)
@@ -157,7 +162,7 @@ namespace Tappe.Forms
                     return;
                 ((DataGridViewButtonCell)itemsGridView.Rows[e.RowIndex].Cells[_deleteBtnColumnIndex]).Value = "حذف";
                 var item = _itemsBusiness.GetItemModel((string)itemsGridView.Rows[e.RowIndex].Cells[_itemColumnIndex].Value);
-                itemsGridView.Rows[e.RowIndex].Cells[_idColumnIndex].Value = item.Id;
+                itemsGridView.Rows[e.RowIndex].Cells[_itemIdColumnIndex].Value = item.Id;
                 itemsGridView.Rows[e.RowIndex].Cells[_feeColumnIndex].Value = _itemsBusiness.GetItemPrice(item.Id, (DateTime)_invoiceDataTable.Rows[0][Invoice.DateColumnName]).Price;
                 itemsGridView.Rows[e.RowIndex].Cells[_quantityColumnIndex].Value = (int) 0;
                 itemsGridView.Rows[e.RowIndex].Cells[_discountColumnIndex].Value = (decimal)0;
@@ -195,8 +200,6 @@ namespace Tappe.Forms
         {
             errorProviderHeader.Clear();
             errorProviderItems.Clear();
-
-            // SetInvoiceItemsStockRef(itemsGridView);
 
             _invoiceDataTable.Rows[0][Invoice.PartyRefColumnName] = GetPartyRef();
             if (!Business.InvoiceBusiness.ValidateInvoiceDataTable(_invoiceDataTable, _sellInvoiceBusiness, _originalInvoiceNumber == -1 ? _lockedInvoiceNumber : _originalInvoiceNumber)

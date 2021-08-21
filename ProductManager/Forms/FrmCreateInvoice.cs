@@ -17,7 +17,7 @@ namespace Tappe.Forms
         protected const string _itemNameColumnName = "ItemName";
         protected const string _stockNameColumnName = "StockName";
 
-        protected readonly int _idColumnIndex = 0;
+        protected readonly int _itemIdColumnIndex = 0;
         protected readonly int _stockColumnIndex = 1;
         protected readonly int _itemColumnIndex = 2;
         protected readonly int _quantityColumnIndex = 3;
@@ -27,6 +27,7 @@ namespace Tappe.Forms
         protected readonly int _taxcolumnName = 7;
         protected readonly int _totalPriceColumnIndex = 8;
         protected readonly int _deleteBtnColumnIndex = 9;
+        protected readonly string _stockIdColumnName = "StockRef";
 
         protected int _originalInvoiceNumber = -1;
         protected int _lockedInvoiceNumber = -1;
@@ -43,6 +44,7 @@ namespace Tappe.Forms
         protected readonly Dictionary<string, int> _stockNameRefs;
 
 
+        public FrmCreateInvoice() { }
         public FrmCreateInvoice(StructureMap.IContainer container)
         {
             _database = container.GetInstance<Database>();
@@ -53,17 +55,17 @@ namespace Tappe.Forms
             foreach (Stock x in _database.Stocks)
                 _stockNameRefs.Add(x.Name, x.Id);
         }
-        protected void SetInvoiceItemsStockRef(DataGridView itemsGridView)
-        {
-            for (int i = 0; i < _invoiceItemsDataTable.Rows.Count; i++)
-            {
-                if (itemsGridView.Rows[i].Cells[_stockColumnIndex].Value is DBNull || itemsGridView.Rows[i].Cells[_stockColumnIndex].Value == null)
-                    continue;
-                string sn = (string)itemsGridView.Rows[i].Cells[_stockColumnIndex].Value;
-                int stockref = _stockNameRefs[(string)itemsGridView.Rows[i].Cells[_stockColumnIndex].Value];
-                    _invoiceItemsDataTable.Rows[i][_stockColumnIndex] = stockref;
-            }
-        }
+        //protected void SetInvoiceItemsStockRef(DataGridView itemsGridView)
+        //{
+        //    for (int i = 0; i < _invoiceItemsDataTable.Rows.Count; i++)
+        //    {
+        //        if (itemsGridView.Rows[i].Cells[_stockColumnIndex].Value is DBNull || itemsGridView.Rows[i].Cells[_stockColumnIndex].Value == null)
+        //            continue;
+        //        string sn = (string)itemsGridView.Rows[i].Cells[_stockColumnIndex].Value;
+        //        int stockref = _stockNameRefs[(string)itemsGridView.Rows[i].Cells[_stockColumnIndex].Value];
+        //            _invoiceItemsDataTable.Rows[i][_stockColumnIndex] = stockref;
+        //    }
+        //}
 
         protected virtual DataTable NewInvoiceDataTable() { throw new NotImplementedException(); }
         protected virtual DataTable NewInvoiceItemDataTable() { throw new NotImplementedException(); }
