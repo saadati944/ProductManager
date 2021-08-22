@@ -5,22 +5,22 @@ using System.Text;
 using System.Threading.Tasks;
 using StructureMap;
 
-namespace Tappe
+namespace Framework
 {
-    class InstanceScanner : Registry
+    static class InstanceScanner
     {
-        public InstanceScanner()
+        public static void ScanProjects()
         {
-            Scan(_ =>
-            { 
-                _.TheCallingAssembly() ;
-                _.WithDefaultConventions();
+            Utilities.IOC.Container = new Container(x =>
+            {
+                x.Scan(_ =>
+                {
+                    _.TheCallingAssembly();
+                    _.WithDefaultConventions();
+                });
+                x.AddRegistry<DataLayer.IOCRegistery>();
+                x.AddRegistry<Business.IOCRegistery>();
             });
-            For<Data.Database>().Singleton().Use<Data.Database>();
-            For<Data.Repositories.BuyInvoicesRepository>().Singleton().Use<Data.Repositories.BuyInvoicesRepository>();
-            For<Data.Repositories.SellInvoicesRepository>().Singleton().Use<Data.Repositories.SellInvoicesRepository>();
-            For<Data.Repositories.MeasurementUnitsRepository>().Singleton().Use<Data.Repositories.MeasurementUnitsRepository>();
-            For<Data.Repositories.ItemsRepository>().Singleton().Use<Data.Repositories.ItemsRepository>();
         }
     }
 }
