@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataLayer;
+﻿using DataLayer;
 using DataLayer.Models;
+using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using Utilities;
 
 namespace Business
@@ -46,7 +44,7 @@ namespace Business
         {
             try
             {
-                return IOC.Container.GetInstance<Database>().GetAll<StockSummary>(null, null, "StockRef="+stockRef+" AND ItemRef=" + itemRef, null, 1).First().Quantity;
+                return IOC.Container.GetInstance<Database>().GetAll<StockSummary>(null, null, "StockRef=" + stockRef + " AND ItemRef=" + itemRef, null, 1).First().Quantity;
             }
             catch { }
             return 0;
@@ -56,9 +54,9 @@ namespace Business
         {
             var stockSummaries = _database.GetAll<StockSummary>(null, null, "StockRef=" + stockref);
             List<string> items = new List<string>();
-            foreach(var x in stockSummaries)
-                if(x.Quantity > 0)
-                    items.Add((string) GetItem(x.ItemRef).Rows[0][Item.NameColumnName]);
+            foreach (var x in stockSummaries)
+                if (x.Quantity > 0)
+                    items.Add((string)GetItem(x.ItemRef).Rows[0][Item.NameColumnName]);
             return items.ToArray();
         }
 
@@ -90,7 +88,7 @@ namespace Business
         public DataTable GetItem(int id)
         {
             DataTable table = _itemsRepository.DataTable.Clone();
-            
+
             foreach (DataRow x in _itemsRepository.DataTable.Rows)
                 if ((int)x[Item.IdColumnName] == id)
                 {

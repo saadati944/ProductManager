@@ -1,13 +1,9 @@
-﻿using System;
-using System.Data;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Business;
+using Business.Repositories;
 using DataLayer;
 using DataLayer.Models;
-using Business.Repositories;
-using Business;
+using System;
+using System.Data;
 
 namespace Presentation.Forms
 {
@@ -36,7 +32,7 @@ namespace Presentation.Forms
             _itemsBusiness = container.GetInstance<ItemsBusiness>();
             _itemsRepository = _itemsBusiness.ItemsRepository;
 
-            
+
             _itemsRepository.Update();
 
             _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _itemNameColumnName, DisplayName = "نام محصول", Checked = true });
@@ -108,7 +104,7 @@ namespace Presentation.Forms
                 dr[_priceColumnName] = lastprice.Price;
                 _dataTable.Rows.Add(dr);
             }
-            
+
         }
     }
 }

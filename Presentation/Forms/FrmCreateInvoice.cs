@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Data;
+﻿using Business;
 using DataLayer;
 using DataLayer.Models;
-using Business;
-using Business.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Windows.Forms;
 
 namespace Presentation.Forms
 {
@@ -29,8 +25,8 @@ namespace Presentation.Forms
         protected readonly int _deleteBtnColumnIndex = 9;
         protected readonly string _stockIdColumnName = "StockRef";
 
-        protected int _originalInvoiceNumber = -1;
-        protected int _lockedInvoiceNumber = -1;
+        protected int? _originalInvoiceNumber = null;
+        protected int _version = -1;
 
         protected DataTable _invoiceDataTable;
         protected DataTable _invoiceItemsDataTable;
@@ -67,19 +63,20 @@ namespace Presentation.Forms
         }
 
         protected virtual DataTable NewInvoiceDataTable() { throw new NotImplementedException(); }
+        protected virtual bool CheckVersion() { throw new NotImplementedException(); }
         protected virtual DataTable NewInvoiceItemDataTable() { throw new NotImplementedException(); }
 
-        protected void InitilizeDataTable(int number)
+        protected void InitilizeDataTable(int? number)
         {
             _originalInvoiceNumber = number;
-            if (number == -1)
+            if (number == null)
             {
                 _invoiceDataTable = NewInvoiceDataTable();
                 _invoiceItemsDataTable = NewInvoiceItemDataTable();
 
                 DataRow row = _invoiceDataTable.NewRow();
 
-                row[Invoice.NumberColumnName] = 0;
+                row[Invoice.NumberColumnName] = -1;
                 row[Invoice.DateColumnName] = DateTime.Now;
                 row[Invoice.TotalPriceColumnName] = 0;
                 row[Invoice.PartyRefColumnName] = -1;
@@ -89,7 +86,7 @@ namespace Presentation.Forms
             }
             else
             {
-                _invoiceDataTable = _invoiceBusiness.GetInvoice(number);
+                _invoiceDataTable = _invoiceBusiness.GetInvoice(number.Value);
                 _invoiceItemsDataTable = _invoiceBusiness.GetInvoiceItems((int)_invoiceDataTable.Rows[0][Invoice.IdColumnName]);
             }
             _invoiceDataTable.Rows[0][Invoice.UserRefColumnName] = Database.LoggedInUser.Id;
@@ -127,7 +124,7 @@ namespace Presentation.Forms
                 _invoiceItemsDataTable.Rows[i][_stockNameColumnName] = stockname;
 
                 var itemcombosell = (DataGridViewComboBoxCell)dgv.Rows[i].Cells[_itemColumnIndex];
-                
+
                 itemcombosell.Items.AddRange(StockItems(stockref));
                 if (!itemcombosell.Items.Contains(itemname))
                     itemcombosell.Items.Add(itemname);
@@ -143,7 +140,7 @@ namespace Presentation.Forms
         }
         protected void UpdateTotalPrices()
         {
-            for(int i=0; i<_invoiceItemsDataTable.Rows.Count; i++)
+            for (int i = 0; i < _invoiceItemsDataTable.Rows.Count; i++)
                 ItemsGridView_CellEndEdit(null, new DataGridViewCellEventArgs(_quantityColumnIndex, i));
         }
 

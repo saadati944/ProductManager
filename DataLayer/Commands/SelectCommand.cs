@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataLayer.Commands
 {
@@ -19,12 +15,13 @@ namespace DataLayer.Commands
         private readonly string _orderby;
         private readonly int _top;
         private readonly bool _autoAddIdColumn;
+        private readonly bool _autoAddVersionColumn;
         private readonly string _customeCommand = null;
         private readonly string[] _parameterNames = null;
         private readonly object[] _parameterValues;
         private DataSet _dataset;
 
-        public SelectCommand(SqlConnection connection, SqlTransaction transaction, string table, string[] columns, string condition = null, string orderby = null, int top = -1, bool autoAddIdColumn = true)
+        public SelectCommand(SqlConnection connection, SqlTransaction transaction, string table, string[] columns, string condition = null, string orderby = null, int top = -1, bool autoAddVersionColumn = false, bool autoAddIdColumn = true)
         {
             _connection = connection;
             _transaction = transaction;
@@ -34,11 +31,13 @@ namespace DataLayer.Commands
             _orderby = orderby;
             _top = top;
             _autoAddIdColumn = autoAddIdColumn;
+            _autoAddVersionColumn = autoAddVersionColumn;
         }
 
-        public SelectCommand(SqlConnection connection, string customeCommand, string[] parameterNames = null, object[] parameterValues = null)
+        public SelectCommand(SqlConnection connection, string customeCommand, string[] parameterNames = null, object[] parameterValues = null, SqlTransaction transaction = null)
         {
             _connection = connection;
+            _transaction = transaction;
             _customeCommand = customeCommand;
             _parameterNames = parameterNames;
             _parameterValues = parameterValues;
@@ -48,11 +47,10 @@ namespace DataLayer.Commands
         {
             execute();
 
-            //System.Windows.Forms.MessageBox.Show(String.Join("\n", _dataset.Tables[0].Select().Select(  x=> String.Join(", ", x.ItemArray))));
             if (_dataset.Tables[0].Rows.Count == 0)
                 return null;
 
-            
+
             return _dataset.Tables[0].AsEnumerable();
         }
 
@@ -77,7 +75,7 @@ namespace DataLayer.Commands
         {
             SqlCommand sqlCommand;
             string query = GenerateQuery();
-            if(_transaction == null)
+            if (_transaction == null)
                 sqlCommand = new SqlCommand(query, _connection);
             else
                 sqlCommand = new SqlCommand(query, _connection, _transaction);
@@ -101,7 +99,9 @@ namespace DataLayer.Commands
         private string GenerateQuery()
         {
             if (_customeCommand == null)
-                return String.Format("SELECT {0} {1} {2} FROM {3} {4} {5};", _top == -1 ? "" : "TOP " + _top.ToString(), _autoAddIdColumn ? "Id," : "", String.Join(", ", _columns), _table, _condition == null ? "" : "WHERE " + _condition, _orderby == null ? "" : "ORDER BY " + _orderby);
+                return String.Format("SELECT {0} {1} {2} {3} FROM {4} {5} {6};", _top == -1 ? "" : "TOP " + _top.ToString()
+                    , _autoAddIdColumn ? "Id, " : "", _autoAddVersionColumn ? "Version, " : ""
+                    , String.Join(", ", _columns), _table, _condition == null ? "" : "WHERE " + _condition, _orderby == null ? "" : "ORDER BY " + _orderby);
 
             return _customeCommand;
         }

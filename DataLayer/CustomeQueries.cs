@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DataLayer
+﻿namespace DataLayer
 {
     public static class CustomeQueries
     {
@@ -16,5 +10,8 @@ namespace DataLayer
         public const string MaxSellInvoiceNumber = @"SELECT MAX(Number) AS MaxNum From SellInvoices;";
         public const string BuyInvoiceTotalPrice = @"SELECT SUM(TotalPrice) AS TotalPrice From BuyInvoices;";
         public const string SellInvoiceTotalPrice = @"SELECT SUM(TotalPrice) AS TotalPrice From SellInvoices;";
+        public const string GenerateInvoiceVersion = @"DECLARE @Ver AS INT = ISNULL((SELECT TOP 1 Version FROM InvoiceLocks WHERE InvoiceNumber=@InvoiceNumber AND InvoiceType=@InvoiceType), -1) IF @Ver = -1 BEGIN INSERT INTO InvoiceLocks(InvoiceNumber, InvoiceType, Version) VALUES(@InvoiceNumber, @InvoiceType, 0);"
+                                                    + "SELECT 0; END ELSE BEGIN UPDATE InvoiceLocks SET Version=@Ver+1 WHERE InvoiceNumber=@InvoiceNumber AND InvoiceType=@InvoiceType; SELECT @Ver+1; END"; // inputs : @InvoiceNumber, @InvoiceType
+        public const string GetInvoiceVersion = @"SELECT ISNULL((SELECT TOP 1 Version FROM InvoiceLocks WHERE InvoiceNumber=@InvoiceNumber AND InvoiceType=@InvoiceType), -1)"; // inputs : @InvoiceNumber, @InvoiceType
     }
 }

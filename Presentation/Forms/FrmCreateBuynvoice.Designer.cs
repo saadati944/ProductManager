@@ -35,6 +35,8 @@
             this.lblTotalPrice = new System.Windows.Forms.Label();
             this.lblTotalPriceLable = new System.Windows.Forms.Label();
             this.pnlControls = new System.Windows.Forms.Panel();
+            this.radCustomeNumber = new System.Windows.Forms.RadioButton();
+            this.radAutoNumber = new System.Windows.Forms.RadioButton();
             this.txtDate = new System.Windows.Forms.MaskedTextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.numInvoiceNumber = new System.Windows.Forms.NumericUpDown();
@@ -127,6 +129,8 @@
             // 
             // pnlControls
             // 
+            this.pnlControls.Controls.Add(this.radCustomeNumber);
+            this.pnlControls.Controls.Add(this.radAutoNumber);
             this.pnlControls.Controls.Add(this.txtDate);
             this.pnlControls.Controls.Add(this.label7);
             this.pnlControls.Controls.Add(this.numInvoiceNumber);
@@ -143,6 +147,28 @@
             this.pnlControls.Name = "pnlControls";
             this.pnlControls.Size = new System.Drawing.Size(867, 126);
             this.pnlControls.TabIndex = 8;
+            // 
+            // radCustomeNumber
+            // 
+            this.radCustomeNumber.AutoSize = true;
+            this.radCustomeNumber.Location = new System.Drawing.Point(191, 53);
+            this.radCustomeNumber.Name = "radCustomeNumber";
+            this.radCustomeNumber.Size = new System.Drawing.Size(14, 13);
+            this.radCustomeNumber.TabIndex = 12;
+            this.radCustomeNumber.TabStop = true;
+            this.radCustomeNumber.UseVisualStyleBackColor = true;
+            this.radCustomeNumber.CheckedChanged += new System.EventHandler(this.radCustomeNumber_CheckedChanged);
+            // 
+            // radAutoNumber
+            // 
+            this.radAutoNumber.AutoSize = true;
+            this.radAutoNumber.Location = new System.Drawing.Point(151, 31);
+            this.radAutoNumber.Name = "radAutoNumber";
+            this.radAutoNumber.Size = new System.Drawing.Size(54, 17);
+            this.radAutoNumber.TabIndex = 11;
+            this.radAutoNumber.TabStop = true;
+            this.radAutoNumber.Text = "خودکار";
+            this.radAutoNumber.UseVisualStyleBackColor = true;
             // 
             // txtDate
             // 
@@ -171,12 +197,12 @@
             this.numInvoiceNumber.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.numInvoiceNumber.Location = new System.Drawing.Point(35, 54);
             this.numInvoiceNumber.Maximum = new decimal(new int[] {
-            1316134912,
-            2328,
+            1000000000,
+            0,
             0,
             0});
             this.numInvoiceNumber.Name = "numInvoiceNumber";
-            this.numInvoiceNumber.Size = new System.Drawing.Size(177, 17);
+            this.numInvoiceNumber.Size = new System.Drawing.Size(153, 17);
             this.numInvoiceNumber.TabIndex = 4;
             this.numInvoiceNumber.Value = new decimal(new int[] {
             1,
@@ -404,5 +430,7 @@
         private System.Windows.Forms.DataGridViewComboBoxColumn StockName;
         private System.Windows.Forms.DataGridViewComboBoxColumn ItemName;
         private System.Windows.Forms.DataGridViewButtonColumn Delete;
+        private System.Windows.Forms.RadioButton radCustomeNumber;
+        private System.Windows.Forms.RadioButton radAutoNumber;
     }
 }

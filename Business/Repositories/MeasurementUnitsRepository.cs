@@ -1,12 +1,9 @@
-﻿using System;
+﻿using DataLayer;
+using DataLayer.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data;
 using System.Data.SqlClient;
-using DataLayer;
-using DataLayer.Models;
+using System.Linq;
 
 namespace Business.Repositories
 {
@@ -45,8 +42,8 @@ namespace Business.Repositories
 
         public MeasurementUnit GetUnit(string name)
         {
-            for(int i=0; i<DataTable.Rows.Count; i++)
-                if(DataTable.Rows[i].Field<string>("Name") == name)
+            for (int i = 0; i < DataTable.Rows.Count; i++)
+                if (DataTable.Rows[i].Field<string>("Name") == name)
                 {
                     var x = new MeasurementUnit();
                     x.MapToModel(DataTable.Rows[i]);

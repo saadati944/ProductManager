@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataLayer.Commands
 {
@@ -13,7 +9,7 @@ namespace DataLayer.Commands
 
         public DeleteCommand(SqlConnection connection, SqlTransaction transaction, string table, string condition)
         {
-            if(transaction == null)
+            if (transaction == null)
                 _sqlCommand = new SqlCommand(CreateQuery(table, condition), connection);
             else
                 _sqlCommand = new SqlCommand(CreateQuery(table, condition), connection, transaction);

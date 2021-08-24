@@ -1,12 +1,9 @@
-﻿using System;
+﻿using DataLayer;
+using DataLayer.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data;
 using System.Data.SqlClient;
-using DataLayer.Models;
-using DataLayer;
+using System.Linq;
 
 namespace Business.Repositories
 {
@@ -39,7 +36,7 @@ namespace Business.Repositories
         }
 
         public event DataChangeHandler DataChanged;
-        
+
         public ItemsRepository(Database database, MeasurementUnitsRepository measurementUnitsRepository)
         {
             _database = database;
@@ -59,19 +56,19 @@ namespace Business.Repositories
                 _connection = _database.GetConnection();
                 _dataAdapter = _database.GetDataAdapter<Item>(_connection);
             }
-            if(_dataTable == null)
+            if (_dataTable == null)
                 _dataTable = new DataTable();
             else
                 _dataTable.Clear();
 
             _dataAdapter.Fill(_dataTable);
-            
+
             if (!_dataTable.Columns.Contains(Item.MeasurementUnitColumnName))
                 _dataTable.Columns.Add(Item.MeasurementUnitColumnName, typeof(MeasurementUnit));
             if (!_dataTable.Columns.Contains(Item.CreatorColumnName))
                 _dataTable.Columns.Add(Item.CreatorColumnName, typeof(User));
 
-            for (int i=0; i<_dataTable.Rows.Count; i++)
+            for (int i = 0; i < _dataTable.Rows.Count; i++)
             {
                 DataRow dr = _dataTable.Rows[i];
                 dr[Item.MeasurementUnitColumnName] = _measurementUnitsRepository.GetUnit((int)dr[Item.MeasurementUnitRefColumnName]);

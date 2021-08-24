@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace DataLayer.Commands
 {
@@ -13,7 +10,7 @@ namespace DataLayer.Commands
         public UpdateCommand(SqlConnection connection, SqlTransaction transaction, string table, string[] columns, string[] values, string condition)
         {
             string query = CreateQuery(table, columns, values, condition);
-            if(transaction == null)
+            if (transaction == null)
                 _sqlCommand = new SqlCommand(query, connection);
             else
                 _sqlCommand = new SqlCommand(query, connection, transaction);
@@ -32,7 +29,7 @@ namespace DataLayer.Commands
             {
                 if (i != 0)
                     query.Append(", ");
-                query.Append(String.Format("{0} = @PaRaM"+i, columns[i]));
+                query.Append(String.Format("{0} = @PaRaM" + i, columns[i]));
             }
             query.Append(String.Format(" WHERE {0}; ", condition));
             return query.ToString();

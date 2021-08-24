@@ -1,24 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using DataLayer;
+using DataLayer.Models;
+using System;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using DataLayer;
-using DataLayer.Models;
-using Business.Repositories;
 
 namespace Presentation.Forms
 {
     public partial class FrmCreateSellInvoice : FrmCreateInvoice
     {
-        private int number;
-        public FrmCreateSellInvoice(int invoiceNumber, StructureMap.IContainer container, int number = -1) : base(container)
+        public FrmCreateSellInvoice(StructureMap.IContainer container, int? number = null) : base(container)
         {
-            this.number = number;
             InitializeComponent();
 
             _invoiceBusiness = _sellInvoiceBusiness;
@@ -31,31 +24,31 @@ namespace Presentation.Forms
 
 
             txtSeller.Text = Database.LoggedInUser.ToString();
-     
-     
+
+
             SuspendLayout();
-            for (int i=0; i<6; i++)
+            for (int i = 0; i < 6; i++)
                 itemsGridView.Columns.Insert(3, new CustomControls.NumericUpDownColumn());
 
-            ((DataGridViewComboBoxColumn)itemsGridView.Columns[_stockColumnIndex]).Items.AddRange(_database.Stocks.Select(x=>x.Name).ToArray());
-     
+            ((DataGridViewComboBoxColumn)itemsGridView.Columns[_stockColumnIndex]).Items.AddRange(_database.Stocks.Select(x => x.Name).ToArray());
+
             errorProviderHeader.DataSource = _invoiceDataTable;
             errorProviderItems.DataSource = _invoiceItemsDataTable;
-     
+
             itemsGridView.Columns[_TotalAfterDiscountColumnIndex].ReadOnly = true;
             itemsGridView.Columns[_totalPriceColumnIndex].ReadOnly = true;
-     
+
             itemsGridView.Columns[_quantityColumnIndex].Name = "مقدار";
             itemsGridView.Columns[_feeColumnIndex].Name = "فی";
             itemsGridView.Columns[_discountColumnIndex].Name = "تخفیف";
             itemsGridView.Columns[_TotalAfterDiscountColumnIndex].Name = "مبلغ پس از کسر تخفیف";
             itemsGridView.Columns[_taxcolumnName].Name = "عوارض و مالیات";
             itemsGridView.Columns[_totalPriceColumnIndex].Name = "مبلغ کل با احتساب تخفیف و عوارض و مالیات";
-     
+
             itemsGridView.CellBeginEdit += ItemsGridView_CellBeginEdit;
             itemsGridView.CellEndEdit += ItemsGridView_CellEndEdit;
             itemsGridView.CellClick += ItemsGridView_CellClick;
-     
+
             ResumeLayout();
 
             cmbParties.Text = cmbParties.Items.Count == 0 ? "" : cmbParties.Items[0].ToString();
@@ -67,11 +60,20 @@ namespace Presentation.Forms
 
             BindDataTable();
 
-            _invoiceDataTable.Rows[0][Invoice.NumberColumnName] = invoiceNumber;
-            _lockedInvoiceNumber = invoiceNumber;
 
-            if (_originalInvoiceNumber != -1)
+            if (_originalInvoiceNumber != null)
+            {
+                radCustomeNumber.Checked = true;
+                radAutoNumber.Enabled = false;
                 lblTitle.Text = "ویرایش فاکتور فروش";
+                _invoiceDataTable.Rows[0][Invoice.NumberColumnName] = _originalInvoiceNumber.Value;
+                _version = _sellInvoiceBusiness.GetInvoiceVersion(_originalInvoiceNumber.Value);
+            }
+            else
+            {
+                radAutoNumber.Checked = true;
+            }
+            radCustomeNumber_CheckedChanged(null, null);
             SetErrorProviderPadding(pnlControls, errorProviderHeader, 10);
         }
 
@@ -90,7 +92,7 @@ namespace Presentation.Forms
             foreach (Control x in pnlControls.Controls)
                 x.DataBindings.Clear();
             lblTotalPrice.DataBindings.Clear();
-            
+
             //header bindings
             numInvoiceNumber.DataBindings.Add("Value", _invoiceDataTable, Invoice.NumberColumnName, false, DataSourceUpdateMode.OnPropertyChanged);
             lblTotalPrice.DataBindings.Add("Text", _invoiceDataTable, Invoice.TotalPriceColumnName, false, DataSourceUpdateMode.OnPropertyChanged);
@@ -102,7 +104,7 @@ namespace Presentation.Forms
             b.Parse += new ConvertEventHandler(StringToDate);
             txtDate.DataBindings.Add(b);
 
-            
+
             //items bindings
             if (itemsGridView.DataSource != null)
                 return;
@@ -133,18 +135,18 @@ namespace Presentation.Forms
         {
             if (e.ColumnIndex == _quantityColumnIndex)
             {
-                if(itemsGridView.Rows[e.RowIndex].Cells[_quantityColumnIndex].Value is decimal)
+                if (itemsGridView.Rows[e.RowIndex].Cells[_quantityColumnIndex].Value is decimal)
                     itemsGridView.Rows[e.RowIndex].Cells[_quantityColumnIndex].Value = (int)(decimal)itemsGridView.Rows[e.RowIndex].Cells[_quantityColumnIndex].Value;
             }
-            if(e.ColumnIndex == _stockColumnIndex)
+            if (e.ColumnIndex == _stockColumnIndex)
             {
                 ((DataGridViewComboBoxCell)itemsGridView.Rows[e.RowIndex].Cells[_itemColumnIndex]).Items.Clear();
-                itemsGridView.Rows[e.RowIndex].Cells[_itemIdColumnIndex].Value = 
-                itemsGridView.Rows[e.RowIndex].Cells[_feeColumnIndex].Value = 
+                itemsGridView.Rows[e.RowIndex].Cells[_itemIdColumnIndex].Value =
+                itemsGridView.Rows[e.RowIndex].Cells[_feeColumnIndex].Value =
                 itemsGridView.Rows[e.RowIndex].Cells[_quantityColumnIndex].Value =
                 itemsGridView.Rows[e.RowIndex].Cells[_discountColumnIndex].Value =
-                itemsGridView.Rows[e.RowIndex].Cells[_taxcolumnName].Value = 
-                itemsGridView.Rows[e.RowIndex].Cells[_totalPriceColumnIndex].Value = 
+                itemsGridView.Rows[e.RowIndex].Cells[_taxcolumnName].Value =
+                itemsGridView.Rows[e.RowIndex].Cells[_totalPriceColumnIndex].Value =
                 itemsGridView.Rows[e.RowIndex].Cells[_TotalAfterDiscountColumnIndex].Value = (decimal)0;
 
                 if (!(itemsGridView.Rows[e.RowIndex].Cells[_stockColumnIndex].Value is DBNull))
@@ -166,7 +168,7 @@ namespace Presentation.Forms
                 var item = _itemsBusiness.GetItemModel((string)itemsGridView.Rows[e.RowIndex].Cells[_itemColumnIndex].Value);
                 itemsGridView.Rows[e.RowIndex].Cells[_itemIdColumnIndex].Value = item.Id;
                 itemsGridView.Rows[e.RowIndex].Cells[_feeColumnIndex].Value = _itemsBusiness.GetItemPrice(item.Id, (DateTime)_invoiceDataTable.Rows[0][Invoice.DateColumnName]).Price;
-                itemsGridView.Rows[e.RowIndex].Cells[_quantityColumnIndex].Value = (int) 0;
+                itemsGridView.Rows[e.RowIndex].Cells[_quantityColumnIndex].Value = (int)0;
                 itemsGridView.Rows[e.RowIndex].Cells[_discountColumnIndex].Value =
                 itemsGridView.Rows[e.RowIndex].Cells[_taxcolumnName].Value =
                 itemsGridView.Rows[e.RowIndex].Cells[_totalPriceColumnIndex].Value =
@@ -185,7 +187,7 @@ namespace Presentation.Forms
                 CalculateTotalPrice();
             }
 
-            if(((DataGridViewButtonCell)itemsGridView.Rows[e.RowIndex].Cells[_deleteBtnColumnIndex]).Value == null)
+            if (((DataGridViewButtonCell)itemsGridView.Rows[e.RowIndex].Cells[_deleteBtnColumnIndex]).Value == null)
                 ((DataGridViewButtonCell)itemsGridView.Rows[e.RowIndex].Cells[_deleteBtnColumnIndex]).Value = "حذف";
         }
 
@@ -196,7 +198,7 @@ namespace Presentation.Forms
 
         private void ItemsGridView_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
         {
-            if (e.RowIndex == itemsGridView.Rows.Count - 1 && e.ColumnIndex != _stockColumnIndex 
+            if (e.RowIndex == itemsGridView.Rows.Count - 1 && e.ColumnIndex != _stockColumnIndex
                 || (e.ColumnIndex != _itemColumnIndex && e.ColumnIndex != _stockColumnIndex && itemsGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value is DBNull))
                 e.Cancel = true;
         }
@@ -206,8 +208,14 @@ namespace Presentation.Forms
             errorProviderHeader.Clear();
             errorProviderItems.Clear();
 
+            if (!CheckVersion())
+            {
+                MessageBox.Show("اطلاعات فاکتور توسط کاربر دیگری تغییر یافته است");
+                return;
+            }
+
             _invoiceDataTable.Rows[0][Invoice.PartyRefColumnName] = GetPartyRef();
-            if (!Business.InvoiceBusiness.ValidateInvoiceDataTable(_invoiceDataTable, _sellInvoiceBusiness, _originalInvoiceNumber == -1 ? _lockedInvoiceNumber : _originalInvoiceNumber)
+            if (!Business.InvoiceBusiness.ValidateInvoiceDataTable(_invoiceDataTable, _sellInvoiceBusiness, _originalInvoiceNumber)
                 | !Business.InvoiceBusiness.ValidateInvoiceItemsDataTable(_invoiceItemsDataTable, true) | !ValidateChildren(ValidationConstraints.Enabled))
             {
                 BindDataTable();
@@ -215,18 +223,22 @@ namespace Presentation.Forms
             }
 
             CalculateTotalPrice();
-            bool result = _originalInvoiceNumber == -1 ? _sellInvoiceBusiness.SaveInvoice(_invoiceDataTable, _invoiceItemsDataTable) : _sellInvoiceBusiness.EditInvoice(_originalInvoiceNumber, _invoiceDataTable, _invoiceItemsDataTable);
+            bool result = _originalInvoiceNumber == null ? _sellInvoiceBusiness.SaveInvoice(_invoiceDataTable, _invoiceItemsDataTable) : _sellInvoiceBusiness.EditInvoice(_originalInvoiceNumber.Value, _version, _invoiceDataTable, _invoiceItemsDataTable);
             if (!result)
                 MessageBox.Show("هنگام ذخیره کردن فاکتور خطایی رخ داده است !!!");
             else
                 Close();
         }
+        protected override bool CheckVersion()
+        {
+            return _originalInvoiceNumber == null || _buyInvoiceBusiness.GetInvoiceVersion(_originalInvoiceNumber.Value) == _version;
+        }
 
         private int GetPartyRef()
         {
-            if(cmbParties.SelectedIndex != -1 && ((Party)cmbParties.SelectedItem).Name == cmbParties.Text)
+            if (cmbParties.SelectedIndex != -1 && ((Party)cmbParties.SelectedItem).Name == cmbParties.Text)
                 return ((Party)cmbParties.SelectedItem).Id;
-            
+
             var party = new Party { Name = cmbParties.Text };
             party.Save();
             return party.Id;
@@ -250,10 +262,10 @@ namespace Presentation.Forms
             {
                 if (itemsGridView.Rows[i].Cells[_totalPriceColumnIndex].Value == null)
                     continue;
-                totalprice += (decimal) itemsGridView.Rows[i].Cells[_totalPriceColumnIndex].Value;
+                totalprice += (decimal)itemsGridView.Rows[i].Cells[_totalPriceColumnIndex].Value;
                 ((DataGridViewButtonCell)itemsGridView.Rows[i].Cells[_deleteBtnColumnIndex]).Value = "حذف";
             }
-            
+
             lblTotalPrice.Text = totalprice.ToString();
         }
 
@@ -286,7 +298,7 @@ namespace Presentation.Forms
 
         private void FrmCreateSellInvoice_Load(object sender, EventArgs e)
         {
-            if (number != -1)
+            if (_originalInvoiceNumber != null)
             {
                 EditMode(itemsGridView, cmbParties);
                 UpdateTotalPrices();
@@ -304,6 +316,23 @@ namespace Presentation.Forms
             {
                 e.Cancel = false;
                 errorProviderHeader.SetError(lblTotalPriceLable, null);
+            }
+        }
+
+        private void radCustomeNumber_CheckedChanged(object sender, EventArgs e)
+        {
+            numInvoiceNumber.Enabled = radCustomeNumber.Checked;
+            if (radCustomeNumber.Checked)
+            {
+                numInvoiceNumber.Minimum = 1;
+                numInvoiceNumber.Maximum = 1000000000;
+                if (_originalInvoiceNumber != null)
+                    numInvoiceNumber.Value = _originalInvoiceNumber.Value;
+            }
+            else
+            {
+                numInvoiceNumber.Minimum =
+                numInvoiceNumber.Maximum = -1;
             }
         }
     }

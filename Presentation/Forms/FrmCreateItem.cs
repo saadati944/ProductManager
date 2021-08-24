@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using Business.Repositories;
 using DataLayer;
 using DataLayer.Models;
-using Business.Repositories;
+using System;
+using System.Data;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace Presentation.Forms
 {
@@ -59,7 +54,7 @@ namespace Presentation.Forms
                         break;
                     }
                 lblTitle.Text = Text = "تغییر محصول";
-                
+
             }
             else
             {
@@ -75,7 +70,7 @@ namespace Presentation.Forms
             }
             txtCreator.Text = _dataTable.Rows[0][Item.CreatorColumnName].ToString();
         }
-        
+
         private void BindDataTable()
         {
             txtItemName.DataBindings.Add("Text", _dataTable, Item.NameColumnName, false, DataSourceUpdateMode.OnPropertyChanged);

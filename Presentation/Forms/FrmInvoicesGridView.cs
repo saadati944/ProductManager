@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Drawing;
+﻿using Business.Repositories;
 using DataLayer;
-using Business.Repositories;
+using System;
+using System.Data;
+using System.Windows.Forms;
 
 namespace Presentation.Forms
 {
@@ -138,29 +133,16 @@ namespace Presentation.Forms
                 return;
 
             var invoicenumber = (int)dataGridView.CurrentRow.Cells[_numberColumnName].Value;
-            
-            if(invoicetype == InvoiceFormType.BuyingInvoices)
-            {
-                if (_buyInvoiceBusiness.LockInvoiceNumber(invoicenumber))
-                {
-                    new FrmCreateBuyInvoice(invoicenumber, container, invoicenumber).ShowDialog();
-                    _buyInvoiceBusiness.UnlockInvoiceNumber(invoicenumber);
-                    _buyInvoicesRepository.Update();
-                }
-                else
-                    MessageBox.Show("امکان ویرایش فاکتور وجود ندارد");
 
+            if (invoicetype == InvoiceFormType.BuyingInvoices)
+            {
+                new FrmCreateBuyInvoice(container, invoicenumber).ShowDialog();
+                _buyInvoicesRepository.Update();
             }
             else
             {
-                if (_sellInvoiceBusiness.LockInvoiceNumber(invoicenumber))
-                {
-                    new FrmCreateSellInvoice(invoicenumber, container, invoicenumber).ShowDialog();
-                    _sellInvoiceBusiness.UnlockInvoiceNumber(invoicenumber);
-                    _sellInvoicesRepository.Update();
-                }
-                else
-                    MessageBox.Show("امکان ویرایش فاکتور وجود ندارد");
+                new FrmCreateSellInvoice(container, invoicenumber).ShowDialog();
+                _sellInvoicesRepository.Update();
             }
         }
 
@@ -176,7 +158,7 @@ namespace Presentation.Forms
                 ShowCustomizeWindow();
                 return;
             }
-            
+
             // TODO : create a permission for removing invoices
             //if (e.ColumnIndex == -1 || !_permissions.GetLoggedInUserPermission(Business.Permissions.))
             //    return;

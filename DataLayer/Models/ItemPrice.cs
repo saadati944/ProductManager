@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataLayer.Models
 {
@@ -29,7 +25,7 @@ namespace DataLayer.Models
         public override void Include()
         {
             Item = new Item { Id = ItemRef };
-            
+
             Item.Load();
         }
 

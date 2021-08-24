@@ -73,6 +73,7 @@
     <Compile Include="Models\Stock.cs" />
     <Compile Include="Models\StockSummary.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Models\VersionableModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Utilities\Utilities.csproj">

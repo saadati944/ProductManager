@@ -1,23 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using DataLayer;
+﻿using DataLayer;
 using DataLayer.Models;
+using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace Presentation.Forms
 {
     public partial class FrmLogin : Form
     {
+        private Database _database;
+        private User _user;
+
         public FrmLogin()
         {
             InitializeComponent();
-            UpdateUsersList();
+            _database = Utilities.IOC.Container.GetInstance<Database>();
             SetErrorProviderPadding(this, errorProvider, 10);
         }
         private void SetErrorProviderPadding(Control container, ErrorProvider errorProvider, int value, bool children = false)
@@ -28,12 +26,6 @@ namespace Presentation.Forms
                 if (children)
                     SetErrorProviderPadding(x, errorProvider, value, true);
             }
-        }
-        private void UpdateUsersList()
-        {
-            cmbUsers.Items.Clear();
-            cmbUsers.Items.AddRange(Utilities.IOC.Container.GetInstance<Database>().Users.ToArray());
-            cmbUsers.SelectedIndex = 0;
         }
 
         private void FrmLogin_FormClosing(object sender, FormClosingEventArgs e)
@@ -46,42 +38,27 @@ namespace Presentation.Forms
             if (!ValidateChildren())
                 return;
 
-            txtPassword.Text = "";
-            var user = (User)cmbUsers.SelectedItem;
+            txtUserName.Text = txtPassword.Text = "";
+            //var user = (User)cmbUsers.SelectedItem;
 
-            Database.LoggedInUser = user;
+            Database.LoggedInUser = _user;
             FrmMain mainform = Utilities.IOC.Container.GetInstance<FrmMain>();
             mainform.Shown += delegate (object se, EventArgs ev) { Hide(); };
             mainform.FormClosed += delegate (object se, FormClosedEventArgs ev)
             {
                 Show();
-                UpdateUsersList();
             };
             mainform.Show();
         }
 
-        private void cmbUsers_Validating(object sender, CancelEventArgs e)
-        {
-            if(cmbUsers.SelectedIndex == -1)
-            {
-                errorProvider.SetError(cmbUsers, "یکی از کاربران را انتخاب نمایید");
-                e.Cancel = true;
-            }
-            else
-            {
-                errorProvider.SetError(cmbUsers, null);
-                e.Cancel = false;
-            }
-        }
-
         private void txtPassword_Validating(object sender, CancelEventArgs e)
         {
-            if(cmbUsers.SelectedIndex == -1)
+            if (_user == null)
             {
                 e.Cancel = true;
                 return;
             }
-            if (txtPassword.Text != ((User)cmbUsers.SelectedItem).Password)
+            if (txtPassword.Text != _user.Password)
             {
                 errorProvider.SetError(txtPassword, "رمز عبور اشتباه میباشد");
                 e.Cancel = true;
@@ -102,6 +79,21 @@ namespace Presentation.Forms
         {
             if (e.KeyCode == Keys.Escape)
                 btnEnter_Click(null, null);
+        }
+
+        private void txtUserName_Validating(object sender, CancelEventArgs e)
+        {
+            _user = _database.Users.FirstOrDefault(x => x.FirstName == txtUserName.Text);
+            if (_user == null)
+            {
+                errorProvider.SetError(txtUserName, "نام کاربری نا معتبر");
+                e.Cancel = true;
+            }
+            else
+            {
+                errorProvider.SetError(txtUserName, null);
+                e.Cancel = false;
+            }
         }
     }
 }

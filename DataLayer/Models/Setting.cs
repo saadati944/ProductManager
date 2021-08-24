@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DataLayer.Models
+﻿namespace DataLayer.Models
 {
     //TODO: include user
     public class Setting : Model
@@ -26,7 +20,7 @@ namespace DataLayer.Models
 
         public override string[] GetValues()
         {
-            return new string[] { Name, Value, UserRef.ToString()};
+            return new string[] { Name, Value, UserRef.ToString() };
         }
         public override void MapToModel(System.Data.DataRow row)
         {

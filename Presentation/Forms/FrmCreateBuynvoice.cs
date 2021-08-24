@@ -1,24 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using DataLayer;
+using DataLayer.Models;
+using System;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using DataLayer;
-using DataLayer.Models;
-using Business.Repositories;
 
 namespace Presentation.Forms
 {
     public partial class FrmCreateBuyInvoice : FrmCreateInvoice
     {
-        private int number;
-        public FrmCreateBuyInvoice(int invoiceNumber, StructureMap.IContainer container, int number = -1) : base(container)
+        public FrmCreateBuyInvoice(StructureMap.IContainer container, int? number = null) : base(container)
         {
-            this.number = number;
             InitializeComponent();
 
             _invoiceBusiness = _buyInvoiceBusiness;
@@ -29,12 +22,12 @@ namespace Presentation.Forms
 
             cmbParties.Items.AddRange(_database.Parties.ToArray());
 
-            
+
             txtBuyer.Text = Database.LoggedInUser.ToString();
 
 
             SuspendLayout();
-            for (int i=0; i<6; i++)
+            for (int i = 0; i < 6; i++)
                 itemsGridView.Columns.Insert(3, new CustomControls.NumericUpDownColumn());
 
             ((DataGridViewComboBoxColumn)itemsGridView.Columns[_stockColumnIndex]).Items.AddRange(_database.Stocks.Select(x => x.Name).ToArray());
@@ -68,11 +61,20 @@ namespace Presentation.Forms
 
             BindDataTable();
 
-            _invoiceDataTable.Rows[0][Invoice.NumberColumnName] = invoiceNumber;
-            _lockedInvoiceNumber = invoiceNumber;
 
-            if (_originalInvoiceNumber != -1)
+            if (_originalInvoiceNumber != null)
+            {
+                radCustomeNumber.Checked = true;
+                radAutoNumber.Enabled = false;
                 lblTitle.Text = "ویرایش فاکتور خرید";
+                _invoiceDataTable.Rows[0][Invoice.NumberColumnName] = _originalInvoiceNumber.Value;
+                _version = _buyInvoiceBusiness.GetInvoiceVersion(_originalInvoiceNumber.Value);
+            }
+            else
+            {
+                radAutoNumber.Checked = true;
+            }
+            radCustomeNumber_CheckedChanged(null, null);
             SetErrorProviderPadding(pnlControls, errorProviderHeader, 10);
         }
 
@@ -116,7 +118,7 @@ namespace Presentation.Forms
             itemsGridView.Columns[_itemColumnIndex].DataPropertyName = _itemNameColumnName;
             itemsGridView.Columns[_stockColumnIndex].DataPropertyName = _stockNameColumnName;
         }
- 
+
         private void ItemsGridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.ColumnIndex == _deleteBtnColumnIndex)
@@ -134,7 +136,7 @@ namespace Presentation.Forms
         {
             if (e.ColumnIndex == _quantityColumnIndex)
             {
-                if(itemsGridView.Rows[e.RowIndex].Cells[_quantityColumnIndex].Value is decimal)
+                if (itemsGridView.Rows[e.RowIndex].Cells[_quantityColumnIndex].Value is decimal)
                     itemsGridView.Rows[e.RowIndex].Cells[_quantityColumnIndex].Value = (int)(decimal)itemsGridView.Rows[e.RowIndex].Cells[_quantityColumnIndex].Value;
 
             }
@@ -169,7 +171,7 @@ namespace Presentation.Forms
                 var item = _itemsBusiness.GetItemModel((string)itemsGridView.Rows[e.RowIndex].Cells[_itemColumnIndex].Value);
                 itemsGridView.Rows[e.RowIndex].Cells[_itemIdColumnIndex].Value = item.Id;
                 itemsGridView.Rows[e.RowIndex].Cells[_feeColumnIndex].Value = _itemsBusiness.GetItemPrice(item.Id, (DateTime)_invoiceDataTable.Rows[0][Invoice.DateColumnName]).Price;
-                itemsGridView.Rows[e.RowIndex].Cells[_quantityColumnIndex].Value = (int) 0;
+                itemsGridView.Rows[e.RowIndex].Cells[_quantityColumnIndex].Value = (int)0;
                 itemsGridView.Rows[e.RowIndex].Cells[_discountColumnIndex].Value =
                 itemsGridView.Rows[e.RowIndex].Cells[_taxcolumnName].Value =
                 itemsGridView.Rows[e.RowIndex].Cells[_totalPriceColumnIndex].Value =
@@ -208,8 +210,14 @@ namespace Presentation.Forms
             errorProviderHeader.Clear();
             errorProviderItems.Clear();
 
+            if (!CheckVersion())
+            {
+                MessageBox.Show("اطلاعات فاکتور توسط کاربر دیگری تغییر یافته است");
+                return;
+            }
+
             _invoiceDataTable.Rows[0][Invoice.PartyRefColumnName] = GetPartyRef();
-            if (!Business.InvoiceBusiness.ValidateInvoiceDataTable(_invoiceDataTable, _buyInvoiceBusiness, _originalInvoiceNumber == -1 ? _lockedInvoiceNumber : _originalInvoiceNumber)
+            if (!Business.InvoiceBusiness.ValidateInvoiceDataTable(_invoiceDataTable, _buyInvoiceBusiness, _originalInvoiceNumber)
                 | !Business.InvoiceBusiness.ValidateInvoiceItemsDataTable(_invoiceItemsDataTable) | !ValidateChildren(ValidationConstraints.Enabled))
             {
                 BindDataTable();
@@ -219,18 +227,23 @@ namespace Presentation.Forms
             CalculateTotalPrice();
 
 
-            bool result = _originalInvoiceNumber == -1 ? _buyInvoiceBusiness.SaveInvoice(_invoiceDataTable, _invoiceItemsDataTable) : _buyInvoiceBusiness.EditInvoice(_originalInvoiceNumber, _invoiceDataTable, _invoiceItemsDataTable);
+            bool result = _originalInvoiceNumber == null ? _buyInvoiceBusiness.SaveInvoice(_invoiceDataTable, _invoiceItemsDataTable) : _buyInvoiceBusiness.EditInvoice(_originalInvoiceNumber.Value, _version, _invoiceDataTable, _invoiceItemsDataTable);
             if (!result)
                 MessageBox.Show("هنگام ذخیره کردن فاکتور خطایی رخ داده است !!!");
             else
                 Close();
         }
 
+        protected override bool CheckVersion()
+        {
+            return _originalInvoiceNumber == null || _buyInvoiceBusiness.GetInvoiceVersion(_originalInvoiceNumber.Value) == _version;
+        }
+
         private int GetPartyRef()
         {
             if (cmbParties.SelectedIndex != -1 && ((Party)cmbParties.SelectedItem).Name == cmbParties.Text)
                 return ((Party)cmbParties.SelectedItem).Id;
-            
+
             var party = new Party { Name = cmbParties.Text };
             party.Save();
             return party.Id;
@@ -254,7 +267,7 @@ namespace Presentation.Forms
             {
                 if (itemsGridView.Rows[i].Cells[_totalPriceColumnIndex].Value == null)
                     continue;
-                totalprice += (decimal) itemsGridView.Rows[i].Cells[_totalPriceColumnIndex].Value;
+                totalprice += (decimal)itemsGridView.Rows[i].Cells[_totalPriceColumnIndex].Value;
                 ((DataGridViewButtonCell)itemsGridView.Rows[i].Cells[_deleteBtnColumnIndex]).Value = "حذف";
             }
 
@@ -290,7 +303,7 @@ namespace Presentation.Forms
 
         private void FrmCreateBuyInvoice_Load(object sender, EventArgs e)
         {
-            if (number != -1)
+            if (_originalInvoiceNumber != null)
             {
                 EditMode(itemsGridView, cmbParties);
                 UpdateTotalPrices();
@@ -299,7 +312,7 @@ namespace Presentation.Forms
 
         private void itemsGridView_Validating(object sender, CancelEventArgs e)
         {
-            if(itemsGridView.Rows.Count == 1)
+            if (itemsGridView.Rows.Count == 1)
             {
                 e.Cancel = true;
                 errorProviderHeader.SetError(lblTotalPriceLable, "موردی را برای خرید انتخاب کنید");
@@ -308,6 +321,23 @@ namespace Presentation.Forms
             {
                 e.Cancel = false;
                 errorProviderHeader.SetError(lblTotalPriceLable, null);
+            }
+        }
+
+        private void radCustomeNumber_CheckedChanged(object sender, EventArgs e)
+        {
+            numInvoiceNumber.Enabled = radCustomeNumber.Checked;
+            if (radCustomeNumber.Checked)
+            {
+                numInvoiceNumber.Minimum = 1;
+                numInvoiceNumber.Maximum = 1000000000;
+                if (_originalInvoiceNumber != null)
+                    numInvoiceNumber.Value = _originalInvoiceNumber.Value;
+            }
+            else
+            {
+                numInvoiceNumber.Minimum =
+                numInvoiceNumber.Maximum = -1;
             }
         }
     }

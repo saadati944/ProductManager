@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data;
 
 namespace DataLayer.Models
 {
@@ -19,16 +14,16 @@ namespace DataLayer.Models
             return InvoiceType.Selling;
         }
 
-       
+
 
         public override string[] Columns()
         {
-            return new string[] { NumberColumnName, PartyRefColumnName, UserRefColumnName, DateColumnName, TotalPriceColumnName};
+            return new string[] { NumberColumnName, PartyRefColumnName, UserRefColumnName, DateColumnName, TotalPriceColumnName };
         }
 
         public override string[] GetValues()
         {
-            return new string[] { Number.ToString(), PartyRef.ToString(), UserRef.ToString(), Date.ToString("yyyy-MM-dd"), TotalPrice.ToString()};
+            return new string[] { Number.ToString(), PartyRef.ToString(), UserRef.ToString(), Date.ToString("yyyy-MM-dd"), TotalPrice.ToString() };
         }
 
         public override void Include()
@@ -55,6 +50,6 @@ namespace DataLayer.Models
             return _tableName;
         }
 
-        
+
     }
 }

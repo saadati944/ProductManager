@@ -1,12 +1,10 @@
-﻿using System;
+﻿using DataLayer;
+using DataLayer.Models;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data;
 using System.Data.SqlClient;
-using DataLayer;
-using DataLayer.Models;
+using System.Linq;
 using Utilities;
 
 namespace Business
@@ -103,16 +101,16 @@ namespace Business
         }
         public override int GetLockedInvoiceNumber()
         {
-            int l = GetLastInvoiceNumber()+1;
+            int l = GetLastInvoiceNumber() + 1;
             while (!LockInvoiceNumber(l))
                 l++;
             return l;
         }
-        public override int GetLastInvoiceNumber()
+        public override int GetLastInvoiceNumber(SqlConnection connection = null, SqlTransaction transaction = null)
         {
             try
             {
-                return (int)_database.CustomeQuery(CustomeQueries.MaxSellInvoiceNumber).Tables[0].Rows[0][0];
+                return (int)_database.CustomeQuery(CustomeQueries.MaxSellInvoiceNumber, null, null, connection, transaction).Tables[0].Rows[0][0];
             }
             catch { }
             return 0;
@@ -127,16 +125,19 @@ namespace Business
             catch { }
             return 0;
         }
-        public override bool EditInvoice(int lastNumber, DataTable invoicetable, DataTable invoiceitems)
+        public override bool EditInvoice(int lastNumber, int version, DataTable invoicetable, DataTable invoiceitems)
         {
             var connection = _database.GetConnection();
             var transaction = _database.BeginTransaction(connection);
-            if (RemoveInvoice(lastNumber, connection, transaction) && Save(invoicetable, invoiceitems, connection, transaction))
+
+            if (GetInvoiceVersion(lastNumber, connection, transaction) == version && RemoveInvoice(lastNumber, connection, transaction) && Save(invoicetable, invoiceitems, connection, transaction))
             {
+                GenerateInvoiceVersion(lastNumber, connection, transaction);
                 _database.CommitTransaction(transaction);
                 connection.Close();
                 return true;
             }
+
             _database.RollbackTransaction(transaction);
             connection.Close();
             return false;
@@ -145,7 +146,7 @@ namespace Business
         {
             var connection = _database.GetConnection();
             var transaction = _database.BeginTransaction(connection);
-            if(RemoveInvoice(number, connection, transaction))
+            if (RemoveInvoice(number, connection, transaction))
             {
                 _database.CommitTransaction(transaction);
                 connection.Close();
@@ -161,7 +162,7 @@ namespace Business
             try
             {
                 var invoice = FullLoadSellInvoice(number, connection, transaction);
-                foreach(SellInvoiceItem x in invoice.InvoiceItems)
+                foreach (SellInvoiceItem x in invoice.InvoiceItems)
                 {
                     var q = ItemQuantity(x.ItemRef, x.StockRef, connection, transaction);
                     q.Quantity += x.Quantity;
@@ -218,8 +219,11 @@ namespace Business
         {
             try
             {
-                if (invoice.UserRef < 1 || invoice.UserRef < 1)
+                if (invoice.UserRef < 1 || invoice.PartyRef < 1)
                     return false;
+
+                if (invoice.Number == -1)
+                    invoice.Number = GetLastInvoiceNumber(connection, transaction) + 1;
 
                 _database.Save(invoice, connection, transaction);
 
@@ -272,6 +276,14 @@ namespace Business
         public void UnlockInvoiceNumber(int number)
         {
             UnlockInvoiceNumber(number, Invoice.InvoiceType.Selling);
+        }
+        public int GetInvoiceVersion(int number, SqlConnection connection = null, SqlTransaction transaction = null)
+        {
+            return GetInvoiceVersion(number, Invoice.InvoiceType.Selling, connection, transaction);
+        }
+        public int GenerateInvoiceVersion(int number, SqlConnection connection = null, SqlTransaction transaction = null)
+        {
+            return GenerateInvoiceVersion(number, Invoice.InvoiceType.Selling, connection, transaction);
         }
     }
 }

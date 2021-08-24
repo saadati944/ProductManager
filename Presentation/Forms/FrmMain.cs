@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Business;
+﻿using Business;
 using Business.Repositories;
 using DataLayer;
-using DataLayer.Models;
-using StructureMap;
+using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace Presentation.Forms
 {
@@ -51,7 +43,7 @@ namespace Presentation.Forms
 
         private void CheckPermissions()
         {
-            if(Database.LoggedInUser.Id == 1)
+            if (Database.LoggedInUser.Id == 1)
                 return;
             btnPermissions.Visible = false;
             btnAddUser.Visible = false;
@@ -164,30 +156,14 @@ namespace Presentation.Forms
 
         private void btnAddBuyingInvoice_Click(object sender, EventArgs e)
         {
-            int invoiceNumber = _buyInvoiceBusiness.GetLockedInvoiceNumber();
-            try
-            {
-                new FrmCreateBuyInvoice(invoiceNumber, container).ShowDialog();
-                UpdateInvoicesRepo();
-            }
-            finally
-            {
-                _buyInvoiceBusiness.UnlockInvoiceNumber(invoiceNumber);
-            }
+            new FrmCreateBuyInvoice(container).ShowDialog();
+            UpdateInvoicesRepo();
         }
 
         private void btnAddSellingInvoice_Click(object sender, EventArgs e)
         {
-            int invoiceNumber = _sellInvoiceBusiness.GetLockedInvoiceNumber();
-            try
-            {
-                new FrmCreateSellInvoice(invoiceNumber, container).ShowDialog();
-                UpdateInvoicesRepo();
-            }
-            finally
-            {
-                _sellInvoiceBusiness.UnlockInvoiceNumber(invoiceNumber);
-            }
+            new FrmCreateSellInvoice(container).ShowDialog();
+            UpdateInvoicesRepo();
         }
 
         private void btnMeasurementUnits_Click(object sender, EventArgs e)
@@ -204,7 +180,7 @@ namespace Presentation.Forms
 
         private void btnStocks_Click(object sender, EventArgs e)
         {
-            container.GetInstance <FrmAddStock>().ShowDialog();
+            container.GetInstance<FrmAddStock>().ShowDialog();
             UpdateItemsRepo();
         }
 
@@ -215,7 +191,7 @@ namespace Presentation.Forms
 
         private void btnAddItemPrice_Click(object sender, EventArgs e)
         {
-            container.GetInstance < FrmAddItemPrice>().ShowDialog();
+            container.GetInstance<FrmAddItemPrice>().ShowDialog();
             UpdateMeasurementUnitsRepo();
         }
 
@@ -226,13 +202,13 @@ namespace Presentation.Forms
 
         private void btnUserInfo_Click(object sender, EventArgs e)
         {
-            container.GetInstance < FrmUserInfo >().ShowDialog();
+            container.GetInstance<FrmUserInfo>().ShowDialog();
             UserUpdated();
         }
 
         private void btnPermissions_Click(object sender, EventArgs e)
         {
-            container.GetInstance < FrmPermissions>().ShowDialog();
+            container.GetInstance<FrmPermissions>().ShowDialog();
         }
 
         private void FrmMain_Load(object sender, EventArgs e)
@@ -244,12 +220,12 @@ namespace Presentation.Forms
 
         private void btnAddUser_Click(object sender, EventArgs e)
         {
-            container.GetInstance < FrmSignUp>().ShowDialog();
+            container.GetInstance<FrmSignUp>().ShowDialog();
         }
 
         private void FrmMain_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.Escape)
+            if (e.KeyCode == Keys.Escape)
                 btnLogOut_Click(null, null);
         }
     }

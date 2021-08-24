@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using DataLayer;
+﻿using DataLayer;
 using DataLayer.Models;
+using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace Presentation.Forms
 {
@@ -33,7 +28,7 @@ namespace Presentation.Forms
         }
         private void SetErrorProviderPadding(Control container, ErrorProvider errorProvider, int value, bool children = false)
         {
-            foreach(Control x in container.Controls)
+            foreach (Control x in container.Controls)
             {
                 errorProvider.SetIconPadding(x, value);
                 if (children)
@@ -54,7 +49,7 @@ namespace Presentation.Forms
 
         private void cmbItems_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(cmbItems.SelectedIndex != -1)
+            if (cmbItems.SelectedIndex != -1)
                 _itemPrice.ItemRef = ((Item)cmbItems.SelectedItem).Id;
         }
 

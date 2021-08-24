@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Business;
+﻿using Business;
+using Business.Repositories;
 using DataLayer;
 using DataLayer.Models;
-using Business.Repositories;
+using System;
+using System.Windows.Forms;
 
 namespace Presentation.Forms
 {
@@ -87,7 +83,7 @@ namespace Presentation.Forms
         {
             if (e.RowIndex == -1 || e.ColumnIndex == -1)
                 return;
-            
+
             dataGridView.ClearSelection();
             dataGridView.Rows[e.RowIndex].Selected = true;
             dataGridView.CurrentCell = dataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex];
@@ -100,7 +96,7 @@ namespace Presentation.Forms
             dataGridView.Columns.Clear();
 
             dataGridView.Columns.Add(_idColumnName, "شماره");
-            dataGridView.Columns[_idColumnName].Visible = IsVIsibleColumn(_settingsPrefix+_idColumnName);
+            dataGridView.Columns[_idColumnName].Visible = IsVIsibleColumn(_settingsPrefix + _idColumnName);
             dataGridView.Columns[_idColumnName].DataPropertyName = _idColumnName;
 
             dataGridView.Columns.Add(_nameColumnName, "نام");

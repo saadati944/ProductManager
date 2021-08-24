@@ -29,27 +29,15 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.cmbUsers = new System.Windows.Forms.ComboBox();
             this.btnEnter = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.btnExit = new System.Windows.Forms.Button();
+            this.txtUserName = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             this.SuspendLayout();
-            // 
-            // cmbUsers
-            // 
-            this.cmbUsers.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbUsers.FormattingEnabled = true;
-            this.cmbUsers.Location = new System.Drawing.Point(35, 54);
-            this.cmbUsers.Margin = new System.Windows.Forms.Padding(4);
-            this.cmbUsers.Name = "cmbUsers";
-            this.cmbUsers.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.cmbUsers.Size = new System.Drawing.Size(188, 27);
-            this.cmbUsers.TabIndex = 0;
-            this.cmbUsers.Validating += new System.ComponentModel.CancelEventHandler(this.cmbUsers_Validating);
             // 
             // btnEnter
             // 
@@ -125,6 +113,14 @@
             this.btnExit.UseVisualStyleBackColor = false;
             this.btnExit.Click += new System.EventHandler(this.btnSignUp_Click);
             // 
+            // txtUserName
+            // 
+            this.txtUserName.Location = new System.Drawing.Point(35, 54);
+            this.txtUserName.Name = "txtUserName";
+            this.txtUserName.Size = new System.Drawing.Size(188, 27);
+            this.txtUserName.TabIndex = 0;
+            this.txtUserName.Validating += new System.ComponentModel.CancelEventHandler(this.txtUserName_Validating);
+            // 
             // FrmLogin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
@@ -132,12 +128,12 @@
             this.AutoValidate = System.Windows.Forms.AutoValidate.Disable;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(255)))), ((int)(((byte)(220)))));
             this.ClientSize = new System.Drawing.Size(337, 225);
+            this.Controls.Add(this.txtUserName);
             this.Controls.Add(this.btnExit);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtPassword);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnEnter);
-            this.Controls.Add(this.cmbUsers);
             this.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.KeyPreview = true;
@@ -158,13 +154,12 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.ComboBox cmbUsers;
         private System.Windows.Forms.Button btnEnter;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtPassword;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ErrorProvider errorProvider;
         private System.Windows.Forms.Button btnExit;
+        private System.Windows.Forms.TextBox txtUserName;
     }
 }

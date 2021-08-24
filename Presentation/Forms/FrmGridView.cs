@@ -1,13 +1,7 @@
-﻿using System;
+﻿using DataLayer;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using DataLayer;
 
 namespace Presentation.Forms
 {
@@ -67,7 +61,7 @@ namespace Presentation.Forms
         {
             CheckDimensions();
         }
-        
+
         private void FrmGridView_SizeChanged(object sender, EventArgs e)
         {
             CheckDimensions();

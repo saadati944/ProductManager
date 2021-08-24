@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using DataLayer;
+﻿using DataLayer;
 using DataLayer.Models;
+using System;
+using System.ComponentModel;
+using System.Windows.Forms;
 
 namespace Presentation.Forms
 {
@@ -46,7 +40,7 @@ namespace Presentation.Forms
             if (!ValidateChildren())
                 return;
 
-            User u = (User) bindingSource.DataSource;
+            User u = (User)bindingSource.DataSource;
             u.Save();
             MessageBox.Show("ثبت نام با موفقیت به پایان رسید");
             Close();
@@ -63,7 +57,7 @@ namespace Presentation.Forms
         }
         private void ValidateTextLength(object sender, CancelEventArgs e, int minLen)
         {
-            if(((Control)sender).Text.Length < minLen)
+            if (((Control)sender).Text.Length < minLen)
             {
                 errorProvider.SetError((Control)sender, "حداقل طول مجاز برای این فیلد 3 کاراکر میباشد");
                 e.Cancel = true;

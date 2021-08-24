@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data;
 
 namespace DataLayer.Models
 {
-    public class Item : Model
+    public class Item : VersionableModel
     {
         private const string _tableName = "Items";
 
@@ -53,12 +48,12 @@ namespace DataLayer.Models
 
         public override string[] Columns()
         {
-            return new string[]{ NameColumnName, DescriptionColumnName, CreatorRefColumnName, PriceColumnName, MeasurementUnitRefColumnName };
+            return new string[] { NameColumnName, DescriptionColumnName, CreatorRefColumnName, PriceColumnName, MeasurementUnitRefColumnName };
         }
 
         public override string[] GetValues()
         {
-            return new string[] { Name, Description, CreatorRef.ToString(), Price.ToString(), MeasurementUnitRef.ToString()};
+            return new string[] { Name, Description, CreatorRef.ToString(), Price.ToString(), MeasurementUnitRef.ToString() };
         }
 
         public override void Include()

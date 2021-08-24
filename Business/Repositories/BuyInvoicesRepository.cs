@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DataLayer;
+using DataLayer.Models;
+using System;
 using System.Data;
 using System.Data.SqlClient;
-using DataLayer;
-using DataLayer.Models;
 
 namespace Business.Repositories
 {
@@ -64,7 +60,7 @@ namespace Business.Repositories
                 _dataTable.Columns.Add(_userColumnName, typeof(User));
             if (!_dataTable.Columns.Contains(_partyColumnName))
                 _dataTable.Columns.Add(_partyColumnName, typeof(Party));
-            if(!_dataTable.Columns.Contains(_typeColumnName))
+            if (!_dataTable.Columns.Contains(_typeColumnName))
                 _dataTable.Columns.Add(_typeColumnName, typeof(string));
             if (!_dataTable.Columns.Contains(_stockColumnName))
                 _dataTable.Columns.Add(_stockColumnName, typeof(Stock));

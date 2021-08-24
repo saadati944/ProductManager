@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Business;
+﻿using Business;
 using DataLayer;
 using DataLayer.Models;
+using System;
+using System.Windows.Forms;
 
 namespace Presentation.Forms
 {
@@ -23,14 +16,14 @@ namespace Presentation.Forms
             InitializeComponent();
             _permissions = permissions;
             foreach (var x in database.Users)
-                if(x.Id != Database.LoggedInUser.Id)
+                if (x.Id != Database.LoggedInUser.Id)
                     cmbUsers.Items.Add(x);
         }
 
         private void AddCheckboxes()
         {
             SuspendLayout();
-            foreach(var x in _permissions.GetAllPermissions(_userref))
+            foreach (var x in _permissions.GetAllPermissions(_userref))
             {
                 AddCheckBox(x);
             }

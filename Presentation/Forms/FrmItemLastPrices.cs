@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data;
-using DataLayer;
+﻿using DataLayer;
 using DataLayer.Models;
+using System;
+using System.Data;
 
 namespace Presentation.Forms
 {
@@ -51,13 +47,13 @@ namespace Presentation.Forms
 
         private void GenerateTable()
         {
-            _dataTable = _database.GetAllDataset<ItemPrice>(null, null, "ItemRef="+_item.Id, "Date DESC").Tables[0];
+            _dataTable = _database.GetAllDataset<ItemPrice>(null, null, "ItemRef=" + _item.Id, "Date DESC").Tables[0];
 
             if (!_dataTable.Columns.Contains(_persianDateColumnName))
                 _dataTable.Columns.Add(_persianDateColumnName);
 
             foreach (DataRow row in _dataTable.Rows)
-                row[_persianDateColumnName]  = PersianDate.PersianDateStringFromDateTime((DateTime)row[_dateColumnName]);
+                row[_persianDateColumnName] = PersianDate.PersianDateStringFromDateTime((DateTime)row[_dateColumnName]);
 
             DataRow drow = _dataTable.NewRow();
             drow[_persianDateColumnName] = "قیمت پیشفرض";

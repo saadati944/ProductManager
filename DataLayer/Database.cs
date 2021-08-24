@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data.SqlClient;
+﻿using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
 
 namespace DataLayer
 {
@@ -45,7 +41,7 @@ namespace DataLayer
             isOpen = false;
         }
 
-        public System.Data.DataSet GetAllDataset<T>(SqlConnection connection=null, SqlTransaction transaction = null ,string condition = null, string orderby = null, int top = -1)
+        public System.Data.DataSet GetAllDataset<T>(SqlConnection connection = null, SqlTransaction transaction = null, string condition = null, string orderby = null, int top = -1)
             where T : Models.Model, new()
         {
             T temp = new T();
@@ -70,9 +66,9 @@ namespace DataLayer
             return new Commands.SelectCommand(connection, null, temp.TableName(), temp.Columns(), condition, orderby, top).GetDataAdapter();
         }
 
-        public DataSet CustomeQuery(string query, string[] parameterNames = null, object[] parameterValues = null)
+        public DataSet CustomeQuery(string query, string[] parameterNames = null, object[] parameterValues = null, SqlConnection connection = null, SqlTransaction transaction = null)
         {
-            return new Commands.SelectCommand(_connection, query, parameterNames, parameterValues).ExecuteDataset();
+            return new Commands.SelectCommand(connection == null ? _connection : connection, query, parameterNames, parameterValues, transaction).ExecuteDataset();
         }
 
 
@@ -153,7 +149,7 @@ namespace DataLayer
             if (val.Id == -1)
                 val.Id = new Commands.InsertCommand(connection == null ? _connection : connection, transaction, val.TableName(), val.Columns(), val.GetValues()).Execute();
             else
-                new Commands.UpdateCommand(connection == null ? _connection : connection, transaction, val.TableName(), val.Columns(), val.GetValues(), "Id = "+val.Id).Execute();
+                new Commands.UpdateCommand(connection == null ? _connection : connection, transaction, val.TableName(), val.Columns(), val.GetValues(), "Id = " + val.Id).Execute();
         }
         /*
                  public void Save(Models.Model val, bool storeInIdVar = false, int idVarIndex = -1)
@@ -194,7 +190,7 @@ namespace DataLayer
 
         public void Load(Models.Model model, SqlConnection connection = null, SqlTransaction transaction = null)
         {
-            var select = new Commands.SelectCommand(connection == null ? _connection : connection, transaction, model.TableName(), model.Columns(), "id = "+model.Id, null, 1, false);
+            var select = new Commands.SelectCommand(connection == null ? _connection : connection, transaction, model.TableName(), model.Columns(), "id = " + model.Id, null, 1, model is Models.VersionableModel, false);
             DataRow row = select.Execute().First();
             model.MapToModel(row);
             return;
@@ -206,7 +202,7 @@ namespace DataLayer
             //    new Commands.DeleteCommand(_sqlCommand, model.TableName(), $"Id = {model.Id}");
             //else
             //    new Commands.DeleteCommand(_connection, model.TableName(), $"Id = {model.Id}").execute();
-            new Commands.DeleteCommand(connection == null ? _connection : connection, transaction, model.TableName(), "Id = "+model.Id).execute();
+            new Commands.DeleteCommand(connection == null ? _connection : connection, transaction, model.TableName(), "Id = " + model.Id).execute();
         }
 
         public SqlTransaction BeginTransaction(SqlConnection connection)

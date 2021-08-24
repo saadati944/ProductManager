@@ -49,9 +49,25 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Business\Business.csproj">
+      <Project>{7a1033ed-1f15-4e5d-8c9e-e6220d2eab82}</Project>
+      <Name>Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataLayer\DataLayer.csproj">
+      <Project>{f8b7368d-5884-40ce-b212-11a5d15f65f6}</Project>
+      <Name>DataLayer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Presentation\Presentation.csproj">
+      <Project>{6b849889-0777-4487-9f9f-362c3227b7d0}</Project>
+      <Name>Presentation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ProductManager\Framework.csproj">
       <Project>{6bf7e9f0-92e1-4593-b99e-dcd539bb498e}</Project>
       <Name>Framework</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utilities\Utilities.csproj">
+      <Project>{a8195d83-0e70-47b6-b5b3-c61a2a9efa56}</Project>
+      <Name>Utilities</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

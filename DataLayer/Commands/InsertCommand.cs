@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace DataLayer.Commands
 {
@@ -13,13 +10,13 @@ namespace DataLayer.Commands
         public InsertCommand(SqlConnection connection, SqlTransaction transaction, string table, string[] columns, string[] values)
         {
             string query = CreateQuery(table, columns, values);
-            if(transaction != null)
+            if (transaction != null)
                 _sqlCommand = new SqlCommand(query, connection, transaction);
             else
                 _sqlCommand = new SqlCommand(query, connection);
             AddParameters(_sqlCommand, values);
         }
-        
+
         public int Execute()
         {
             return Convert.ToInt32(_sqlCommand.ExecuteScalar());
@@ -36,7 +33,7 @@ namespace DataLayer.Commands
                     sb.Append(", ");
                 sb.Append("@PaRaM" + i);
             }
-            
+
             sb.Append("); ");
             sb.Append("SELECT SCOPE_IDENTITY(); ");
             //sb.Append("DECLARE @id AS int = SCOPE_IDENTITY(); ");

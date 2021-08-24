@@ -1,12 +1,10 @@
-﻿using System;
+﻿using DataLayer;
+using DataLayer.Models;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataLayer;
-using DataLayer.Models;
 
 namespace Business.Repositories
 {

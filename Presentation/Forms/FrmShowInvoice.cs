@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataLayer;
+﻿using DataLayer;
 using DataLayer.Models;
+using System;
+using System.Text;
 
 namespace Presentation.Forms
 {
@@ -98,7 +95,7 @@ namespace Presentation.Forms
             information.Append(invoice.GetPersianDate().ToString());
             information.Append("\nقیمت کل           : ");
             information.Append(invoice.TotalPrice);
-            
+
             lblInformation.Text = information.ToString();
         }
     }

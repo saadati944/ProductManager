@@ -1,10 +1,7 @@
-﻿using System;
+﻿using DataLayer;
+using DataLayer.Models;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataLayer;
-using DataLayer.Models;
 
 namespace Business
 {
@@ -113,7 +110,7 @@ namespace Business
         {
             try
             {
-                return _database.GetAll<Permission>(null, null, "UserRef = "+userRef+" AND Name = '" + name.Replace("''", "'") + "'").First();
+                return _database.GetAll<Permission>(null, null, "UserRef = " + userRef + " AND Name = '" + name.Replace("''", "'") + "'").First();
             }
             catch { }
             return null;
