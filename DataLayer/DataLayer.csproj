@@ -74,6 +74,14 @@
     <Compile Include="Models\StockSummary.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\VersionableModel.cs" />
+    <Compile Include="Repositories\BuyInvoicesRepository.cs" />
+    <Compile Include="Repositories\IInvoiceRepository.cs" />
+    <Compile Include="Repositories\IRepository.cs" />
+    <Compile Include="Repositories\ItemPricesRepository.cs" />
+    <Compile Include="Repositories\ItemsRepository.cs" />
+    <Compile Include="Repositories\MeasurementUnitsRepository.cs" />
+    <Compile Include="Repositories\SellInvoicesRepository.cs" />
+    <Compile Include="Repositories\StockSummariesRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Utilities\Utilities.csproj">

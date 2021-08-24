@@ -6,7 +6,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 
-namespace Business.Repositories
+namespace DataLayer.Repositories
 {
     class ItemPricesRepository : IRepository
     {
@@ -15,7 +15,6 @@ namespace Business.Repositories
         private SqlConnection _connection;
         private SqlDataAdapter _dataAdapter;
 
-        private readonly ItemsBusiness _itemsBusiness;
         private readonly ItemsRepository _itemsRepository;
 
         private const string _itemRefColumnName = "ItemRef";
@@ -43,11 +42,10 @@ namespace Business.Repositories
 
         public event DataChangeHandler DataChanged;
 
-        public ItemPricesRepository(Database database, Business.ItemsBusiness itemsbusiness)
+        public ItemPricesRepository(Database database, ItemsRepository itemsRepository)
         {
             _database = database;
-            _itemsBusiness = itemsbusiness;
-            _itemsRepository = _itemsBusiness.ItemsRepository;
+            _itemsRepository = itemsRepository;
 
 
             _itemsRepository.DataChanged += Update;
@@ -76,7 +74,7 @@ namespace Business.Repositories
             {
                 DataRow dr = _dataTable.Rows[i];
 
-                Item item = _itemsBusiness.GetItemModel((int)dr[_itemRefColumnName]);
+                Item item = _itemsRepository.GetItemModel((int)dr[_itemRefColumnName]);
                 dr[_itemColumnName] = item;
 
                 dr[_persianDateColumnName] = PersianDate.PersianDateStringFromDateTime((DateTime)dr[_dateColumnName]);

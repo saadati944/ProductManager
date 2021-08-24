@@ -5,7 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 
-namespace Business.Repositories
+namespace DataLayer.Repositories
 {
     public class ItemsRepository : IRepository
     {
@@ -81,5 +81,52 @@ namespace Business.Repositories
             if (DataChanged != null)
                 DataChanged();
         }
+
+        public DataTable NewItemsDatatable()
+        {
+            return DataTable.Clone();
+        }
+        public Item GetItemModel(string name)
+        {
+            Item item = new Item();
+            item.MapToModel(GetItem(name).Rows[0]);
+            return item;
+        }
+        
+        public Item GetItemModel(int id)
+        {
+            Item item = new Item();
+            item.MapToModel(GetItem(id).Rows[0]);
+            return item;
+        }
+
+        public DataTable GetItem(string name)
+        {
+            DataTable table = DataTable.Clone();
+
+            foreach (DataRow x in DataTable.Rows)
+                if (x.Field<string>(Item.NameColumnName) == name)
+                {
+                    table.Rows.Add(x.ItemArray);
+                    break;
+                }
+
+            return table;
+        }
+
+        public DataTable GetItem(int id)
+        {
+            DataTable table = DataTable.Clone();
+
+            foreach (DataRow x in DataTable.Rows)
+                if (x.Field<int>(Item.IdColumnName) == id)
+                {
+                    table.Rows.Add(x.ItemArray);
+                    break;
+                }
+
+            return table;
+        }
+
     }
 }

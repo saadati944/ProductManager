@@ -3,7 +3,7 @@ using DataLayer.Models;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace Business.Repositories
+namespace DataLayer.Repositories
 {
     public class StockSummariesRepository : IRepository
     {
@@ -12,7 +12,7 @@ namespace Business.Repositories
         private readonly Database _database;
         private SqlConnection _connection;
         private SqlDataAdapter _dataAdapter;
-        private readonly Business.ItemsBusiness _itemsBusiness;
+        private readonly ItemsRepository _itemsRepository;
         private readonly SellInvoicesRepository _sellInvoicesRepository;
         private readonly BuyInvoicesRepository _buyInvoicesRepository;
         private readonly MeasurementUnitsRepository _measurementUnitsRepository;
@@ -38,15 +38,15 @@ namespace Business.Repositories
 
         public event DataChangeHandler DataChanged;
 
-        public StockSummariesRepository(Database database, Business.ItemsBusiness itemsBusiness, SellInvoicesRepository sellInvoicesRepository, BuyInvoicesRepository buyInvoicesRepository, MeasurementUnitsRepository measurementUnitsRepository)
+        public StockSummariesRepository(Database database, ItemsRepository itemsRepository, SellInvoicesRepository sellInvoicesRepository, BuyInvoicesRepository buyInvoicesRepository, MeasurementUnitsRepository measurementUnitsRepository)
         {
             _database = database;
-            _itemsBusiness = itemsBusiness;
+            _itemsRepository = itemsRepository;
             _sellInvoicesRepository = sellInvoicesRepository;
             _buyInvoicesRepository = buyInvoicesRepository;
             _measurementUnitsRepository = measurementUnitsRepository;
 
-            _itemsBusiness.ItemsRepository.DataChanged += Update;
+            _itemsRepository.DataChanged += Update;
             _sellInvoicesRepository.DataChanged += Update;
             _buyInvoicesRepository.DataChanged += Update;
         }
@@ -77,7 +77,7 @@ namespace Business.Repositories
             {
                 DataRow dr = _dataTable.Rows[i];
 
-                Item item = _itemsBusiness.GetItemModel((int)dr[_itemRefColumnName]);
+                Item item = _itemsRepository.GetItemModel((int)dr[_itemRefColumnName]);
                 dr[_itemColumnName] = item;
                 dr[_measurementUnitColumnName] = _measurementUnitsRepository.GetUnit(item.MeasurementUnitRef);
 

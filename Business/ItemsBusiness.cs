@@ -1,4 +1,5 @@
 ﻿using DataLayer;
+using DataLayer.Repositories;
 using DataLayer.Models;
 using System;
 using System.Collections.Generic;
@@ -11,10 +12,10 @@ namespace Business
     public class ItemsBusiness
     {
         private readonly Database _database;
-        private readonly Repositories.ItemsRepository _itemsRepository;
+        private readonly ItemsRepository _itemsRepository;
 
 
-        public Repositories.ItemsRepository ItemsRepository
+        public ItemsRepository ItemsRepository
         {
             get
             {
@@ -30,7 +31,7 @@ namespace Business
             }
         }
 
-        public ItemsBusiness(Database database, Repositories.ItemsRepository itemsrepo)
+        public ItemsBusiness(Database database, ItemsRepository itemsrepo)
         {
             _database = database;
             _itemsRepository = itemsrepo;
@@ -74,29 +75,14 @@ namespace Business
         }
         public Item GetItemModel(int id)
         {
-            foreach (DataRow x in _itemsRepository.DataTable.Rows)
-                if ((int)x[Item.IdColumnName] == id)
-                {
-                    var it = new Item();
-                    it.MapToModel(x);
-                    return it;
-                }
-
-            return null;
+            //TODO: remove this function
+            return _itemsRepository.GetItemModel(id);
         }
 
         public DataTable GetItem(int id)
         {
-            DataTable table = _itemsRepository.DataTable.Clone();
-
-            foreach (DataRow x in _itemsRepository.DataTable.Rows)
-                if ((int)x[Item.IdColumnName] == id)
-                {
-                    table.Rows.Add(x.ItemArray);
-                    break;
-                }
-
-            return table;
+            //TODO: remove this function
+            return _itemsRepository.GetItem(id);
         }
 
 
@@ -112,7 +98,8 @@ namespace Business
 
         public DataTable NewTable()
         {
-            return _itemsRepository.DataTable.Clone();
+            //TODO: remove this function
+            return _itemsRepository.NewItemsDatatable();
         }
 
         public void SaveItem(Item item)

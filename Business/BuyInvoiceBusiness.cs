@@ -1,4 +1,5 @@
 ﻿using DataLayer;
+using DataLayer.Repositories;
 using DataLayer.Models;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace Business
 {
     public class BuyInvoiceBusiness : InvoiceBusiness
     {
-        public Repositories.BuyInvoicesRepository BuyInvoicesRepository
+        public BuyInvoicesRepository BuyInvoicesRepository
         {
             get
             {
@@ -33,7 +34,7 @@ namespace Business
             }
         }
 
-        public BuyInvoiceBusiness(Database database, Repositories.SellInvoicesRepository sellInvoicesRepository, Repositories.BuyInvoicesRepository buyInvoicesRepository) : base(database, sellInvoicesRepository, buyInvoicesRepository)
+        public BuyInvoiceBusiness(Database database, SellInvoicesRepository sellInvoicesRepository, BuyInvoicesRepository buyInvoicesRepository) : base(database, sellInvoicesRepository, buyInvoicesRepository)
         {
 
         }
@@ -59,6 +60,8 @@ namespace Business
 
         public override Invoice GetInvoiceModel(int number)
         {
+            //TODO: remove this function
+            return _buyInvoicesRepository.GetInvoiceModel(number);
             BuyInvoice bi = null;
             try
             {
@@ -71,22 +74,8 @@ namespace Business
         }
         public override DataTable GetInvoice(int number)
         {
-            DataTable table = _buyInvoicesRepository.NewInvoiceDataTable();
-
-            try
-            {
-                DataRow row = _database.GetAllDataset<BuyInvoice>(null, null, "Number=" + number, null, 1).Tables[0].Rows[0];
-                DataRow newRow = table.NewRow();
-                newRow[BuyInvoice.IdColumnName] = row[BuyInvoice.IdColumnName];
-                newRow[BuyInvoice.NumberColumnName] = row[BuyInvoice.NumberColumnName];
-                newRow[BuyInvoice.PartyRefColumnName] = row[BuyInvoice.PartyRefColumnName];
-                newRow[BuyInvoice.UserRefColumnName] = row[BuyInvoice.UserRefColumnName];
-                newRow[BuyInvoice.DateColumnName] = row[BuyInvoice.DateColumnName];
-                newRow[BuyInvoice.TotalPriceColumnName] = row[BuyInvoice.TotalPriceColumnName];
-                table.Rows.Add(newRow);
-            }
-            catch { }
-            return table;
+            //TODO: remove this function
+            return _buyInvoicesRepository.GetInvoice(number);
         }
 
         public override IEnumerable<InvoiceItem> GetInvoiceItemModels(int invoiceid)
@@ -213,8 +202,6 @@ namespace Business
 
         private bool Save(BuyInvoice invoice, SqlConnection connection, SqlTransaction transaction)
         {
-            System.Windows.Forms.MessageBox.Show(String.Join("-", invoice.Version.Select(x => x.ToString())));
-            return false;
             try
             {
                 if (invoice.UserRef < 1 || invoice.PartyRef < 1)

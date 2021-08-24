@@ -46,13 +46,6 @@
     <Compile Include="SellInvoiceBusiness.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="IOCRegistery.cs" />
-    <Compile Include="Repositories\BuyInvoicesRepository.cs" />
-    <Compile Include="Repositories\IRepository.cs" />
-    <Compile Include="Repositories\ItemPricesRepository.cs" />
-    <Compile Include="Repositories\ItemsRepository.cs" />
-    <Compile Include="Repositories\MeasurementUnitsRepository.cs" />
-    <Compile Include="Repositories\SellInvoicesRepository.cs" />
-    <Compile Include="Repositories\StockSummariesRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />

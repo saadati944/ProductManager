@@ -1,4 +1,5 @@
 ﻿using DataLayer;
+using DataLayer.Repositories;
 using DataLayer.Models;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace Business
 {
     public class SellInvoiceBusiness : InvoiceBusiness
     {
-        public Repositories.SellInvoicesRepository SellInvoicesRepository
+        public SellInvoicesRepository SellInvoicesRepository
         {
             get
             {
@@ -33,7 +34,7 @@ namespace Business
             }
         }
 
-        public SellInvoiceBusiness(Database database, Repositories.SellInvoicesRepository sellInvoicesRepository, Repositories.BuyInvoicesRepository buyInvoicesRepository) : base(database, sellInvoicesRepository, buyInvoicesRepository)
+        public SellInvoiceBusiness(Database database, SellInvoicesRepository sellInvoicesRepository, BuyInvoicesRepository buyInvoicesRepository) : base(database, sellInvoicesRepository, buyInvoicesRepository)
         {
 
         }
@@ -59,6 +60,8 @@ namespace Business
 
         public override Invoice GetInvoiceModel(int number)
         {
+            //TODO: remove this function
+            return _sellInvoicesRepository.GetInvoiceModel(number);
             SellInvoice si = null;
             try
             {
@@ -72,22 +75,8 @@ namespace Business
 
         public override DataTable GetInvoice(int number)
         {
-            DataTable table = _buyInvoicesRepository.NewInvoiceDataTable();
-
-            try
-            {
-                DataRow row = _database.GetAllDataset<SellInvoice>(null, null, "Number=" + number, null, 1).Tables[0].Rows[0];
-                DataRow newRow = table.NewRow();
-                newRow[SellInvoice.IdColumnName] = row[SellInvoice.IdColumnName];
-                newRow[SellInvoice.NumberColumnName] = row[SellInvoice.NumberColumnName];
-                newRow[SellInvoice.PartyRefColumnName] = row[SellInvoice.PartyRefColumnName];
-                newRow[SellInvoice.UserRefColumnName] = row[SellInvoice.UserRefColumnName];
-                newRow[SellInvoice.DateColumnName] = row[SellInvoice.DateColumnName];
-                newRow[SellInvoice.TotalPriceColumnName] = row[SellInvoice.TotalPriceColumnName];
-                table.Rows.Add(newRow);
-            }
-            catch { }
-            return table;
+            //TODO: remove this function
+            return _sellInvoicesRepository.GetInvoice(number);
         }
 
         public override IEnumerable<InvoiceItem> GetInvoiceItemModels(int invoiceid)

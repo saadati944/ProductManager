@@ -45,14 +45,14 @@ namespace DataLayer
             where T : Models.Model, new()
         {
             T temp = new T();
-            return new Commands.SelectCommand(connection == null ? _connection : connection, transaction, temp.TableName(), temp.Columns(), condition, orderby, top).ExecuteDataset();
+            return new Commands.SelectCommand(connection == null ? _connection : connection, transaction, temp.TableName(), temp.Columns(), condition, orderby, top, temp is Models.VersionableModel).ExecuteDataset();
         }
 
         public IEnumerable<T> GetAll<T>(SqlConnection connection = null, SqlTransaction transaction = null, string condition = null, string orderby = null, int top = -1)
             where T : Models.Model, new()
         {
             T temp = new T();
-            EnumerableRowCollection<DataRow> rows = new Commands.SelectCommand(connection == null ? _connection : connection, transaction, temp.TableName(), temp.Columns(), condition, orderby, top).Execute();
+            EnumerableRowCollection<DataRow> rows = new Commands.SelectCommand(connection == null ? _connection : connection, transaction, temp.TableName(), temp.Columns(), condition, orderby, top, temp is Models.VersionableModel).Execute();
             if (rows == null)
                 return Enumerable.Empty<T>();
             return rows.Select(x => { T t = new T(); t.MapToModel(x); return t; });
@@ -63,7 +63,7 @@ namespace DataLayer
             where T : Models.Model, new()
         {
             T temp = new T();
-            return new Commands.SelectCommand(connection, null, temp.TableName(), temp.Columns(), condition, orderby, top).GetDataAdapter();
+            return new Commands.SelectCommand(connection, null, temp.TableName(), temp.Columns(), condition, orderby, top, temp is Models.VersionableModel).GetDataAdapter();
         }
 
         public DataSet CustomeQuery(string query, string[] parameterNames = null, object[] parameterValues = null, SqlConnection connection = null, SqlTransaction transaction = null)

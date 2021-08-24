@@ -6,10 +6,7 @@ namespace Business
     {
         public IOCRegistery()
         {
-            For<Repositories.BuyInvoicesRepository>().Singleton().Use<Repositories.BuyInvoicesRepository>();
-            For<Repositories.SellInvoicesRepository>().Singleton().Use<Repositories.SellInvoicesRepository>();
-            For<Repositories.MeasurementUnitsRepository>().Singleton().Use<Repositories.MeasurementUnitsRepository>();
-            For<Repositories.ItemsRepository>().Singleton().Use<Repositories.ItemsRepository>();
+
         }
     }
 }

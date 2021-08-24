@@ -5,7 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 
-namespace Business.Repositories
+namespace DataLayer.Repositories
 {
     public class MeasurementUnitsRepository : IRepository
     {

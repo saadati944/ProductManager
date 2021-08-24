@@ -1,4 +1,5 @@
 ﻿using DataLayer;
+using DataLayer.Repositories;
 using DataLayer.Models;
 using System;
 using System.Collections.Generic;
@@ -11,8 +12,8 @@ namespace Business
 
     public abstract class InvoiceBusiness
     {
-        protected readonly Repositories.SellInvoicesRepository _sellInvoicesRepository;
-        protected readonly Repositories.BuyInvoicesRepository _buyInvoicesRepository;
+        protected readonly SellInvoicesRepository _sellInvoicesRepository;
+        protected readonly BuyInvoicesRepository _buyInvoicesRepository;
         protected const string _itemNameColumnName = "ItemName";
         protected const string _stockNameColumnName = "StockName";
         protected readonly Database _database;
@@ -20,7 +21,7 @@ namespace Business
         public IEnumerable<Invoice> Invoices { get { return null; } }
         public IEnumerable<InvoiceItem> InvoiceItems { get { return null; } }
 
-        public InvoiceBusiness(Database database, Repositories.SellInvoicesRepository sellInvoicesRepository, Repositories.BuyInvoicesRepository buyInvoicesRepository)
+        public InvoiceBusiness(Database database, SellInvoicesRepository sellInvoicesRepository, BuyInvoicesRepository buyInvoicesRepository)
         {
             _database = database;
             _sellInvoicesRepository = sellInvoicesRepository;

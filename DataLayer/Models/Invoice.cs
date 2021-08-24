@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 
 namespace DataLayer.Models
@@ -17,6 +18,8 @@ namespace DataLayer.Models
             Selling,
             Buying
         }
+        public IEnumerable<InvoiceItem> InvoiceItems { get; set; }
+
         public int Number { get; set; }
         public int PartyRef { get; set; }
         public Party Party { get; set; }
@@ -32,6 +35,24 @@ namespace DataLayer.Models
             {
                 return Party != null && User != null;
             }
+        }
+        public override void Include()
+        {
+            User = new User { Id = UserRef };
+            Party = new Party { Id = PartyRef };
+
+            User.Load();
+            Party.Load();
+        }
+
+        public override void MapToModel(DataRow row)
+        {
+            base.MapToModel(row);
+            Number = GetField(row, NumberColumnName, Number);
+            PartyRef = GetField(row, PartyRefColumnName, PartyRef);
+            UserRef = GetField(row, UserRefColumnName, UserRef);
+            Date = GetField(row, DateColumnName, Date);
+            TotalPrice = GetField(row, TotalPriceColumnName, TotalPrice);
         }
 
         public void SetPersianDate(int year, int month, int day, int hour = 0, int minute = 0, int second = 0, int millisecond = 0)
@@ -56,8 +77,22 @@ namespace DataLayer.Models
             Date = pc.ToDateTime(pdate.Year, pdate.Month, pdate.Day, 0, 0, 0, 0);
         }
 
+        public override string[] Columns()
+        {
+            return new string[] { NumberColumnName, PartyRefColumnName, UserRefColumnName, DateColumnName, TotalPriceColumnName };
+        }
+
+        public override string[] GetValues()
+        {
+            return new string[] { Number.ToString(), PartyRef.ToString(), UserRef.ToString(), Date.ToString("yyyy-MM-dd"), TotalPrice.ToString() };
+        }
+
+        public override string TableName()
+        {
+            return GetInvoiceType() == InvoiceType.Selling ? "SellInvoices" : "BuyInvoices";
+        }
+
         public abstract InvoiceType GetInvoiceType();
-        public IEnumerable<InvoiceItem> InvoiceItems { get; set; }
     }
     public class PersianDate
     {

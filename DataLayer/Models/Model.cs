@@ -34,12 +34,12 @@ namespace DataLayer.Models
         }
         public virtual void Include() { }
 
-        public static T GetField<T>(DataRow row, string col, T def)
+        public static T GetField<T>(DataRow row, string col, T defaultvalue)
         {
-            if (row[col] is DBNull)
-                return def;
+            if (!row.Table.Columns.Contains(col) || row[col] is DBNull)
+                return defaultvalue;
             T val = row.Field<T>(col);
-            return val == null ? def : val;
+            return val == null ? defaultvalue : val;
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace Business.Repositories
+namespace DataLayer.Repositories
 {
     public delegate void DataChangeHandler();
     public interface IRepository

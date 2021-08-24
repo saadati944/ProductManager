@@ -4,9 +4,9 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace Business.Repositories
+namespace DataLayer.Repositories
 {
-    public class BuyInvoicesRepository : IRepository
+    public class SellInvoicesRepository : IInvoiceRepository
     {
         private DataTable _dataTable = null;
         private readonly Database _database;
@@ -27,7 +27,7 @@ namespace Business.Repositories
 
         public event DataChangeHandler DataChanged;
 
-        public BuyInvoicesRepository(Database database)
+        public SellInvoicesRepository(Database database)
         {
             _database = database;
         }
@@ -47,7 +47,7 @@ namespace Business.Repositories
             if (_connection == null)
             {
                 _connection = _database.GetConnection();
-                _dataAdapter = _database.GetDataAdapter<BuyInvoice>(_connection);
+                _dataAdapter = _database.GetDataAdapter<SellInvoice>(_connection);
             }
             if (_dataTable == null)
                 _dataTable = new DataTable();
@@ -81,7 +81,7 @@ namespace Business.Repositories
 
                 dr[_persianDateColumnName] = PersianDate.PersianDateStringFromDateTime((DateTime)dr[_dateColumnName]);
 
-                dr[_typeColumnName] = "خرید";
+                dr[_typeColumnName] = "فروش";
             }
 
 
@@ -91,10 +91,32 @@ namespace Business.Repositories
         public DataTable NewInvoiceDataTable()
         {
             return DataTable.Clone();
+
         }
         public DataTable NewInvoiceItemDataTable()
         {
-            return _database.GetAllDataset<BuyInvoiceItem>(null, null, "1=0", null, 0).Tables[0];
+            return _database.GetAllDataset<SellInvoiceItem>(null, null, "1=0", null, 0).Tables[0];
+        }
+
+        public Invoice GetInvoiceModel(int number)
+        {
+            SellInvoice invoice = new SellInvoice();
+            invoice.MapToModel(GetInvoice(number).Rows[0]);
+            return invoice;
+        }
+
+        public DataTable GetInvoice(int number)
+        {
+            DataTable table = NewInvoiceDataTable();
+            for (int i = 0; i < DataTable.Rows.Count; i++)
+                if (DataTable.Rows[i].Field<int>(_numberColumnName) == number)
+                {
+                    DataRow row = table.NewRow();
+                    row.ItemArray = DataTable.Rows[i].ItemArray;
+                    table.Rows.Add(row);
+                    break;
+                }
+            return table;
         }
     }
 
