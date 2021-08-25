@@ -15,7 +15,7 @@ namespace Framework
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            Application.Run(new Presentation.Forms.FrmLogin());
+            Application.Run(Utilities.IOC.Container.GetInstance<Presentation.Forms.FrmLogin>());
         }
     }
 }

@@ -46,6 +46,7 @@
     <Compile Include="SellInvoiceBusiness.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="IOCRegistery.cs" />
+    <Compile Include="UsersBusiness.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />

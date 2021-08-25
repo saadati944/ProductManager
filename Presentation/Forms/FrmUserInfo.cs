@@ -17,8 +17,8 @@ namespace Presentation.Forms
             _user = new User
             {
                 Id = defaultUser.Id,
-                FirstName = txtFirstName.Text = defaultUser.FirstName,
-                LastName = txtLastName.Text = defaultUser.LastName,
+                UserName = txtFirstName.Text = defaultUser.UserName,
+                FullName = txtLastName.Text = defaultUser.FullName,
                 Age = (int)(numAge.Value = defaultUser.Age),
                 Gender = radMale.Checked = defaultUser.Gender,
                 Password = defaultUser.Password
@@ -37,8 +37,8 @@ namespace Presentation.Forms
 
         private void Bind()
         {
-            _user.FirstName = txtFirstName.Text;
-            _user.LastName = txtLastName.Text;
+            _user.UserName = txtFirstName.Text;
+            _user.FullName = txtLastName.Text;
             _user.Age = (int)numAge.Value;
             _user.Gender = radMale.Checked;
         }

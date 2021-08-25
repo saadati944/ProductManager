@@ -151,42 +151,6 @@ namespace DataLayer
             else
                 new Commands.UpdateCommand(connection == null ? _connection : connection, transaction, val.TableName(), val.Columns(), val.GetValues(), "Id = " + val.Id).Execute();
         }
-        /*
-                 public void Save(Models.Model val, bool storeInIdVar = false, int idVarIndex = -1)
-        {
-            string[] values = val.GetValues();
-
-            bool escape = true;
-            if (idVarIndex != -1)
-            {
-                escape = false;
-                for (int i = 0; i < values.Length; i++)
-                {
-                    if (i == idVarIndex)
-                        values[0] = "@id";
-                    else
-                        values[i] = $"'{values[i].Replace("'", "''")}'";
-                }
-            }
-
-            if (_inTransaction)
-            {
-                if (val.Id == -1)
-                {
-                    new Commands.InsertCommand(_sqlCommand, val.TableName(), val.Columns(), values, storeInIdVar, escape);
-                }
-                else
-                    new Commands.UpdateCommand(_sqlCommand, val.TableName(), val.Columns(), values, $"Id = {val.Id}", escape);
-            }
-            else
-            {
-                if (val.Id == -1)
-                    val.Id = new Commands.InsertCommand(_connection, val.TableName(), val.Columns(), values, escape).Execute();
-                else
-                    new Commands.UpdateCommand(_connection, val.TableName(), val.Columns(), values, $"Id = {val.Id}", escape).execute();
-            }
-        }
-        */
 
         public void Load(Models.Model model, SqlConnection connection = null, SqlTransaction transaction = null)
         {
@@ -198,10 +162,6 @@ namespace DataLayer
 
         public void Delete(Models.Model model, SqlConnection connection = null, SqlTransaction transaction = null)
         {
-            //if(_inTransaction)
-            //    new Commands.DeleteCommand(_sqlCommand, model.TableName(), $"Id = {model.Id}");
-            //else
-            //    new Commands.DeleteCommand(_connection, model.TableName(), $"Id = {model.Id}").execute();
             new Commands.DeleteCommand(connection == null ? _connection : connection, transaction, model.TableName(), "Id = " + model.Id).execute();
         }
 
@@ -217,34 +177,6 @@ namespace DataLayer
         {
             transaction.Rollback();
         }
-
-        /*
-         public void BeginTransaction()
-        {
-            _inTransaction = true;
-            _sqlCommand = new SqlCommand();
-            _sqlCommand.Connection = _connection;
-            _sqlCommand.CommandText = @"BEGIN TRY BEGIN TRANSACTION; ";
-        }
-        public bool CommitTransaction()
-        {
-            _sqlCommand.CommandText += @"COMMIT TRANSACTION; SELECT 1; END TRY BEGIN CATCH ROLLBACK TRANSACTION; SELECT 0; END CATCH";
-            _inTransaction = false;
-            //log(_sqlCommand.CommandText);
-            bool result = (int)_sqlCommand.ExecuteScalar() == 1;
-            _sqlCommand = null;
-            return result;
-        }
-             */
-
-
-        //private void log(string mes)
-        //{
-        //    int fn = 0;
-        //    while (System.IO.File.Exists(System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "QUERY_" + fn+ ".sql")))
-        //        fn++;
-        //    System.IO.File.WriteAllText(System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "QUERY_" + fn + ".sql"), mes);
-        //}
 
         public SqlConnection GetConnection()
         {

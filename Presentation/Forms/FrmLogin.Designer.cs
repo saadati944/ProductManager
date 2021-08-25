@@ -111,14 +111,16 @@
             this.btnExit.TabIndex = 3;
             this.btnExit.Text = "بستن برنامه";
             this.btnExit.UseVisualStyleBackColor = false;
-            this.btnExit.Click += new System.EventHandler(this.btnSignUp_Click);
+            this.btnExit.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // txtUserName
             // 
+            this.txtUserName.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtUserName.Location = new System.Drawing.Point(35, 54);
             this.txtUserName.Name = "txtUserName";
-            this.txtUserName.Size = new System.Drawing.Size(188, 27);
+            this.txtUserName.Size = new System.Drawing.Size(188, 20);
             this.txtUserName.TabIndex = 0;
+            this.txtUserName.Text = "mmd";
             this.txtUserName.Validating += new System.ComponentModel.CancelEventHandler(this.txtUserName_Validating);
             // 
             // FrmLogin

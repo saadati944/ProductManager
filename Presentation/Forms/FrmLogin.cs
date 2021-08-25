@@ -9,13 +9,12 @@ namespace Presentation.Forms
 {
     public partial class FrmLogin : Form
     {
-        private Database _database;
-        private User _user;
+        private Business.UsersBusiness _usersBusiness;
 
-        public FrmLogin()
+        public FrmLogin(Business.UsersBusiness usersBusiness)
         {
             InitializeComponent();
-            _database = Utilities.IOC.Container.GetInstance<Database>();
+            _usersBusiness = usersBusiness;
             SetErrorProviderPadding(this, errorProvider, 10);
         }
         private void SetErrorProviderPadding(Control container, ErrorProvider errorProvider, int value, bool children = false)
@@ -35,13 +34,16 @@ namespace Presentation.Forms
 
         private void btnEnter_Click(object sender, EventArgs e)
         {
-            if (!ValidateChildren())
+            var user = _usersBusiness.Login(txtUserName.Text, txtPassword.Text);
+            if(user == null)
+            {
+                MessageBox.Show("نام کاربری یا رمز عبور اشتباه است");
                 return;
+            }
 
             txtUserName.Text = txtPassword.Text = "";
-            //var user = (User)cmbUsers.SelectedItem;
 
-            Database.LoggedInUser = _user;
+            Database.LoggedInUser = user;
             FrmMain mainform = Utilities.IOC.Container.GetInstance<FrmMain>();
             mainform.Shown += delegate (object se, EventArgs ev) { Hide(); };
             mainform.FormClosed += delegate (object se, FormClosedEventArgs ev)
@@ -53,24 +55,10 @@ namespace Presentation.Forms
 
         private void txtPassword_Validating(object sender, CancelEventArgs e)
         {
-            if (_user == null)
-            {
-                e.Cancel = true;
-                return;
-            }
-            if (txtPassword.Text != _user.Password)
-            {
-                errorProvider.SetError(txtPassword, "رمز عبور اشتباه میباشد");
-                e.Cancel = true;
-            }
-            else
-            {
-                errorProvider.SetError(txtPassword, null);
-                e.Cancel = false;
-            }
+
         }
 
-        private void btnSignUp_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             Application.Exit();
         }
@@ -78,22 +66,12 @@ namespace Presentation.Forms
         private void FrmLogin_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
-                btnEnter_Click(null, null);
+                btnClose_Click(null, null);
         }
 
         private void txtUserName_Validating(object sender, CancelEventArgs e)
         {
-            _user = _database.Users.FirstOrDefault(x => x.FirstName == txtUserName.Text);
-            if (_user == null)
-            {
-                errorProvider.SetError(txtUserName, "نام کاربری نا معتبر");
-                e.Cancel = true;
-            }
-            else
-            {
-                errorProvider.SetError(txtUserName, null);
-                e.Cancel = false;
-            }
+            
         }
     }
 }
