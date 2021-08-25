@@ -67,7 +67,7 @@ namespace Presentation.Forms
                 radAutoNumber.Enabled = false;
                 lblTitle.Text = "ویرایش فاکتور فروش";
                 _invoiceDataTable.Rows[0][Invoice.NumberColumnName] = _originalInvoiceNumber.Value;
-                _version = _sellInvoiceBusiness.GetInvoiceVersion2(_originalInvoiceNumber.Value);
+                _version = _sellInvoiceBusiness.GetInvoiceVersion(_originalInvoiceNumber.Value);
             }
             else
             {
@@ -231,7 +231,7 @@ namespace Presentation.Forms
         }
         protected override bool CheckVersion()
         {
-            return _originalInvoiceNumber == null || Utilities.ArrayComparator.AreEqual(_buyInvoiceBusiness.GetInvoiceVersion2(_originalInvoiceNumber.Value), _version);
+            return _originalInvoiceNumber == null || Utilities.ArrayComparator.AreEqual(_sellInvoiceBusiness.GetInvoiceVersion(_originalInvoiceNumber.Value), _version);
         }
 
         private int GetPartyRef()

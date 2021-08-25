@@ -234,7 +234,7 @@ namespace Business
         }
 
 
-        public byte[] GetInvoiceVersion2(int number, SqlConnection connection = null, SqlTransaction transaction = null)
+        public byte[] GetInvoiceVersion(int number, SqlConnection connection = null, SqlTransaction transaction = null)
         {
             return GetInvoiceVersion(number, Invoice.InvoiceType.Buying, connection, transaction);
         }

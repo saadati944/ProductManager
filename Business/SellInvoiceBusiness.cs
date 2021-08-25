@@ -103,7 +103,7 @@ namespace Business
             var connection = _database.GetConnection();
             var transaction = _database.BeginTransaction(connection);
 
-            if (GetInvoiceVersion(lastNumber, Invoice.InvoiceType.Selling, connection, transaction) == invoicetable.Rows[0].Field<byte[]>(Invoice.VersionColumnName)
+            if (ArrayComparator.AreEqual(GetInvoiceVersion(lastNumber, Invoice.InvoiceType.Selling, connection, transaction), invoicetable.Rows[0].Field<byte[]>(Invoice.VersionColumnName))
                 && RemoveInvoice(lastNumber, connection, transaction) && Save(invoicetable, invoiceitems, connection, transaction))
             {
                 _database.CommitTransaction(transaction);
@@ -243,7 +243,7 @@ namespace Business
         }
 
 
-        public byte[] GetInvoiceVersion2(int number, SqlConnection connection = null, SqlTransaction transaction = null)
+        public byte[] GetInvoiceVersion(int number, SqlConnection connection = null, SqlTransaction transaction = null)
         {
             return GetInvoiceVersion(number, Invoice.InvoiceType.Selling, connection, transaction);
         }

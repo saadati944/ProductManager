@@ -26,7 +26,9 @@ namespace Presentation.Forms
         private readonly Business.SellInvoiceBusiness _sellInvoiceBusiness;
 
         private readonly Business.Permissions _permissions;
-        private readonly ContextMenuStrip _contextMenu;
+
+        private readonly ToolStripMenuItem _editToolStrip;
+        private readonly ToolStripMenuItem _removeToolStrip;
 
         //private readonly Color _sellInvoiceColor = Color.FromArgb(213, 255, 204);
         //private readonly Color _buyInvoiceColor = Color.FromArgb(255, 212, 204);
@@ -66,10 +68,8 @@ namespace Presentation.Forms
                 _buyInvoicesRepository.Update();
             }
 
-            ContextMenuStrip contextMenu = new ContextMenuStrip();
-            contextMenu.Items.Add(new ToolStripMenuItem("حذف", null, RemoveMenueItem_Click));
-            contextMenu.Items.Add(new ToolStripMenuItem("ویرایش", null, EditMenueItem_Click));
-            _contextMenu = contextMenu;
+            _removeToolStrip = new ToolStripMenuItem("حذف", null, RemoveMenueItem_Click);
+            _editToolStrip = new ToolStripMenuItem("ویرایش", null, EditMenueItem_Click);
 
             _buyInvoicesRepository.DataChanged += Repositories_DataChanged;
             _sellInvoicesRepository.DataChanged += Repositories_DataChanged;
@@ -166,7 +166,15 @@ namespace Presentation.Forms
             dataGridView.ClearSelection();
             dataGridView.Rows[e.RowIndex].Selected = true;
             dataGridView.CurrentCell = dataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex];
-            e.ContextMenuStrip = _contextMenu;
+            ContextMenuStrip cm = new ContextMenuStrip();
+            var invoicetype = (string)dataGridView.CurrentRow.Cells[_typeColumnName].Value == _sellInvoiceColumnText ? InvoiceFormType.SellingInvoices : InvoiceFormType.BuyingInvoices;
+
+            if (_permissions.GetLoggedInUserPermission(invoicetype == InvoiceFormType.SellingInvoices ? Business.Permissions.EditSellInvoicePermission : Business.Permissions.EditBuyInvoicePermission))
+                cm.Items.Add(_editToolStrip);
+            if (_permissions.GetLoggedInUserPermission(invoicetype == InvoiceFormType.SellingInvoices ? Business.Permissions.RemoveSellInvoicePermission : Business.Permissions.RemoveBuyInvoicePermission))
+                cm.Items.Add(_removeToolStrip);
+
+            e.ContextMenuStrip = cm;
         }
         private void DataGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
