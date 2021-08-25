@@ -1,6 +1,6 @@
 ﻿using DataLayer;
-using DataLayer.Repositories;
 using DataLayer.Models;
+using DataLayer.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -57,7 +57,7 @@ namespace Business
             List<string> items = new List<string>();
             foreach (var x in stockSummaries)
                 if (x.Quantity > 0)
-                    items.Add((string)GetItem(x.ItemRef).Rows[0][Item.NameColumnName]);
+                    items.Add((string)_itemsRepository.GetItem(x.ItemRef).Rows[0][Item.NameColumnName]);
             return items.ToArray();
         }
 
@@ -73,17 +73,17 @@ namespace Business
 
             return null;
         }
-        public Item GetItemModel(int id)
-        {
-            //TODO: remove this function
-            return _itemsRepository.GetItemModel(id);
-        }
+        //public Item GetItemModel(int id)
+        //{
+        //    //TODO: remove this function
+        //    return _itemsRepository.GetItemModel(id);
+        //}
 
-        public DataTable GetItem(int id)
-        {
-            //TODO: remove this function
-            return _itemsRepository.GetItem(id);
-        }
+        //public DataTable GetItem(int id)
+        //{
+        //    //TODO: remove this function
+        //    return _itemsRepository.GetItem(id);
+        //}
 
 
         public ItemPrice GetItemPrice(int id, DateTime? dateTime)
@@ -92,15 +92,15 @@ namespace Business
                 foreach (var x in _database.GetAll<ItemPrice>(null, null, String.Format("ItemRef = {0} AND Date <= '{1}'", id, dateTime.Value.ToString("yyyy-MM-dd")), "Date DESC", 1))
                     return x;
 
-            var item = GetItemModel(id);
+            var item = _itemsRepository.GetItemModel(id);
             return new ItemPrice { ItemRef = item.Id, Item = item, Date = dateTime == null ? DateTime.Now : dateTime.Value, Price = item.Price };
         }
 
-        public DataTable NewTable()
-        {
-            //TODO: remove this function
-            return _itemsRepository.NewItemsDatatable();
-        }
+        //public DataTable NewTable()
+        //{
+        //    //TODO: remove this function
+        //    return _itemsRepository.NewItemsDatatable();
+        //}
 
         public void SaveItem(Item item)
         {

@@ -106,8 +106,8 @@ namespace DataLayer.Repositories
         public DataTable GetInvoice(int number)
         {
             DataTable table = NewInvoiceDataTable();
-            for(int i=0; i<DataTable.Rows.Count; i++)
-                if(DataTable.Rows[i].Field<int>(_numberColumnName) == number)
+            for (int i = 0; i < DataTable.Rows.Count; i++)
+                if (DataTable.Rows[i].Field<int>(_numberColumnName) == number)
                 {
                     DataRow row = table.NewRow();
                     row.ItemArray = DataTable.Rows[i].ItemArray;

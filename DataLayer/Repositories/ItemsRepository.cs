@@ -1,5 +1,4 @@
-﻿using DataLayer;
-using DataLayer.Models;
+﻿using DataLayer.Models;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -92,7 +91,7 @@ namespace DataLayer.Repositories
             item.MapToModel(GetItem(name).Rows[0]);
             return item;
         }
-        
+
         public Item GetItemModel(int id)
         {
             Item item = new Item();

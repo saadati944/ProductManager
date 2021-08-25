@@ -1,6 +1,6 @@
 ﻿using DataLayer;
-using DataLayer.Repositories;
 using DataLayer.Models;
+using DataLayer.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -29,7 +29,7 @@ namespace Business
 
         }
 
-        public abstract bool EditInvoice(int lastNumber, int version, DataTable invoicetable, DataTable invoiceitems);
+        public abstract bool EditInvoice(int lastNumber, DataTable invoicetable, DataTable invoiceitems);
         public abstract bool RemoveInvoice(int number);
         public abstract bool SaveInvoice(DataTable invoicetable, DataTable invoiceitems);
         public abstract Invoice GetInvoiceModel(int number);
@@ -39,7 +39,6 @@ namespace Business
         public abstract int GetLastInvoiceNumber(SqlConnection connection = null, SqlTransaction transaction = null);
         public abstract decimal GetTotalPrice();
         public abstract bool IsInvoiceNumberValid(int num);
-        public abstract int GetLockedInvoiceNumber();
 
 
         protected StockSummary ItemQuantity(int itemRef, int stockRef, SqlConnection connection, SqlTransaction transaction)
@@ -158,53 +157,11 @@ namespace Business
             return result;
         }
 
-        protected void UnlockInvoiceNumber(int number, Invoice.InvoiceType invoiceType)
+        protected byte[] GetInvoiceVersion(int number, Invoice.InvoiceType invoiceType, SqlConnection connection = null, SqlTransaction transaction = null)
         {
-            var locks = _database.GetAll<InvoiceLock>(null, null, String.Format("{0}={1} AND {2}={3}", InvoiceLock.InvoiceNumberColumnName, number, InvoiceLock.InvoiceTypeColumnName, invoiceType == Invoice.InvoiceType.Selling ? 1 : 0), null, 1);
-            if (locks.Count() == 0)
-                return;
-            _database.Delete(locks.First());
-        }
-
-        protected int GenerateInvoiceVersion(int number, Invoice.InvoiceType invoiceType, SqlConnection connection = null, SqlTransaction transaction = null)
-        {
-            return (int)_database.CustomeQuery(CustomeQueries.GenerateInvoiceVersion, new string[] { "@InvoiceNumber", "@InvoiceType" }, new string[] { number.ToString(), (invoiceType == Invoice.InvoiceType.Selling).ToString() }, connection, transaction).Tables[0].Rows[0][0];
-        }
-        protected int GetInvoiceVersion(int number, Invoice.InvoiceType invoiceType, SqlConnection connection = null, SqlTransaction transaction = null)
-        {
-            return (int)_database.CustomeQuery(CustomeQueries.GetInvoiceVersion, new string[] { "@InvoiceNumber", "@InvoiceType" }, new string[] { number.ToString(), (invoiceType == Invoice.InvoiceType.Selling).ToString() }, connection, transaction).Tables[0].Rows[0][0];
-        }
-        protected bool LockInvoiceNumber(int number, Invoice.InvoiceType invoiceType)
-        {
-            var connection = _database.GetConnection();
-            var transaction = _database.BeginTransaction(connection);
-
-            if (LockInvoice(number, invoiceType, connection, transaction))
-            {
-                transaction.Commit();
-                connection.Close();
-                return true;
-            }
-
-            transaction.Rollback();
-            connection.Close();
-            return false;
-        }
-        private bool LockInvoice(int number, Invoice.InvoiceType type, SqlConnection connection, SqlTransaction transaction)
-        {
-            try
-            {
-                if (_database.GetAll<InvoiceLock>(connection, transaction, String.Format("{0}={1} AND {2}={3}", InvoiceLock.InvoiceNumberColumnName, number, InvoiceLock.InvoiceTypeColumnName, type == Invoice.InvoiceType.Selling ? 1 : 0), null, 1).Count() != 0)
-                    return false;
-
-                InvoiceLock il = new InvoiceLock { InvoiceType = type, InvoiceNumber = number };
-                _database.Save(il, connection, transaction);
-            }
-            catch
-            {
-                return false;
-            }
-            return true;
+            if (invoiceType == Invoice.InvoiceType.Selling)
+                return _database.GetAllDataset<SellInvoice>(null, null, "Number=" + number).Tables[0].Rows[0].Field<byte[]>(Invoice.VersionColumnName);
+            return _database.GetAllDataset<BuyInvoice>(null, null, "Number=" + number).Tables[0].Rows[0].Field<byte[]>(Invoice.VersionColumnName);
         }
     }
 }

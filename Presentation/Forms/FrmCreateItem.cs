@@ -1,6 +1,6 @@
-﻿using DataLayer.Repositories;
-using DataLayer;
+﻿using DataLayer;
 using DataLayer.Models;
+using DataLayer.Repositories;
 using System;
 using System.Data;
 using System.Linq;
@@ -11,6 +11,7 @@ namespace Presentation.Forms
     public partial class FrmCreateItem : Form
     {
         private readonly Business.ItemsBusiness _itemsBusiness;
+        private readonly ItemsRepository _itemsRepository;
         private readonly MeasurementUnitsRepository _measurementUnitsRepository;
         private DataTable _dataTable;
 
@@ -20,6 +21,7 @@ namespace Presentation.Forms
             _itemsBusiness = container.GetInstance<Business.ItemsBusiness>();
             _measurementUnitsRepository = container.GetInstance<MeasurementUnitsRepository>();
             _measurementUnitsRepository.Update();
+            _itemsRepository = container.GetInstance<ItemsRepository>();
             cmbMeasurementUnits.Items.AddRange(_measurementUnitsRepository.MeasurementUnits.ToArray());
 
             CreateDataTable(itemId);
@@ -45,7 +47,7 @@ namespace Presentation.Forms
         {
             if (itemId != -1)
             {
-                _dataTable = _itemsBusiness.GetItem(itemId);
+                _dataTable = _itemsRepository.GetItem(itemId);
                 DataRow row = _dataTable.Rows[0];
                 for (int i = 0; i < cmbMeasurementUnits.Items.Count; i++)
                     if (((MeasurementUnit)cmbMeasurementUnits.Items[i]).Id == (int)row[Item.MeasurementUnitRefColumnName])
@@ -58,7 +60,7 @@ namespace Presentation.Forms
             }
             else
             {
-                _dataTable = _itemsBusiness.NewTable();
+                _dataTable = _itemsRepository.NewItemsDatatable();
                 DataRow row = _dataTable.NewRow();
                 row[Item.CreatorRefColumnName] = Database.LoggedInUser.Id;
                 row[Item.CreatorColumnName] = Database.LoggedInUser;

@@ -1,5 +1,4 @@
-﻿using DataLayer;
-using DataLayer.Models;
+﻿using DataLayer.Models;
 using System.Data;
 using System.Data.SqlClient;
 

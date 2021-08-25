@@ -12,7 +12,7 @@ namespace Presentation.Forms
 
         public FrmItemLastPrices(int itemRef, StructureMap.IContainer container) : base(container.GetInstance<Database>(), container.GetInstance<Business.Settings>())
         {
-            _item = container.GetInstance<Business.ItemsBusiness>().GetItemModel(itemRef);
+            _item = container.GetInstance<DataLayer.Repositories.ItemsRepository>().GetItemModel(itemRef);
             SetTitle("لیست قیمت های " + _item.Name);
 
             _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _persianDateColumnName, DisplayName = "تاریخ", Checked = true });

@@ -1,5 +1,5 @@
-﻿using DataLayer.Repositories;
-using DataLayer;
+﻿using DataLayer;
+using DataLayer.Repositories;
 using System;
 using System.Data;
 using System.Windows.Forms;

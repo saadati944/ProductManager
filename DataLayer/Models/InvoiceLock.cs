@@ -2,7 +2,7 @@
 
 namespace DataLayer.Models
 {
-    public class InvoiceLock : Model
+    public class InvoiceLock2 : Model
     {
         private const string _tableName = "InvoiceLocks";
 

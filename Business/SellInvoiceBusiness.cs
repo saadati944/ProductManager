@@ -1,7 +1,6 @@
 ﻿using DataLayer;
-using DataLayer.Repositories;
 using DataLayer.Models;
-using System;
+using DataLayer.Repositories;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -62,15 +61,6 @@ namespace Business
         {
             //TODO: remove this function
             return _sellInvoicesRepository.GetInvoiceModel(number);
-            SellInvoice si = null;
-            try
-            {
-                si = _database.GetAll<SellInvoice>(null, null, "Number=" + number, null, 1).First();
-            }
-            catch { }
-            if (si != null)
-                return si;
-            return new SellInvoice();
         }
 
         public override DataTable GetInvoice(int number)
@@ -88,13 +78,7 @@ namespace Business
             DataTable table = _database.GetAllDataset<SellInvoiceItem>(null, null, "SellInvoiceRef=" + invoiceid).Tables[0];
             return table;
         }
-        public override int GetLockedInvoiceNumber()
-        {
-            int l = GetLastInvoiceNumber() + 1;
-            while (!LockInvoiceNumber(l))
-                l++;
-            return l;
-        }
+
         public override int GetLastInvoiceNumber(SqlConnection connection = null, SqlTransaction transaction = null)
         {
             try
@@ -114,14 +98,14 @@ namespace Business
             catch { }
             return 0;
         }
-        public override bool EditInvoice(int lastNumber, int version, DataTable invoicetable, DataTable invoiceitems)
+        public override bool EditInvoice(int lastNumber, DataTable invoicetable, DataTable invoiceitems)
         {
             var connection = _database.GetConnection();
             var transaction = _database.BeginTransaction(connection);
 
-            if (GetInvoiceVersion(lastNumber, connection, transaction) == version && RemoveInvoice(lastNumber, connection, transaction) && Save(invoicetable, invoiceitems, connection, transaction))
+            if (GetInvoiceVersion(lastNumber, Invoice.InvoiceType.Selling, connection, transaction) == invoicetable.Rows[0].Field<byte[]>(Invoice.VersionColumnName)
+                && RemoveInvoice(lastNumber, connection, transaction) && Save(invoicetable, invoiceitems, connection, transaction))
             {
-                GenerateInvoiceVersion(lastNumber, connection, transaction);
                 _database.CommitTransaction(transaction);
                 connection.Close();
                 return true;
@@ -252,27 +236,16 @@ namespace Business
         {
             try
             {
-                return _database.GetAll<SellInvoice>(null, null, "Number=" + num, null, 1).Count() == 0 && _database.GetAll<InvoiceLock>(null, null, String.Format("{0}={1} AND {2}={3}", InvoiceLock.InvoiceNumberColumnName, num, InvoiceLock.InvoiceTypeColumnName, 1), null, 1).Count() == 0;
+                return _database.GetAll<SellInvoice>(null, null, "Number=" + num, null, 1).Count() == 0;
             }
             catch { }
             return false;
         }
 
-        public bool LockInvoiceNumber(int number)
-        {
-            return LockInvoiceNumber(number, Invoice.InvoiceType.Selling);
-        }
-        public void UnlockInvoiceNumber(int number)
-        {
-            UnlockInvoiceNumber(number, Invoice.InvoiceType.Selling);
-        }
-        public int GetInvoiceVersion(int number, SqlConnection connection = null, SqlTransaction transaction = null)
+
+        public byte[] GetInvoiceVersion2(int number, SqlConnection connection = null, SqlTransaction transaction = null)
         {
             return GetInvoiceVersion(number, Invoice.InvoiceType.Selling, connection, transaction);
-        }
-        public int GenerateInvoiceVersion(int number, SqlConnection connection = null, SqlTransaction transaction = null)
-        {
-            return GenerateInvoiceVersion(number, Invoice.InvoiceType.Selling, connection, transaction);
         }
     }
 }

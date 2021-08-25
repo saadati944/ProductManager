@@ -26,7 +26,7 @@ namespace Presentation.Forms
         protected readonly string _stockIdColumnName = "StockRef";
 
         protected int? _originalInvoiceNumber = null;
-        protected int _version = -1;
+        protected byte[] _version = null;
 
         protected DataTable _invoiceDataTable;
         protected DataTable _invoiceItemsDataTable;
@@ -35,7 +35,8 @@ namespace Presentation.Forms
         protected BuyInvoiceBusiness _buyInvoiceBusiness;
         protected SellInvoiceBusiness _sellInvoiceBusiness;
         protected InvoiceBusiness _invoiceBusiness;
-        protected readonly ItemsBusiness _itemsBusiness;
+        protected readonly Business.ItemsBusiness _itemsBusiness;
+        protected readonly DataLayer.Repositories.ItemsRepository _itemsRepository;
 
         protected readonly Dictionary<string, int> _stockNameRefs;
 
@@ -47,6 +48,7 @@ namespace Presentation.Forms
             _buyInvoiceBusiness = container.GetInstance<BuyInvoiceBusiness>();
             _sellInvoiceBusiness = container.GetInstance<SellInvoiceBusiness>();
             _itemsBusiness = container.GetInstance<ItemsBusiness>();
+            _itemsRepository = container.GetInstance<DataLayer.Repositories.ItemsRepository>();
             _stockNameRefs = new Dictionary<string, int>();
             foreach (Stock x in _database.Stocks)
                 _stockNameRefs.Add(x.Name, x.Id);
@@ -103,7 +105,7 @@ namespace Presentation.Forms
 
             for (int i = 0; i < _invoiceItemsDataTable.Rows.Count; i++)
             {
-                string itemname = _itemsBusiness.GetItemModel((int)_invoiceItemsDataTable.Rows[i][InvoiceItem.ItemRefColumnName]).Name;
+                string itemname = _itemsRepository.GetItemModel((int)_invoiceItemsDataTable.Rows[i][InvoiceItem.ItemRefColumnName]).Name;
                 string stockname = "";
                 int stockref = (int)_invoiceItemsDataTable.Rows[i][InvoiceItem.StockRefColumnName];
                 foreach (var x in _stockNameRefs)

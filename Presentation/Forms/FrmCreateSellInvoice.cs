@@ -67,7 +67,7 @@ namespace Presentation.Forms
                 radAutoNumber.Enabled = false;
                 lblTitle.Text = "ویرایش فاکتور فروش";
                 _invoiceDataTable.Rows[0][Invoice.NumberColumnName] = _originalInvoiceNumber.Value;
-                _version = _sellInvoiceBusiness.GetInvoiceVersion(_originalInvoiceNumber.Value);
+                _version = _sellInvoiceBusiness.GetInvoiceVersion2(_originalInvoiceNumber.Value);
             }
             else
             {
@@ -165,7 +165,7 @@ namespace Presentation.Forms
                     itemsGridView.Rows[e.RowIndex].Cells[_itemIdColumnIndex].Value = -1;
                     return;
                 }
-                var item = _itemsBusiness.GetItemModel((string)itemsGridView.Rows[e.RowIndex].Cells[_itemColumnIndex].Value);
+                var item = _itemsRepository.GetItemModel((string)itemsGridView.Rows[e.RowIndex].Cells[_itemColumnIndex].Value);
                 itemsGridView.Rows[e.RowIndex].Cells[_itemIdColumnIndex].Value = item.Id;
                 itemsGridView.Rows[e.RowIndex].Cells[_feeColumnIndex].Value = _itemsBusiness.GetItemPrice(item.Id, (DateTime)_invoiceDataTable.Rows[0][Invoice.DateColumnName]).Price;
                 itemsGridView.Rows[e.RowIndex].Cells[_quantityColumnIndex].Value = (int)0;
@@ -223,7 +223,7 @@ namespace Presentation.Forms
             }
 
             CalculateTotalPrice();
-            bool result = _originalInvoiceNumber == null ? _sellInvoiceBusiness.SaveInvoice(_invoiceDataTable, _invoiceItemsDataTable) : _sellInvoiceBusiness.EditInvoice(_originalInvoiceNumber.Value, _version, _invoiceDataTable, _invoiceItemsDataTable);
+            bool result = _originalInvoiceNumber == null ? _sellInvoiceBusiness.SaveInvoice(_invoiceDataTable, _invoiceItemsDataTable) : _sellInvoiceBusiness.EditInvoice(_originalInvoiceNumber.Value, _invoiceDataTable, _invoiceItemsDataTable);
             if (!result)
                 MessageBox.Show("هنگام ذخیره کردن فاکتور خطایی رخ داده است !!!");
             else
@@ -231,7 +231,7 @@ namespace Presentation.Forms
         }
         protected override bool CheckVersion()
         {
-            return _originalInvoiceNumber == null || _buyInvoiceBusiness.GetInvoiceVersion(_originalInvoiceNumber.Value) == _version;
+            return _originalInvoiceNumber == null || Utilities.ArrayComparator.AreEqual(_buyInvoiceBusiness.GetInvoiceVersion2(_originalInvoiceNumber.Value), _version);
         }
 
         private int GetPartyRef()
