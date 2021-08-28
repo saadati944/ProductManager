@@ -41,7 +41,7 @@ namespace Framework
             }
             finally
             {
-                Console.WriteLine("Exit_"+address, starttime);
+                // Console.WriteLine("Exit_"+address, starttime);
             }
         }
         private void Log(string mes, int starttime=0)

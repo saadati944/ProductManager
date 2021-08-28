@@ -24,6 +24,7 @@ namespace Framework.Presentation.Forms
         protected void ShowCustomizeWindow()
         {
             var frmSelectColumns = _formFactory.CreateForm<FrmSelectColumns>();
+            frmSelectColumns.SetColumns(_columnSettings);
             btnCustomize.Visible = dataGridView.Visible = false;
             frmSelectColumns.Left = 30;
             frmSelectColumns.Width = pnlGrid.Width - 60;
