@@ -35,7 +35,7 @@ namespace BasicData.Business
 
         public int GetItemQuantity(int itemRef, int stockRef)
         {
-            var stockSummary=_database.GetAll<StockSummary>(null, null, "StockRef=" + stockRef + " AND ItemRef=" + itemRef, null, 1).FirstOrDefault();
+            var stockSummary = _database.GetAll<StockSummary>(null, null, "StockRef=" + stockRef + " AND ItemRef=" + itemRef, null, 1).FirstOrDefault();
             return stockSummary == null ? 0 : stockSummary.Quantity;
         }
 
@@ -83,6 +83,38 @@ namespace BasicData.Business
             item.MapToModel(table.Rows[0]);
             return SaveItem(item);
         }
+        public bool ValidateDataTable(DataTable table)
+        {
+            bool result = true;
+            for (int i = 0; i < table.Rows.Count; i++)
+            {
+                DataRow row = table.Rows[i];
 
+                row.ClearErrors();
+
+
+                if (row[Item.NameColumnName] is DBNull)
+                {
+                    row.SetColumnError(Item.NameColumnName, "نام کالا اجباری میباشد");
+                    result = false;
+                }
+                else
+                {
+                    string name = (string)row[Item.NameColumnName];
+                    var item = _itemsRepository.GetItem(name);
+                    if (name.Length == 0 || item.Rows.Count != 0 && item.Rows[0].Field<int>(Item.IdColumnName) != row.Field<int>(Item.IdColumnName))
+                    {
+                        row.SetColumnError(Item.NameColumnName, "این نام قبلا ثبت شده است");
+                        result = false;
+                    }
+                }
+                if (row[Item.MeasurementUnitRefColumnName] is DBNull || (int)row[Item.MeasurementUnitRefColumnName] == -1)
+                {
+                    row.SetColumnError(Item.MeasurementUnitColumnName, "یکی از واحد های اندازه گیری را انتخاب نمایید");
+                    result = false;
+                }
+            }
+            return result;
+        }
     }
 }

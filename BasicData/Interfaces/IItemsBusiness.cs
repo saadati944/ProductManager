@@ -20,5 +20,6 @@ namespace BasicData.Interfaces
         ItemPrice GetItemPrice(int id, DateTime? dateTime);
         DatabaseSaveResult SaveItem(Item item);
         DatabaseSaveResult SaveItem(DataTable table);
+        bool ValidateDataTable(DataTable table);
     }
 }

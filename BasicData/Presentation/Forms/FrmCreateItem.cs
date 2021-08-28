@@ -95,42 +95,12 @@ namespace BasicData.Presentation.Forms
             cmbMeasurementUnits.DataBindings.Add("SelectedItem", _dataTable, Item.MeasurementUnitColumnName, false, DataSourceUpdateMode.OnPropertyChanged);
         }
 
-        private bool ValidateDatatable()
-        {
-            DataRow row = _dataTable.Rows[0];
-
-            row[Item.MeasurementUnitRefColumnName] = cmbMeasurementUnits.SelectedIndex == -1 ? -1 : ((MeasurementUnit)cmbMeasurementUnits.SelectedItem).Id;
-
-            row.ClearErrors();
-
-            bool result = true;
-
-            if (row[Item.NameColumnName] is DBNull)
-            {
-                row.SetColumnError(Item.NameColumnName, "نام کالا اجباری میباشد");
-                result = false;
-            }
-            else
-            {
-                string name = (string)row[Item.NameColumnName];
-                if (name.Length == 0 || name != (string)_dataTable.Rows[1][Item.NameColumnName] && _itemsBusiness.IsItemNameExists(name))
-                {
-                    row.SetColumnError(Item.NameColumnName, "این نام قبلا ثبت شده است");
-                    result = false;
-                }
-            }
-            if (row[Item.MeasurementUnitRefColumnName] is DBNull || (int)row[Item.MeasurementUnitRefColumnName] == -1)
-            {
-                row.SetColumnError(Item.MeasurementUnitColumnName, "یکی از واحد های اندازه گیری را انتخاب نمایید");
-                result = false;
-            }
-
-            return result;
-        }
+      
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            if (!ValidateDatatable())
+            _dataTable.Rows[0][Item.MeasurementUnitRefColumnName] = cmbMeasurementUnits.SelectedIndex == -1 ? -1 : ((MeasurementUnit)cmbMeasurementUnits.SelectedItem).Id;
+            if (!_itemsBusiness.ValidateDataTable(_dataTable))
                 return;
 
                 var res = _itemsBusiness.SaveItem(_dataTable);
