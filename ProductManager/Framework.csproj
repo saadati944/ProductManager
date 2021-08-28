@@ -72,6 +72,7 @@
     <Compile Include="DataLayer\Models\User.cs" />
     <Compile Include="DataLayer\Models\VersionableModel.cs" />
     <Compile Include="FrameworkRegistration.cs" />
+    <Compile Include="Interfaces\DatabaseSaveResult.cs" />
     <Compile Include="Interfaces\IFormFactory.cs" />
     <Compile Include="Interfaces\IPermissionsBusiness.cs" />
     <Compile Include="Interfaces\IRegistration.cs" />

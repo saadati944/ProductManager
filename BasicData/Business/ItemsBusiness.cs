@@ -73,16 +73,15 @@ namespace BasicData.Business
             return new ItemPrice { ItemRef = item.Id, Item = item, Date = dateTime == null ? DateTime.Now : dateTime.Value, Price = item.Price };
         }
 
-        public void SaveItem(Item item)
+        public DatabaseSaveResult SaveItem(Item item)
         {
-            //TODO : if item was edited then check the version
-            _database.Save(item);
+            return _database.Save(item);
         }
-        public void SaveItem(DataTable table)
+        public DatabaseSaveResult SaveItem(DataTable table)
         {
             Item item = new Item();
             item.MapToModel(table.Rows[0]);
-            SaveItem(item);
+            return SaveItem(item);
         }
 
     }

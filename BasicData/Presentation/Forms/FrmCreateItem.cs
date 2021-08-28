@@ -133,8 +133,12 @@ namespace BasicData.Presentation.Forms
             if (!ValidateDatatable())
                 return;
 
-            _itemsBusiness.SaveItem(_dataTable);
-            Close();
+                var res = _itemsBusiness.SaveItem(_dataTable);
+            
+            if(res == DatabaseSaveResult.AlreadyChanged)
+                MessageBox.Show("این محصول توسط کاربر دیگری تغییر یافته است");
+            else
+                Close();
         }
 
         private void btnCancele_Click(object sender, EventArgs e)

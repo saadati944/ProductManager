@@ -18,7 +18,7 @@ namespace BasicData.Interfaces
         string[] GetItemNamesInStock(int stockref);
         Item GetItemModel(string name);
         ItemPrice GetItemPrice(int id, DateTime? dateTime);
-        void SaveItem(Item item);
-        void SaveItem(DataTable table);
+        DatabaseSaveResult SaveItem(Item item);
+        DatabaseSaveResult SaveItem(DataTable table);
     }
 }

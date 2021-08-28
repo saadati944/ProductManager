@@ -2,10 +2,11 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using Framework.Interfaces;
 
 namespace Framework.DataLayer
 {
-    public class Database : Interfaces.IDatabase
+    public class Database : IDatabase
     {
         private const string _ConnectionString = @"Server=VDI-MIS-077\SEPIDAR;Database=adodotnet;User Id=test;Password=!@qw3456; ";
 
@@ -63,12 +64,26 @@ namespace Framework.DataLayer
 
 
 
-        public void Save(Models.Model val, SqlConnection connection = null, SqlTransaction transaction = null)
+        public DatabaseSaveResult Save(Models.Model val, SqlConnection connection = null, SqlTransaction transaction = null)
         {
             if (val.Id == -1)
+            {
                 val.Id = new Commands.InsertCommand(connection == null ? _connection : connection, transaction, val.TableName(), val.Columns(), val.GetValues()).Execute();
+                return DatabaseSaveResult.Saved;
+            }
             else
+            {
+                if (val is Models.VersionableModel)
+                {
+                    string query = string.Format("SELECT Version FROM {0} WHERE Id={1}", val.TableName(), val.Id);
+                    byte[] versin = (byte[])CustomeQuery(query).Tables[0].Rows[0][0];
+                    if (!Utilities.ArrayComparator.AreEqual(versin, ((Models.VersionableModel)val).Version))
+                        return DatabaseSaveResult.AlreadyChanged;
+                }
+
                 new Commands.UpdateCommand(connection == null ? _connection : connection, transaction, val.TableName(), val.Columns(), val.GetValues(), "Id = " + val.Id).Execute();
+                return DatabaseSaveResult.Updated;
+            }
         }
 
         public void Load(Models.Model model, SqlConnection connection = null, SqlTransaction transaction = null)
@@ -103,5 +118,16 @@ namespace Framework.DataLayer
             connection.Open();
             return connection;
         }
+    }
+
+    [System.Serializable]
+    public class ModelChangedException : System.Exception
+    {
+        public ModelChangedException() { }
+        public ModelChangedException(string message) : base(message) { }
+        public ModelChangedException(string message, System.Exception inner) : base(message, inner) { }
+        protected ModelChangedException(
+          System.Runtime.Serialization.SerializationInfo info,
+          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
     }
 }

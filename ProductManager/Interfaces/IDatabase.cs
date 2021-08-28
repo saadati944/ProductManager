@@ -15,7 +15,7 @@ namespace Framework.Interfaces
             where T : Model, new();
         DataSet CustomeQuery(string query, string[] parameterNames = null, object[] parameterValues = null, SqlConnection connection = null,
             SqlTransaction transaction = null);
-        void Save(Model val, SqlConnection connection = null, SqlTransaction transaction = null);
+        DatabaseSaveResult Save(Model val, SqlConnection connection = null, SqlTransaction transaction = null);
         void Load(Model model, SqlConnection connection = null, SqlTransaction transaction = null);
         void Delete(Model model, SqlConnection connection = null, SqlTransaction transaction = null);
         SqlTransaction BeginTransaction(SqlConnection connection);
