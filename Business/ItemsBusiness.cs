@@ -14,20 +14,11 @@ namespace Business
         private readonly Database _database;
         private readonly ItemsRepository _itemsRepository;
 
-
-        public ItemsRepository ItemsRepository
-        {
-            get
-            {
-                return _itemsRepository;
-            }
-        }
-
         public IEnumerable<Item> Items
         {
             get
             {
-                return _database.Items;
+                return _database.GetAll<Item>();
             }
         }
 
@@ -73,18 +64,6 @@ namespace Business
 
             return null;
         }
-        //public Item GetItemModel(int id)
-        //{
-        //    //TODO: remove this function
-        //    return _itemsRepository.GetItemModel(id);
-        //}
-
-        //public DataTable GetItem(int id)
-        //{
-        //    //TODO: remove this function
-        //    return _itemsRepository.GetItem(id);
-        //}
-
 
         public ItemPrice GetItemPrice(int id, DateTime? dateTime)
         {
@@ -95,12 +74,6 @@ namespace Business
             var item = _itemsRepository.GetItemModel(id);
             return new ItemPrice { ItemRef = item.Id, Item = item, Date = dateTime == null ? DateTime.Now : dateTime.Value, Price = item.Price };
         }
-
-        //public DataTable NewTable()
-        //{
-        //    //TODO: remove this function
-        //    return _itemsRepository.NewItemsDatatable();
-        //}
 
         public void SaveItem(Item item)
         {

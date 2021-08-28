@@ -41,6 +41,7 @@ namespace Business
 
         public List<PermissionViewModel> GetAllPermissions(int userref)
         {
+            //TODO: correct orders
             List<PermissionViewModel> ps = new List<PermissionViewModel>();
             ps.Add(new PermissionViewModel { Key = CreateSellInvoicePermission, DisplayName = "ثبت فاکتور فروش" });
             ps.Add(new PermissionViewModel { Key = EditSellInvoicePermission, DisplayName = "ویرایش فاکتور فروش" });

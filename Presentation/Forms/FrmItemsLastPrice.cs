@@ -30,7 +30,7 @@ namespace Presentation.Forms
             SetTitle("لیست آخرین قیمت محصولات");
             dataGridView.AutoGenerateColumns = false;
             _itemsBusiness = container.GetInstance<ItemsBusiness>();
-            _itemsRepository = _itemsBusiness.ItemsRepository;
+            _itemsRepository = container.GetInstance<ItemsRepository>();
 
 
             _itemsRepository.Update();

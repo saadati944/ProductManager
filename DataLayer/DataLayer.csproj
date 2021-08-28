@@ -60,7 +60,6 @@
     <Compile Include="Models\BuyInvoiceItem.cs" />
     <Compile Include="Models\Invoice.cs" />
     <Compile Include="Models\InvoiceItem.cs" />
-    <Compile Include="Models\InvoiceLock.cs" />
     <Compile Include="Models\Item.cs" />
     <Compile Include="Models\ItemPrice.cs" />
     <Compile Include="Models\MeasurementUnit.cs" />

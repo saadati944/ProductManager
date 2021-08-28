@@ -1,0 +1,233 @@
+﻿using BuyAndSell.DataLayer.Models;
+using BuyAndSell.Interfaces;
+using Framework.DataLayer;
+using Framework.Interfaces;
+using Framework.Presentation.Forms;
+using System;
+using System.Data;
+using System.Windows.Forms;
+
+namespace BuyAndSell.Presentation.Forms
+{
+    public class FrmInvoicesGridView : FrmGridView
+    {
+        public enum InvoiceFormType
+        {
+            BuyingInvoices,
+            SellingInvoices,
+            All
+        }
+        private bool _showSells = false;
+        private bool _showBuys = false;
+
+        private readonly IBuyInvoicesRepository _buyInvoicesRepository;
+        private readonly ISellInvoicesRepository _sellInvoicesRepository;
+
+        private readonly IBuyInvoiceBusiness _buyInvoiceBusiness;
+        private readonly ISellInvoiceBusiness _sellInvoiceBusiness;
+
+        private readonly IPermissionsBusiness _permissions;
+
+        private ToolStripMenuItem _editToolStrip;
+        private ToolStripMenuItem _removeToolStrip;
+
+        //private readonly Color _sellInvoiceColor = Color.FromArgb(213, 255, 204);
+        //private readonly Color _buyInvoiceColor = Color.FromArgb(255, 212, 204);
+        private const string _sellInvoiceColumnText = "فروش";
+        private const string _buyInvoiceColumnText = "خرید";
+
+        private const string _settingsPrefix = "FrmInvoicesGridView";
+        private const string _typeColumnName = "Type";
+        private const string _numberColumnName = "Number";
+        //private const string _dateColumnName = "Date";
+        private const string _persianDateColumnName = "PersianDate";
+        private const string _TotalPriceColumnName = "TotalPrice";
+
+
+        public FrmInvoicesGridView(IDatabase database, ISettingsBusiness settings, IFormFactory formFactory, IBuyInvoicesRepository buyInvoicesRepository,
+            ISellInvoicesRepository sellInvoicesRepository, IBuyInvoiceBusiness buyInvoiceBusiness, ISellInvoiceBusiness sellInvoiceBusiness, IPermissionsBusiness permissions) :
+            base(database, settings, formFactory)
+        {
+            _buyInvoicesRepository = buyInvoicesRepository;
+            _sellInvoicesRepository = sellInvoicesRepository;
+
+            _buyInvoiceBusiness = buyInvoiceBusiness;
+            _sellInvoiceBusiness = sellInvoiceBusiness;
+
+            _permissions = permissions;
+        }
+
+        public void SetFormType(InvoiceFormType formType)
+        {
+            if (formType == InvoiceFormType.All || formType == InvoiceFormType.SellingInvoices)
+            {
+                _showSells = true;
+                _sellInvoicesRepository.Update();
+            }
+            if (formType == InvoiceFormType.All || formType == InvoiceFormType.BuyingInvoices)
+            {
+                _showBuys = true;
+                _buyInvoicesRepository.Update();
+            }
+
+            _removeToolStrip = new ToolStripMenuItem("حذف", null, RemoveMenueItem_Click);
+            _editToolStrip = new ToolStripMenuItem("ویرایش", null, EditMenueItem_Click);
+
+            _buyInvoicesRepository.DataChanged += Repositories_DataChanged;
+            _sellInvoicesRepository.DataChanged += Repositories_DataChanged;
+
+            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _typeColumnName, DisplayName = "نوع فاکتور", Checked = true });
+            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _numberColumnName, DisplayName = "شماره فاکتور", Checked = true });
+            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _persianDateColumnName, DisplayName = "تاریخ", Checked = true });
+            _columnSettings.Add(new ColumnSelectInfo { SettingsKey = _settingsPrefix + _TotalPriceColumnName, DisplayName = "مبلغ کل", Checked = true });
+
+            LoadColumnSettings();
+
+
+            dataGridView.AutoGenerateColumns = false;
+            dataGridView.CellContextMenuStripNeeded += DataGridView_CellContextMenuStripNeeded;
+            dataGridView.CellDoubleClick += DataGridView_CellDoubleClick;
+            switch (formType)
+            {
+                case InvoiceFormType.BuyingInvoices:
+                    Text = "فاکتور های خرید";
+                    break;
+                case InvoiceFormType.SellingInvoices:
+                    Text = "فاکتور های فروش";
+                    break;
+                case InvoiceFormType.All:
+                    Text = "فاکتور های خرید و فروش";
+                    break;
+            }
+            UpdateData();
+        }
+
+        private void RemoveMenueItem_Click(object sender, EventArgs e)
+        {
+            var invoicetype = (string)dataGridView.CurrentRow.Cells[_typeColumnName].Value == _sellInvoiceColumnText ? InvoiceFormType.SellingInvoices : InvoiceFormType.BuyingInvoices;
+
+            if (!_permissions.GetLoggedInUserPermission(invoicetype == InvoiceFormType.SellingInvoices ? Framework.Business.PermissionsBusiness.RemoveSellInvoicePermission : Framework.Business.PermissionsBusiness.RemoveBuyInvoicePermission))
+                return;
+
+            if (MessageBox.Show("آیا مطمئن هستید که میخواهید این مورد را حذف کنید ؟", "تایید برای حذف", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                return;
+
+            var invoicenumber = (int)dataGridView.CurrentRow.Cells[_numberColumnName].Value;
+
+            var res = invoicetype == InvoiceFormType.BuyingInvoices ? _buyInvoiceBusiness.RemoveInvoice(invoicenumber) : _sellInvoiceBusiness.RemoveInvoice(invoicenumber);
+
+            if (!res)
+            {
+                MessageBox.Show("در هنگام حذف فاکتور خطایی رخ داده است");
+                return;
+            }
+
+            if (invoicetype == InvoiceFormType.BuyingInvoices)
+                _buyInvoicesRepository.Update();
+            else
+                _sellInvoicesRepository.Update();
+        }
+
+        private void EditMenueItem_Click(object sender, EventArgs e)
+        {
+            var invoicetype = (string)dataGridView.CurrentRow.Cells[_typeColumnName].Value == _sellInvoiceColumnText ? InvoiceFormType.SellingInvoices : InvoiceFormType.BuyingInvoices;
+
+            if (!_permissions.GetLoggedInUserPermission(invoicetype == InvoiceFormType.SellingInvoices ? Framework.Business.PermissionsBusiness.EditSellInvoicePermission : Framework.Business.PermissionsBusiness.EditBuyInvoicePermission))
+                return;
+
+            var invoicenumber = (int)dataGridView.CurrentRow.Cells[_numberColumnName].Value;
+
+            if (invoicetype == InvoiceFormType.BuyingInvoices)
+            {
+                var frmcreateinvoice = _formFactory.CreateForm<FrmCreateBuyInvoice>();
+                frmcreateinvoice.SetNumber(invoicenumber);
+                frmcreateinvoice.ShowDialog();
+                _buyInvoicesRepository.Update();
+            }
+            else
+            {
+                var frmcreateinvoice = _formFactory.CreateForm<FrmCreateSellInvoice>();
+                frmcreateinvoice.SetNumber(invoicenumber);
+                frmcreateinvoice.ShowDialog();
+                _sellInvoicesRepository.Update();
+            }
+        }
+
+        private void Repositories_DataChanged()
+        {
+            UpdateData();
+        }
+
+        private void DataGridView_CellContextMenuStripNeeded(object sender, System.Windows.Forms.DataGridViewCellContextMenuStripNeededEventArgs e)
+        {
+            if (e.RowIndex == -1)
+            {
+                ShowCustomizeWindow();
+                return;
+            }
+
+            // TODO : create a permission for removing invoices
+            //if (e.ColumnIndex == -1 || !_permissions.GetLoggedInUserPermission(Business.Permissions.))
+            //    return;
+
+            dataGridView.ClearSelection();
+            dataGridView.Rows[e.RowIndex].Selected = true;
+            dataGridView.CurrentCell = dataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex];
+            ContextMenuStrip cm = new ContextMenuStrip();
+            var invoicetype = (string)dataGridView.CurrentRow.Cells[_typeColumnName].Value == _sellInvoiceColumnText ? InvoiceFormType.SellingInvoices : InvoiceFormType.BuyingInvoices;
+
+            if (_permissions.GetLoggedInUserPermission(invoicetype == InvoiceFormType.SellingInvoices ? Framework.Business.PermissionsBusiness.EditSellInvoicePermission : Framework.Business.PermissionsBusiness.EditBuyInvoicePermission))
+                cm.Items.Add(_editToolStrip);
+            if (_permissions.GetLoggedInUserPermission(invoicetype == InvoiceFormType.SellingInvoices ? Framework.Business.PermissionsBusiness.RemoveSellInvoicePermission : Framework.Business.PermissionsBusiness.RemoveBuyInvoicePermission))
+                cm.Items.Add(_removeToolStrip);
+
+            e.ContextMenuStrip = cm;
+        }
+        private void DataGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex == -1)
+                return;
+            dataGridView.Rows[e.RowIndex].Selected = true;
+            InvoiceFormType formtype = (string)dataGridView.Rows[e.RowIndex].Cells[_typeColumnName].Value == _sellInvoiceColumnText ? InvoiceFormType.SellingInvoices : InvoiceFormType.BuyingInvoices;
+            var frm = _formFactory.CreateForm<FrmShowInvoice>();
+            frm.SetUpForm(formtype, (int)dataGridView.Rows[e.RowIndex].Cells[_numberColumnName].Value);
+            _formFactory.AddForm(frm);
+        }
+
+        public override void UpdateData()
+        {
+            dataGridView.DataSource = null;
+
+            dataGridView.Columns.Clear();
+            dataGridView.Columns.Add(_typeColumnName, "نوع فاکتور");
+            dataGridView.Columns[_typeColumnName].Visible = IsVIsibleColumn(_settingsPrefix + _typeColumnName);
+            dataGridView.Columns[_typeColumnName].DataPropertyName = _typeColumnName;
+
+            dataGridView.Columns.Add(_numberColumnName, "شماره فاکتور");
+            dataGridView.Columns[_numberColumnName].Visible = IsVIsibleColumn(_settingsPrefix + _numberColumnName);
+            dataGridView.Columns[_numberColumnName].DataPropertyName = _numberColumnName;
+
+            dataGridView.Columns.Add(_persianDateColumnName, "تاریخ");
+            dataGridView.Columns[_persianDateColumnName].Visible = IsVIsibleColumn(_settingsPrefix + _persianDateColumnName);
+            dataGridView.Columns[_persianDateColumnName].DataPropertyName = _persianDateColumnName;
+
+            dataGridView.Columns.Add(_TotalPriceColumnName, "مبلغ کل");
+            dataGridView.Columns[_TotalPriceColumnName].Visible = IsVIsibleColumn(_settingsPrefix + _TotalPriceColumnName);
+            dataGridView.Columns[_TotalPriceColumnName].DataPropertyName = _TotalPriceColumnName;
+
+
+            dataGridView.DataSource = CreateTable();
+        }
+        private DataTable CreateTable()
+        {
+            var table = _sellInvoicesRepository.DataTable.Clone();
+            if (_showSells)
+                foreach (DataRow x in _sellInvoicesRepository.DataTable.Rows)
+                    table.Rows.Add(x.ItemArray);
+            if (_showBuys)
+                foreach (DataRow x in _buyInvoicesRepository.DataTable.Rows)
+                    table.Rows.Add(x.ItemArray);
+            return table;
+        }
+    }
+}

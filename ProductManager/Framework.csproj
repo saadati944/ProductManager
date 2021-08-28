@@ -5,9 +5,9 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{6BF7E9F0-92E1-4593-B99E-DCD539BB498E}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Library</OutputType>
     <RootNamespace>Framework</RootNamespace>
-    <AssemblyName>ProductManager</AssemblyName>
+    <AssemblyName>Framework</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <LangVersion>5</LangVersion>
     <FileAlignment>512</FileAlignment>
@@ -33,13 +33,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Framework.Program</StartupObject>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Core.4.4.1\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
     <Reference Include="StructureMap, Version=4.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\StructureMap.4.7.1\lib\net45\StructureMap.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -52,9 +57,53 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Business\PermissionsBusiness.cs" />
+    <Compile Include="Business\SettingsBusiness.cs" />
+    <Compile Include="DataLayer\Commands\DeleteCommand.cs" />
+    <Compile Include="DataLayer\Commands\InsertCommand.cs" />
+    <Compile Include="DataLayer\Commands\SelectCommand.cs" />
+    <Compile Include="DataLayer\Commands\UpdateCommand.cs" />
+    <Compile Include="DataLayer\CustomeQueries.cs" />
+    <Compile Include="DataLayer\Database.cs" />
+    <Compile Include="DataLayer\Models\Model.cs" />
+    <Compile Include="DataLayer\Models\Permission.cs" />
+    <Compile Include="DataLayer\Models\PermissionViewModel.cs" />
+    <Compile Include="DataLayer\Models\Setting.cs" />
+    <Compile Include="DataLayer\Models\User.cs" />
+    <Compile Include="DataLayer\Models\VersionableModel.cs" />
+    <Compile Include="FrameworkRegistration.cs" />
+    <Compile Include="Interfaces\IFormFactory.cs" />
+    <Compile Include="Interfaces\IPermissionsBusiness.cs" />
+    <Compile Include="Interfaces\IRegistration.cs" />
+    <Compile Include="Interfaces\IRepository.cs" />
+    <Compile Include="Interfaces\IDatabase.cs" />
+    <Compile Include="Interfaces\ISettingsBusiness.cs" />
     <Compile Include="InstanceScanner.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="LoggingInterceptor.cs" />
+    <Compile Include="Presentation\Forms\FrmGridView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Presentation\Forms\FrmGridView.Designer.cs">
+      <DependentUpon>FrmGridView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Presentation\Forms\FrmSelectColumns.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Presentation\Forms\FrmSelectColumns.Designer.cs">
+      <DependentUpon>FrmSelectColumns.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\ArrayComparator.cs" />
+    <Compile Include="Utilities\FormFactory.cs" />
+    <Compile Include="Utilities\IOC.cs" />
+    <Compile Include="Utilities\LoggedInUser.cs" />
+    <Compile Include="Utilities\PersianDate.cs" />
+    <EmbeddedResource Include="Presentation\Forms\FrmGridView.resx">
+      <DependentUpon>FrmGridView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Presentation\Forms\FrmSelectColumns.resx">
+      <DependentUpon>FrmSelectColumns.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -87,24 +136,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Product.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Business\Business.csproj">
-      <Project>{7a1033ed-1f15-4e5d-8c9e-e6220d2eab82}</Project>
-      <Name>Business</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DataLayer\DataLayer.csproj">
-      <Project>{f8b7368d-5884-40ce-b212-11a5d15f65f6}</Project>
-      <Name>DataLayer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Presentation\Presentation.csproj">
-      <Project>{6b849889-0777-4487-9f9f-362c3227b7d0}</Project>
-      <Name>Presentation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Utilities\Utilities.csproj">
-      <Project>{a8195d83-0e70-47b6-b5b3-c61a2a9efa56}</Project>
-      <Name>Utilities</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
