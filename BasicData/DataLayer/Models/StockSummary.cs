@@ -27,11 +27,11 @@ namespace BasicData.DataLayer.Models
 
         public override void Include()
         {
-            //Item = new Item { Id = ItemRef };
-            //Stock = new Stock { Id = StockRef };
+            Item = new Item { Id = ItemRef };
+            Stock = new Stock { Id = StockRef };
 
-            //Item.Load();
-            //Stock.Load();
+            Load(Item);
+            Load(Stock);
         }
 
         public override string[] Columns()

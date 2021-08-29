@@ -59,10 +59,10 @@ namespace BasicData.DataLayer.Models
 
         public override void Include()
         {
-            //Creator = new User { Id = CreatorRef };
-            //MeasurementUnit = new MeasurementUnit { Id = MeasurementUnitRef };
-            //Creator.Load();
-            //MeasurementUnit.Load();
+            Creator = new User { Id = CreatorRef };
+            MeasurementUnit = new MeasurementUnit { Id = MeasurementUnitRef };
+            Load(Creator);
+            Load(MeasurementUnit);
         }
 
         public override string TableName()

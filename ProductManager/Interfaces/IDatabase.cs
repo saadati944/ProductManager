@@ -18,6 +18,7 @@ namespace Framework.Interfaces
         DatabaseSaveResult Save(Model val, SqlConnection connection = null, SqlTransaction transaction = null);
         void Load(Model model, SqlConnection connection = null, SqlTransaction transaction = null);
         void Delete(Model model, SqlConnection connection = null, SqlTransaction transaction = null);
+        byte[] GetVersion<T>(int id, SqlConnection connection = null, SqlTransaction transaction = null);
         SqlTransaction BeginTransaction(SqlConnection connection);
         void CommitTransaction(SqlTransaction transaction);
         void RollbackTransaction(SqlTransaction transaction);

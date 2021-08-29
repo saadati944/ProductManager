@@ -28,7 +28,6 @@ namespace BuyAndSell.Presentation.Forms
         protected readonly string _stockIdColumnName = "StockRef";
 
         protected int? _originalInvoiceNumber = null;
-        protected byte[] _version = null;
 
         protected DataTable _invoiceDataTable;
         protected DataTable _invoiceItemsDataTable;
@@ -42,13 +41,14 @@ namespace BuyAndSell.Presentation.Forms
         protected readonly IItemsRepository _itemsRepository;
         protected readonly ISellInvoicesRepository _sellInvoicesRepository;
         protected readonly IBuyInvoicesRepository _buyInvoicesRepository;
+        protected readonly IStockSummariesRepository _stockSummariesRepository;
 
         protected readonly Dictionary<string, int> _stockNameRefs;
 
 
         public FrmCreateInvoice() { }
         public FrmCreateInvoice(IDatabase database, IBuyInvoiceBusiness buyInvoiceBusiness, ISellInvoiceBusiness sellInvoiceBusiness, IItemsBusiness itemsBusiness,
-            IItemsRepository itemsRepository, ISellInvoicesRepository sellInvoicesRepository, IBuyInvoicesRepository buyInvoicesRepository)
+            IItemsRepository itemsRepository, ISellInvoicesRepository sellInvoicesRepository, IBuyInvoicesRepository buyInvoicesRepository, IStockSummariesRepository stockSummariesRepository)
         {
             _database = database;
             _buyInvoiceBusiness = buyInvoiceBusiness;
@@ -86,10 +86,6 @@ namespace BuyAndSell.Presentation.Forms
             }
         }
 
-        protected byte[] GetInvoiceVersion()
-        {
-            return _invoiceDataTable.Rows[0].Field<byte[]>(Invoice.VersionColumnName);
-        }
 
         protected virtual DataTable NewInvoiceDataTable() { throw new NotImplementedException(); }
         protected virtual bool CheckVersion() { throw new NotImplementedException(); }

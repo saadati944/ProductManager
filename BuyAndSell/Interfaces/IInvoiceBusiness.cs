@@ -14,9 +14,9 @@ namespace BuyAndSell.Interfaces
     {
         IEnumerable<Invoice> Invoices { get; }
         IEnumerable<InvoiceItem> InvoiceItems { get; }
-        bool EditInvoice(int lastNumber, DataTable invoicetable, DataTable invoiceitems);
+        DatabaseSaveResult EditInvoice(int lastNumber, DataTable invoicetable, DataTable invoiceitems);
         bool RemoveInvoice(int number);
-        bool SaveInvoice(DataTable invoicetable, DataTable invoiceitems);
+        DatabaseSaveResult SaveInvoice(DataTable invoicetable, DataTable invoiceitems);
         Invoice GetInvoiceModel(int number, SqlConnection connection = null, SqlTransaction transaction = null);
         DataTable GetInvoice(int number, SqlConnection connection = null, SqlTransaction transaction = null);
         int GetLastInvoiceNumber(SqlConnection connection = null, SqlTransaction transaction = null);

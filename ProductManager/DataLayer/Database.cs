@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -75,8 +76,7 @@ namespace Framework.DataLayer
             {
                 if (val is Models.VersionableModel)
                 {
-                    string query = string.Format("SELECT Version FROM {0} WHERE Id={1}", val.TableName(), val.Id);
-                    byte[] versin = (byte[])CustomeQuery(query).Tables[0].Rows[0][0];
+                    byte[] versin = GetVersion(val.GetType(), val.Id, connection, transaction);
                     if (!Utilities.ArrayComparator.AreEqual(versin, ((Models.VersionableModel)val).Version))
                         return DatabaseSaveResult.AlreadyChanged;
                 }
@@ -84,6 +84,17 @@ namespace Framework.DataLayer
                 new Commands.UpdateCommand(connection == null ? _connection : connection, transaction, val.TableName(), val.Columns(), val.GetValues(), "Id = " + val.Id).Execute();
                 return DatabaseSaveResult.Updated;
             }
+        }
+
+        public byte[] GetVersion<T>(int id, SqlConnection connection = null, SqlTransaction transaction = null)
+        {
+            return GetVersion(typeof(T), id, connection, transaction);
+        }
+        private byte[] GetVersion(Type versionablemodel, int id, SqlConnection connection = null, SqlTransaction transaction = null)
+        {
+            Models.VersionableModel t = (Models.VersionableModel) versionablemodel.GetConstructor(new Type[] { }).Invoke(null);
+            string query = string.Format("SELECT Version FROM {0} WHERE Id={1}", t.TableName(), id);
+            return (byte[])CustomeQuery(query, null, null, connection, transaction).Tables[0].Rows[0][0];
         }
 
         public void Load(Models.Model model, SqlConnection connection = null, SqlTransaction transaction = null)
@@ -118,16 +129,5 @@ namespace Framework.DataLayer
             connection.Open();
             return connection;
         }
-    }
-
-    [System.Serializable]
-    public class ModelChangedException : System.Exception
-    {
-        public ModelChangedException() { }
-        public ModelChangedException(string message) : base(message) { }
-        public ModelChangedException(string message, System.Exception inner) : base(message, inner) { }
-        protected ModelChangedException(
-          System.Runtime.Serialization.SerializationInfo info,
-          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
     }
 }

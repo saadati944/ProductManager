@@ -76,22 +76,18 @@ namespace BuyAndSell.Business
             catch { }
             return 0;
         }
-        public override bool EditInvoice(int lastNumber, DataTable invoicetable, DataTable invoiceitems)
+        public override DatabaseSaveResult EditInvoice(int lastNumber, DataTable invoicetable, DataTable invoiceitems)
         {
             var connection = _database.GetConnection();
             var transaction = _database.BeginTransaction(connection);
-
-            if (Framework.Utilities.ArrayComparator.AreEqual(GetInvoiceVersion(lastNumber, Invoice.InvoiceType.Selling, connection, transaction), invoicetable.Rows[0].Field<byte[]>(Invoice.VersionColumnName))
-                && RemoveInvoice(lastNumber, connection, transaction) && Save(invoicetable, invoiceitems, connection, transaction))
-            {
+            var res = RemoveInvoiceItems(lastNumber, connection, transaction) ? DatabaseSaveResult.Saved : DatabaseSaveResult.Error;
+            if (res == DatabaseSaveResult.Saved) res = Save(invoicetable, invoiceitems, connection, transaction);
+            if (res == DatabaseSaveResult.Saved)
                 _database.CommitTransaction(transaction);
-                connection.Close();
-                return true;
-            }
-
-            _database.RollbackTransaction(transaction);
+            else
+                _database.RollbackTransaction(transaction);
             connection.Close();
-            return false;
+            return res;
         }
         public override bool RemoveInvoice(int number)
         {
@@ -112,15 +108,30 @@ namespace BuyAndSell.Business
         {
             try
             {
+                var invoice = GetInvoiceModel(number, connection, transaction);
+                if (!RemoveInvoiceItems(number, connection, transaction))
+                    return false;
+                _database.Delete(invoice, connection, transaction);
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        }
+        private bool RemoveInvoiceItems(int number, SqlConnection connection, SqlTransaction transaction)
+        {
+            try
+            {
                 var invoice = FullLoadSellInvoice(number, connection, transaction);
                 foreach (SellInvoiceItem x in invoice.InvoiceItems)
                 {
                     var q = ItemQuantity(x.ItemRef, x.StockRef, connection, transaction);
-                    q.Quantity += x.Quantity;
+                    q.Quantity -= x.Quantity;
                     _database.Save(q, connection, transaction);
                     _database.Delete(x, connection, transaction);
                 }
-                _database.Delete(invoice, connection, transaction);
             }
             catch
             {
@@ -131,28 +142,26 @@ namespace BuyAndSell.Business
         }
 
 
-        public override bool SaveInvoice(DataTable invoicetable, DataTable invoiceitems)
+        public override DatabaseSaveResult SaveInvoice(DataTable invoicetable, DataTable invoiceitems)
         {
             var connection = _database.GetConnection();
             var transaction = _database.BeginTransaction(connection);
 
-            if (Save(invoicetable, invoiceitems, connection, transaction))
-            {
-                _database.CommitTransaction(transaction);
-                connection.Close();
-                return true;
-            }
+            var res = Save(invoicetable, invoiceitems, connection, transaction);
 
-            _database.RollbackTransaction(transaction);
+            if(res != DatabaseSaveResult.Saved)
+                _database.RollbackTransaction(transaction);
+            else
+                _database.CommitTransaction(transaction);
+
             connection.Close();
-            return false;
+            return res;
         }
-        private bool Save(DataTable invoicetable, DataTable invoiceitems, SqlConnection connection, SqlTransaction transaction)
+        private DatabaseSaveResult Save(DataTable invoicetable, DataTable invoiceitems, SqlConnection connection, SqlTransaction transaction)
         {
             SellInvoice invoice = new SellInvoice();
             invoice.MapToModel(invoicetable.Rows[0]);
-            invoice.Id = -1;
-
+            
             var items = new List<SellInvoiceItem>();
             foreach (DataRow row in invoiceitems.Rows)
             {
@@ -166,25 +175,26 @@ namespace BuyAndSell.Business
             return Save(invoice, connection, transaction);
         }
 
-        private bool Save(SellInvoice invoice, SqlConnection connection, SqlTransaction transaction)
+        private DatabaseSaveResult Save(SellInvoice invoice, SqlConnection connection, SqlTransaction transaction)
         {
             try
             {
                 if (invoice.UserRef < 1 || invoice.PartyRef < 1)
-                    return false;
+                    return DatabaseSaveResult.Error;
 
                 if (invoice.Number == -1)
                     invoice.Number = GetLastInvoiceNumber(connection, transaction) + 1;
 
-                _database.Save(invoice, connection, transaction);
+                if (_database.Save(invoice, connection, transaction) == DatabaseSaveResult.AlreadyChanged)
+                    return DatabaseSaveResult.AlreadyChanged;
 
                 if (_database.GetAllDataset<SellInvoice>(connection, transaction, "Number=" + invoice.Number, null, 2).Tables[0].Rows.Count != 1)
-                    return false;
+                    return DatabaseSaveResult.Error;
 
                 foreach (SellInvoiceItem x in invoice.InvoiceItems)
                 {
                     if (x.ItemRef < 1 || x.StockRef < 1)
-                        return false;
+                        return DatabaseSaveResult.Error;
 
                     x.InvoiceRef = invoice.Id;
                     _database.Save(x, connection, transaction);
@@ -195,7 +205,7 @@ namespace BuyAndSell.Business
                     var q = ItemQuantity(x.ItemRef, x.StockRef, connection, transaction);
 
                     if (q == null || q.Quantity < x.Quantity)
-                        return false;
+                        return DatabaseSaveResult.Error;
                     q.Quantity -= x.Quantity;
 
                     _database.Save(q, connection, transaction);
@@ -204,10 +214,10 @@ namespace BuyAndSell.Business
             }
             catch
             {
-                return false;
+                return DatabaseSaveResult.Error;
             }
 
-            return true;
+            return DatabaseSaveResult.Saved;
         }
 
         public override bool IsInvoiceNumberValid(int num)

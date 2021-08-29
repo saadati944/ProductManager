@@ -39,11 +39,11 @@ namespace BuyAndSell.DataLayer.Models
         }
         public override void Include()
         {
-            //User = new User { Id = UserRef };
-            //Party = new Party { Id = PartyRef };
+            User = new User { Id = UserRef };
+            Party = new Party { Id = PartyRef };
 
-            //User.Load();
-            //Party.Load();
+            Load(User);
+            Load(Party);
         }
 
         public override void MapToModel(DataRow row)

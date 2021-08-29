@@ -14,11 +14,12 @@ namespace BuyAndSell.Presentation.Forms
     public partial class FrmCreateBuyInvoice : FrmCreateInvoice
     {
         public FrmCreateBuyInvoice(IDatabase database, IBuyInvoiceBusiness buyInvoiceBusiness, ISellInvoiceBusiness sellInvoiceBusiness, IItemsBusiness itemsBusiness,
-            IItemsRepository itemsRepository, ISellInvoicesRepository sellInvoicesRepository, IBuyInvoicesRepository buyInvoicesRepository) :
-            base(database, buyInvoiceBusiness, sellInvoiceBusiness, itemsBusiness, itemsRepository, sellInvoicesRepository, buyInvoicesRepository)
+            IItemsRepository itemsRepository, ISellInvoicesRepository sellInvoicesRepository, IBuyInvoicesRepository buyInvoicesRepository, IStockSummariesRepository stockSummariesRepository) :
+            base(database, buyInvoiceBusiness, sellInvoiceBusiness, itemsBusiness, itemsRepository, sellInvoicesRepository, buyInvoicesRepository, stockSummariesRepository)
         {
             InitializeComponent();
-
+            itemsGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            
             SetInvoiceType(Invoice.InvoiceType.Buying);
 
             itemsGridView.AutoGenerateColumns = false;
@@ -37,9 +38,6 @@ namespace BuyAndSell.Presentation.Forms
 
             ((DataGridViewComboBoxColumn)itemsGridView.Columns[_stockColumnIndex]).Items.AddRange(_database.GetAll<Stock>().Select(x => x.Name).ToArray());
 
-            errorProviderHeader.DataSource = _invoiceDataTable;
-            errorProviderItems.DataSource = _invoiceItemsDataTable;
-
             itemsGridView.Columns[_TotalAfterDiscountColumnIndex].ReadOnly = true;
             itemsGridView.Columns[_totalPriceColumnIndex].ReadOnly = true;
 
@@ -54,14 +52,14 @@ namespace BuyAndSell.Presentation.Forms
             itemsGridView.CellEndEdit += ItemsGridView_CellEndEdit;
             itemsGridView.CellClick += ItemsGridView_CellClick;
 
-            ResumeLayout();
-
             cmbParties.Text = cmbParties.Items.Count == 0 ? "" : cmbParties.Items[0].ToString();
 
             itemsGridView.Columns[_itemIdColumnIndex].Visible = false;
 
             itemsGridView.Columns.Add(_stockIdColumnName, "StockId");
             itemsGridView.Columns[_stockIdColumnName].Visible = false;
+
+            ResumeLayout();
 
             // BindDataTable();
 
@@ -75,13 +73,15 @@ namespace BuyAndSell.Presentation.Forms
         }
         private void Setup(int? number)
         {
+            SuspendLayout();
             InitilizeDataTable(number);
+            itemsGridView.DataSource = null;
+            itemsGridView.Rows.Clear();
             BindDataTable();
+            errorProviderHeader.DataSource = _invoiceDataTable;
+            errorProviderItems.DataSource = _invoiceItemsDataTable;
             SetNumberRadio();
-            if (_originalInvoiceNumber != null)
-            {
-                _version = GetInvoiceVersion();
-            }
+            ResumeLayout();
         }
 
         private void SetNumberRadio()
@@ -232,12 +232,6 @@ namespace BuyAndSell.Presentation.Forms
             errorProviderHeader.Clear();
             errorProviderItems.Clear();
 
-            if (!CheckVersion())
-            {
-                MessageBox.Show("اطلاعات فاکتور توسط کاربر دیگری تغییر یافته است");
-                return;
-            }
-
             _invoiceDataTable.Rows[0][Invoice.PartyRefColumnName] = GetPartyRef();
             if (!_invoiceBusiness.ValidateInvoiceDataTable(_invoiceDataTable, _originalInvoiceNumber)
                 | !_invoiceBusiness.ValidateInvoiceItemsDataTable(_invoiceItemsDataTable) | !ValidateChildren(ValidationConstraints.Enabled))
@@ -247,15 +241,16 @@ namespace BuyAndSell.Presentation.Forms
             }
 
             CalculateTotalPrice();
-            bool result = _originalInvoiceNumber == null ? _buyInvoiceBusiness.SaveInvoice(_invoiceDataTable, _invoiceItemsDataTable) : _buyInvoiceBusiness.EditInvoice(_originalInvoiceNumber.Value, _invoiceDataTable, _invoiceItemsDataTable);
-            if (!result)
+            var result = _originalInvoiceNumber == null ? _buyInvoiceBusiness.SaveInvoice(_invoiceDataTable, _invoiceItemsDataTable) : _buyInvoiceBusiness.EditInvoice(_originalInvoiceNumber.Value, _invoiceDataTable, _invoiceItemsDataTable);
+            if (result == DatabaseSaveResult.AlreadyChanged)
+                MessageBox.Show("این فاکتور قبلا توسط کاربر دیگری تغییر یافته است");
+            else if (result == DatabaseSaveResult.Error)
                 MessageBox.Show("هنگام ذخیره کردن فاکتور خطایی رخ داده است !!!");
             else
+            {
+                _stockSummariesRepository.Update();
                 Close();
-        }
-        protected override bool CheckVersion()
-        {
-            return _originalInvoiceNumber == null || Framework.Utilities.ArrayComparator.AreEqual(GetInvoiceVersion(), _version);
+            }
         }
 
         private int GetPartyRef()
@@ -327,6 +322,7 @@ namespace BuyAndSell.Presentation.Forms
                 EditMode(itemsGridView, cmbParties);
                 UpdateTotalPrices();
             }
+            itemsGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
 
         private void itemsGridView_Validating(object sender, CancelEventArgs e)

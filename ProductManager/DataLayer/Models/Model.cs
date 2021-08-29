@@ -32,6 +32,10 @@ namespace Framework.DataLayer.Models
             //if (Id == -1)
             //    Id = (int)row["Id"];
         }
+        protected void Load(Model model)
+        {
+            Utilities.IOC.Container.GetInstance<Interfaces.IDatabase>().Load(model);
+        }
         public virtual void Include() { }
 
         public static T GetField<T>(DataRow row, string col, T defaultvalue)

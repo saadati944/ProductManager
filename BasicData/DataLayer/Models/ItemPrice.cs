@@ -25,9 +25,9 @@ namespace BasicData.DataLayer.Models
         }
         public override void Include()
         {
-            //Item = new Item { Id = ItemRef };
+            Item = new Item { Id = ItemRef };
 
-            //Item.Load();
+            Load(Item);
         }
 
         public override string[] Columns()

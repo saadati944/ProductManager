@@ -32,9 +32,9 @@ namespace BuyAndSell.Business
             _itemsBusiness = itemsBusiness;
         }
 
-        public abstract bool EditInvoice(int lastNumber, DataTable invoicetable, DataTable invoiceitems);
+        public abstract DatabaseSaveResult EditInvoice(int lastNumber, DataTable invoicetable, DataTable invoiceitems);
         public abstract bool RemoveInvoice(int number);
-        public abstract bool SaveInvoice(DataTable invoicetable, DataTable invoiceitems);
+        public abstract DatabaseSaveResult SaveInvoice(DataTable invoicetable, DataTable invoiceitems);
         public abstract Invoice GetInvoiceModel(int number, SqlConnection connection = null, SqlTransaction transaction = null);
         public abstract DataTable GetInvoice(int number, SqlConnection connection = null, SqlTransaction transaction = null);
         public abstract int GetLastInvoiceNumber(SqlConnection connection = null, SqlTransaction transaction = null);
@@ -159,8 +159,8 @@ namespace BuyAndSell.Business
         protected byte[] GetInvoiceVersion(int number, Invoice.InvoiceType invoiceType, SqlConnection connection = null, SqlTransaction transaction = null)
         {
             if (invoiceType == Invoice.InvoiceType.Selling)
-                return _database.GetAllDataset<SellInvoice>(null, null, "Number=" + number).Tables[0].Rows[0].Field<byte[]>(Invoice.VersionColumnName);
-            return _database.GetAllDataset<BuyInvoice>(null, null, "Number=" + number).Tables[0].Rows[0].Field<byte[]>(Invoice.VersionColumnName);
+                return _database.GetAllDataset<SellInvoice>(connection, transaction, "Number=" + number).Tables[0].Rows[0].Field<byte[]>(Invoice.VersionColumnName);
+            return _database.GetAllDataset<BuyInvoice>(connection, transaction, "Number=" + number).Tables[0].Rows[0].Field<byte[]>(Invoice.VersionColumnName);
         }
     }
 }

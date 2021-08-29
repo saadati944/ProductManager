@@ -31,13 +31,13 @@ namespace BuyAndSell.DataLayer.Models
         }
         public override void Include()
         {
-            //Item = new Item { Id = ItemRef };
-            //Invoice = new SellInvoice { Id = InvoiceRef };
-            //Stock = new Stock { Id = StockRef };
+            Item = new Item { Id = ItemRef };
+            Invoice = new SellInvoice { Id = InvoiceRef };
+            Stock = new Stock { Id = StockRef };
 
-            //Item.Load();
-            //Invoice.Load();
-            //Stock.Load();
+            Load(Item);
+            Load(Invoice);
+            Load(Stock);
         }
 
         public override string TableName()
