@@ -1,6 +1,5 @@
 ﻿namespace Framework.DataLayer.Models
 {
-    //TODO: include user
     public class Setting : Model
     {
         private const string _tableName = "Settings";
@@ -12,6 +11,21 @@
         public string Name { get; set; }
         public string Value { get; set; }
         public int UserRef { get; set; }
+        public User User { get; set; }
+
+        public new bool Included
+        {
+            get
+            {
+                return User != null;
+            }
+        }
+        public override void Include()
+        {
+            User = new User { Id = UserRef };
+
+            Load(User);
+        }
 
         public override string[] Columns()
         {

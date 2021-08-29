@@ -20,7 +20,7 @@ namespace Login.Presentation.Forms
             {
                 Id = defaultUser.Id,
                 UserName = txtFirstName.Text = defaultUser.UserName,
-                FullName = txtLastName.Text = defaultUser.FullName,
+                // FullName = txtLastName.Text = defaultUser.FullName,
                 Age = (int)(numAge.Value = defaultUser.Age),
                 Gender = radMale.Checked = defaultUser.Gender,
                 Password = defaultUser.Password
@@ -40,7 +40,7 @@ namespace Login.Presentation.Forms
         private void Bind()
         {
             _user.UserName = txtFirstName.Text;
-            _user.FullName = txtLastName.Text;
+            // _user.FullName = txtLastName.Text;
             _user.Age = (int)numAge.Value;
             _user.Gender = radMale.Checked;
         }

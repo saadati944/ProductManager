@@ -22,10 +22,9 @@
         }
         public override void Include()
         {
-            //TODO: add a part in framework to load the models
-            //User = new User { Id = UserRef };
+            User = new User { Id = UserRef };
 
-            //User.Load();
+            Load(User);
         }
 
         public override string[] Columns()

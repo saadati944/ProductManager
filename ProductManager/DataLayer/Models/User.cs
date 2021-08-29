@@ -8,14 +8,17 @@ namespace Framework.DataLayer.Models
         private const string _tableName = "Users";
 
         public const string UsernameColumnName = "Username";
-        public const string FullnameColumnName = "Fullname";
+        public const string FirstnameColumnName = "Firstname";
+        public const string LastnameColumnName = "Lastname";
         public const string PasswordnameColumnName = "Password";
         public const string AgenameColumnName = "Age";
         public const string GendernameColumnName = "Gender";
 
         public int Age { get; set; }
         public string UserName { get; set; }
-        public string FullName { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string FullName { get { return FirstName + " " + LastName; } }
         public string Password { get; set; }
 
 
@@ -24,12 +27,12 @@ namespace Framework.DataLayer.Models
 
         public override string[] Columns()
         {
-            return new string[] { UsernameColumnName, FullnameColumnName, PasswordnameColumnName, AgenameColumnName, GendernameColumnName };
+            return new string[] { UsernameColumnName, FirstnameColumnName, LastnameColumnName, PasswordnameColumnName, AgenameColumnName, GendernameColumnName };
         }
 
         public override string[] GetValues()
         {
-            return new string[] { UserName, FullName, Password, Age.ToString(), Gender.ToString() };
+            return new string[] { UserName, FirstName, LastName, Password, Age.ToString(), Gender.ToString() };
         }
 
 
@@ -37,7 +40,8 @@ namespace Framework.DataLayer.Models
         {
             base.MapToModel(row);
             UserName = GetField(row, UsernameColumnName, UserName);
-            FullName = GetField(row, FullnameColumnName, FullName);
+            FirstName = GetField(row, FirstnameColumnName, FullName);
+            LastName = GetField(row, LastnameColumnName, FullName);
             Password = GetField(row, PasswordnameColumnName, Password);
             Age = GetField(row, AgenameColumnName, Age);
             Gender = GetField(row, GendernameColumnName, Gender);
