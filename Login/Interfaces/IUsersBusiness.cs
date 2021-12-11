@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using Framework.DataLayer.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,7 @@ namespace Login.Interfaces
     {
         IEnumerable<User> Users { get; }
         User Login(string username, string password);
+        DataTable NewDataTable();
+        bool ValidateDataTable(DataTable table);
     }
 }

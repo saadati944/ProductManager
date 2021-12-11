@@ -1,4 +1,6 @@
-﻿using Framework.Interfaces;
+﻿using System.Data;
+using Login.Interfaces;
+using Framework.Interfaces;
 using Framework.DataLayer.Models;
 using System;
 using System.ComponentModel;
@@ -10,10 +12,14 @@ namespace Login.Presentation.Forms
     {
         private readonly IDatabase _database;
         private readonly User _user = new User();
-        
-        public FrmSignUp(IDatabase database)
+
+        private readonly IUsersBusiness _usersBusiness;
+        private readonly DataTable _dataTable;
+
+        public FrmSignUp(IDatabase database, IUsersBusiness usersBusiness)
         {
             _database = database;
+            _usersBusiness = usersBusiness;
 
             InitializeComponent();
             bindingSource.DataSource = _user;
